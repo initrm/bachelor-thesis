@@ -1,12 +1,28 @@
 % Tesi D.S.I. - modello preso da
 % Stanford University PhD thesis style -- modifications to the report style
-%
-\long\def\komment#1{}
 
-% \makeatletter            --not necessary for LaTeX style files
-% We need 1" margins except on the binding edge, where it is 1 1/2"
-\oddsidemargin 0.5in \evensidemargin 0in
-\marginparwidth 40pt \marginparsep 10pt
+% not necessary for LaTeX style files
+% \makeatletter
+
+% commenting each one results in a centered text in pages: should be fixed (?)
+
+% this is the stanford thesis original
+% \if@twoside
+% 	\setlength\oddsidemargin   {36.1\p@}
+% 	\setlength\evensidemargin  {0\p@}
+% 	\setlength\marginparwidth {40\p@}
+% \else
+% 	\setlength\oddsidemargin   {36.1\p@}
+% 	\setlength\evensidemargin  {36.1\p@}
+% 	\setlength\marginparwidth  {40\p@}
+% \fi
+% \marginparsep 10pt
+
+% this is the one provided from the university of milano
+%\oddsidemargin 0.5in \evensidemargin 0in
+%\marginparwidth 40pt
+
+\marginparsep 10pt
 \topmargin 0pt \headsep .5in
 \textheight 8.1in \textwidth 6in
 
@@ -94,30 +110,27 @@
 \figurespagefalse
 \tablespagefalse
 
-\def\titlep{%
-	\thispagestyle{empty}%
-	%\null\vskip1in%
-        \begin{center}
-            \includegraphics[width=1\linewidth]{logo_facolta.jpg}
-            \Large
-            {\em \@dept}
-        \end{center}
-        \vskip1in
-	\begin{center}
-% 		{\Large\uppercase\expandafter{\@title}}
-        \begin{doublespace}
-		{\Huge\uppercase\expandafter{\@title}}
-        \end{doublespace}
-	\end{center}
-	\vfill
-        \begin{description}
-        \item[Relatore:] \@relatore
-        % \item[Correlatore:] \@correlatore
-        \end{description}
-	\vskip0.5in
+\def\titlep{
+	\thispagestyle{empty}
+    \begin{center}
+    	\includegraphics[width=1\linewidth]{logo_facolta.jpg}
+      \Large{\em \@dept}
+    \end{center}
+    \vskip1in
+		\begin{center}
+      \begin{doublespace}
+				{\Huge\uppercase\expandafter{\@title}}
+      \end{doublespace}
+		\end{center}
+		\vfill
+    \begin{description}
+      \item[Relatore:] \@relatore
+      % \item[Correlatore:] \@correlatore
+    \end{description}
+		\vskip0.5in
         \null\hfill
         \parbox{3in}{
-          Tesi di: \\
+          Autore: \\
           \expandafter{\@author}
 	  \\ Matricola: \@matricola
           }
@@ -126,44 +139,6 @@
          \large   Anno Accademico \@anno
         \end{center}
         \newpage}
-
-\def\copyrightpage{%
-	\null\vfill
-	\begin{center}
-		\Large\copyright\ Copyright \@copyrightyear\\
-		by\\
-		\@author\\
-	\end{center}
-	\vfill\newpage}
-
-\long\def\signature#1{%
-\begin{center}
-\begin{minipage}{4in}
-\parindent=0pt
-I certify that I have read this thesis and that in my opinion
-it is fully adequate, in scope and in quality, as a dissertation for the degree
-of Doctor of Philosophy.
-\par
-\vspace{.5in}
-\hbox to 4in{\hfil\shortstack{\vrule width 3in height 0.4pt\\#1}}
-\end{minipage}
-\end{center}}
-
-\def\signaturepage{%
-	\signature{\@principaladviser\\(Principal \advis@r)}
-	\vfill
-	\signature\@firstreader
-	\vfill
-	\signature\@secondreader
-	\vfill
-	\begin{center}
-	\begin{minipage}{4in}
-	Approved for the University Committee on Graduate Studies:\par
-	\vspace{.5in}
-	\hbox to 4in{\hfil\shortstack{\vrule width 3in height 0.4pt\\
-			Dean of Graduate Studies \& Research}}
-	\end{minipage}
-	\end{center}}
 
 \def\beforepreface{
 	\pagenumbering{roman}
@@ -203,4 +178,3 @@ of Doctor of Philosophy.
 
 \pagestyle{headings}
 % \makeatother           --not necessary for LaTeX style files
-

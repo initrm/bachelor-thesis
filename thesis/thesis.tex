@@ -71,23 +71,28 @@ ne vengono presentati i concetti fondamentali, per un'esposizione più completa 
 
 \section{Alfabeti, parole e linguaggi}
 
-Un alfabeto, generalmente indicato con la lettera $\Sigma$, è un insieme finito di simboli, entità astratte non definite formalmente cui esempio possono essere lettere e numeri.
+Un alfabeto, generalmente indicato con la lettera $\Sigma$, è un insieme finito di simboli,
+entità astratte non definite formalmente cui esempi possono essere lettere e numeri.
 
-Una parola è una sequenza finita di simboli giustapposti, in particolare, una parola su un alfabeto $\Sigma$ è una sequenza finita di simboli appartenenti a $\Sigma$.
+Una parola è una sequenza finita di simboli giustapposti, in particolare, una parola su un alfabeto $\Sigma$
+è una sequenza finita di simboli appartenenti a $\Sigma$.
 
 La lunghezza di una parola $w$, indicata con $|w|$, è il numero di simboli che la compongono.
-Caso particolare è la parola vuota, a cui per convenzione si fa riferimento con la lettera $\epsilon$, composta da zero simboli ($|\epsilon| = 0$).
+Caso particolare è la parola vuota, a cui per convenzione si fa riferimento con la lettera $\epsilon$,
+composta da zero simboli ($|\epsilon| = 0$).
 
-Un possibile esempio di alfabeto è $\Sigma = \{0, 1\}$, mentre una possibile parola su $\Sigma$ è $w = 01$, dove $|w| = 2$.
+Un possibile esempio di alfabeto è $\Sigma = \{0, 1\}$, mentre una possibile parola su $\Sigma$ è
+$w = 01$, dove $|w| = 2$.
 
 Si è in grado a questo punto di introdurre il concetto di linguaggio.
 
 \begin{theorem}\label{th:lang}
-  Un linguaggio $L$ su un alfabeto $\Sigma$ è un insieme di parole su $\Sigma$, ovvero, un insieme di parole formate dalla giustappozione di simboli appartenenti a $\Sigma$.
+  Un linguaggio $L$ su un alfabeto $\Sigma$ è un insieme di parole su $\Sigma$, ovvero, un insieme di
+  parole formate dalla giustappozione di simboli appartenenti a $\Sigma$.
 \end{theorem}
 
-Due esempi particolari possono essere il linguaggio vuoto $L_\emptyset = \emptyset$ ed il linguaggio composto solo dalla
-parola vuota $L_\epsilon = \{\epsilon\}$, puntualizzando il fatto che $L_\emptyset \neq L_\epsilon$,
+Due esempi particolari possono essere il linguaggio vuoto $L_\emptyset = \emptyset$ ed il linguaggio composto
+solo dalla parola vuota $L_\epsilon = \{\epsilon\}$, puntualizzando il fatto che $L_\emptyset \neq L_\epsilon$,
 infatti $|L_\emptyset| = 0$ mentre $|L_\epsilon| = 1$.
 
 Convenzionalmente, fissato un alfabeto $\Sigma$, viene indicato con $\Sigma^*$ il linguaggio composto da tutte
@@ -108,26 +113,40 @@ non deterministici (NFA).
   \label{th:dfa}
   Un automa a stati finiti deterministico è una quintupla \\
   $A = (Q, \Sigma, \delta, q_I, F)$ dove $Q$ denota un insieme finito di stati, $\Sigma$ un alfabeto, \\
-  $\delta: Q \times \Sigma \rightarrow Q$ la funzione di transizione, $q_I \in Q$ lo stato iniziale e $F \subseteq Q$ l'insieme degli stati finali.
+  $\delta: Q \times \Sigma \rightarrow Q$ la funzione di transizione, $q_I \in Q$ lo stato iniziale
+  e $F \subseteq Q$ l'insieme degli stati finali.
 \end{theorem}
 
-La funzione di transizione $\delta$ può essere estesa per essere applicata a parole, si definisce dunque $\hat{\delta}: Q \times \Sigma^* \rightarrow Q$ dove $\hat{\delta}(q, w)$
-è lo stato in cui l'automa si trova, partendo dallo stato $q$, dopo aver letto la parola $w$. Più formalmente, $\hat{\delta}(q, \epsilon) = q$ e $\hat{\delta}(q, w\sigma) = \delta(\hat{\delta}(q, w), \sigma)$ per ogni $w \in \Sigma^*$ e $\sigma \in \Sigma$.
+La funzione di transizione $\delta$ può essere estesa per essere applicata a parole, si definisce dunque
+$\hat{\delta}: Q \times \Sigma^* \rightarrow Q$ dove $\hat{\delta}(q, w)$ è lo stato in cui l'automa si trova,
+partendo dallo stato $q$, dopo aver letto la parola $w$. Più formalmente, $\hat{\delta}(q, \epsilon) = q$ e
+$\hat{\delta}(q, w\sigma) = \delta(\hat{\delta}(q, w), \sigma)$ per ogni $w \in \Sigma^*$ e $\sigma \in \Sigma$.
 
-Una comune rappresentazione della funzione di transizione è quella in forma tabellare, chiamata tabella di transizione, nella quale le righe
-corrispondono agli stati, le colonne ai possibili simboli in ingresso ed il generico elemento di riga $q$ e colonna $\sigma$ allo stato $\delta(q, \sigma)$. Lo stato iniziale e gli stati finali sono evidenziati rispettivamente con $\rightarrow$ e $*$.
+Una comune rappresentazione della funzione di transizione è quella in forma tabellare, chiamata tabella di transizione,
+nella quale le righe corrispondono agli stati, le colonne ai possibili simboli in ingresso ed il generico elemento
+di riga $q$ e colonna $\sigma$ allo stato $\delta(q, \sigma)$. Lo stato iniziale e gli stati finali sono evidenziati
+rispettivamente con $\rightarrow$ e $*$.
 
-Un esempio di automa a stati finiti deterministico è mostrato in Figura \ref{fig:dfa}, in tale caso, $Q = \{A, B, C, D, E, F, G, H\}$, $\Sigma = \{a, b\}$, $q_I = A$ e $F = \{E, G, H\}$, mentre
+Un esempio di automa a stati finiti deterministico è mostrato in Figura \ref{fig:dfa}, in tale caso,
+$Q = \{A, B, C, D, E, F, G, H\}$, $\Sigma = \{a, b\}$, $q_I = A$ e $F = \{E, G, H\}$, mentre
 la funzione di transizione $\delta$ è mostrata in Tabella \ref{tab:transitions}.
 
-Dato un automa $A = (Q, \Sigma, \delta, q_I, F)$ a stati finiti non deterministici, si definisce il linguaggio riconosciuto da $A$ come 
-$L(A) = \{w \in \Sigma^* \mid \hat{\delta}(q_I, w) \in F\}$, ovvero, come il linguaggio composto da tutte le parole $w \in \Sigma^*$ che portano dallo
-stato iniziale $q_I$ ad uno stato $q \in F$.
+\begin{theorem}
+  \label{th:reg-lang}
+  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, si definisce il linguaggio
+  riconosciuto da $A$ come $L(A) = \{w \in \Sigma^* \mid \hat{\delta}(q_I, w) \in F\}$, ovvero, come
+  il linguaggio composto da tutte le parole $w \in \Sigma^*$ che portano dallo stato iniziale $q_I$ ad
+  uno stato $q \in F$.
+\end{theorem}
 
-Gli automi a stati finiti non deterministici sono simili ai DFA, la differenza principale risiede nella funzione di transizione che è definita come $\delta: Q \times \Sigma \rightarrow 2^Q$ che ne cambia di conseguenza anche il modo di processare gli input.
+Gli automi a stati finiti non deterministici sono simili ai DFA, la differenza principale risiede nella
+funzione di transizione che è definita come $\delta: Q \times \Sigma \rightarrow 2^Q$ che ne cambia di
+conseguenza anche il modo di processare gli input.
 
-Data la non rilevanza degli NFA per il proseguo della trattazione, maggiori dettagli, per i quali il lettore è nuovamente rimandato a \cite{HMU06}, sono omessi. Si ritiene tuttavia importante 
-puntualizzare come, gli automi a stati finiti non deterministici siano equivalenti a quelli deterministici, ovvero, per ogni NFA esiste un DFA che riconosce lo stesso linguaggio e viceversa.
+Data la non rilevanza degli NFA per il proseguo della trattazione, maggiori dettagli, per i quali il lettore è
+nuovamente rimandato a \cite{HMU06}, sono omessi. Si ritiene tuttavia importante puntualizzare come, gli automi
+a stati finiti non deterministici siano equivalenti a quelli deterministici, ovvero, per ogni NFA esiste un
+DFA che riconosce lo stesso linguaggio e viceversa.
 
 \begin{figure}[!htb]
   \centering
@@ -179,7 +198,7 @@ due stati equivalenti, possono essere sostituiti da un singolo stato che si comp
 La diretta conseguenza risiede nel fatto che, dato un automa di partenza $A = (Q, \Sigma, \delta, q_I, F)$, 
 siano $q_A, q_B \in Q$ tali che $q_A \equiv q_B$, è possibile costruire un automa $A' = (Q', \Sigma, \delta', q_I', F')$,
 con $||Q'|| < ||Q||$ e $L(A') = L(A)$, facendo collassare gli stati $q_A$ e $q_B$ in un singolo stato $q'$, ovvero, definendo
-$Q' = Q \setminus \{q_A, q_B\} \cup \{q'\}$ e la funzione di transizione $\delta'$, inizialmente uguale a $\delta$,
+$Q' = Q \setminus \{q_A, q_B\} \cup \{q'\}$ e la funzione di transizione $\delta'$
 in modo che tutte le transizioni in ingresso a $q_A$ e $q_B$ vengano reindirizzate a $q'$ e che
 $\delta'(q', \sigma) = \delta(q_A, \sigma)$ per ogni $\sigma \in \Sigma$, prestando particolare attenzione,
 se necessario, anche alla conseguente ridefinizione dello stato iniziale e degli stati finali in $A'$.
@@ -187,7 +206,7 @@ se necessario, anche alla conseguente ridefinizione dello stato iniziale e degli
 Il teorema \ref{th:eq-rel-states} permette di estendere il risultato sopra riportato ad un numero arbitrario di
 stati equivalenti, più formalmente, siano $q_1, q_2, \dots, q_n \in Q$ con $n \in \mathbb{N}$ tali che
 $q_1 \equiv q_2 \equiv \dots \equiv q_n$, allora è possibile collassare gli stati $q_1, q_2, \dots, q_n$ in un
-singolo stato $q'$ mantenendo il linguaggio riconosciuto inalterato.
+singolo stato $q'$ mantenendo il linguaggio riconosciuto dall'automa inalterato.
 
 Grazie all'idea di equivalenza tra stati, è inoltre possibile definire l'equivalenza tra automi: siano
 $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ due DFA, 

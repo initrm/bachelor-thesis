@@ -14,9 +14,9 @@
 \usepackage[utf8]{inputenc}
 
 \newcommand{\partitioned}[2]{#1\slash\!\!#2}
-\renewcommand\eminnershape{\bfseries}
 
 \newtheorem{theorem}{Teorema}[chapter]
+\newtheorem{definition}{Definizione}[chapter]
 
 \begin{document}
 
@@ -85,10 +85,10 @@ $w = 01$, dove $|w| = 2$.
 
 Si è in grado a questo punto di introdurre il concetto di linguaggio.
 
-\begin{theorem}\label{th:lang}
+\begin{definition}\label{def:lang}
   Un \emph{linguaggio} $L$ su un alfabeto $\Sigma$ è un insieme di parole su $\Sigma$, ovvero, un insieme di
   parole formate dalla giustappozione di simboli appartenenti a $\Sigma$.
-\end{theorem}
+\end{definition}
 
 Due esempi particolari possono essere il linguaggio vuoto $L_\emptyset = \emptyset$ ed il linguaggio composto
 solo dalla parola vuota $L_\varepsilon = \{\varepsilon\}$, puntualizzando il fatto che $L_\emptyset \neq L_\varepsilon$,
@@ -108,12 +108,12 @@ con un numero finito di input, che possono trovarsi in un numero finito di confi
 In questa categoria rientrano gli automi a stati finiti deterministici (DFA) e gli automi a stati finiti 
 non deterministici (NFA).
 
-\begin{theorem}
-  \label{th:dfa}
+\begin{definition}
+  \label{def:dfa}
   Un \emph{automa a stati finiti deterministico} è una quintupla $A = (Q, \Sigma, \delta, \allowbreak q_I, F)$
   dove $Q$ denota un insieme finito di stati, $\Sigma$ un alfabeto, $\delta: Q \times \Sigma \rightarrow Q$ 
   la funzione di transizione, $q_I \in Q$ lo stato iniziale e $F \subseteq Q$ l'insieme degli stati finali.
-\end{theorem}
+\end{definition}
 
 La funzione di transizione $\delta$ può essere estesa per essere applicata a parole. Si definisce dunque
 $\hat{\delta}: Q \times \Sigma^* \rightarrow Q$ dove $\hat{\delta}(q, w)$ è lo stato in cui l'automa si trova,
@@ -133,13 +133,13 @@ Un esempio di automa a stati finiti deterministico è mostrato in Figura \ref{fi
 $Q = \{A, B, C, D, E, F, G, H\}$, $\Sigma = \{a, b\}$, $q_I = A$ e $F = \{E, G, H\}$, mentre
 la funzione di transizione $\delta$ è mostrata in Tabella \ref{tab:transitions}.
 
-\begin{theorem}
-  \label{th:reg-lang}
-  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, si definisce il linguaggio
-  riconosciuto da $A$ come $L(A) = \{w \in \Sigma^* \mid \hat{\delta}(q_I, w) \in F\}$, ovvero, come
+\begin{definition}
+  \label{def:reg-lang}
+  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, si definisce il \emph{linguaggio
+  riconosciuto} da $A$ come $L(A) = \{w \in \Sigma^* \mid \hat{\delta}(q_I, w) \in F\}$, ovvero, come
   il linguaggio composto da tutte le parole $w \in \Sigma^*$ che portano dallo stato iniziale $q_I$ ad
   uno stato $q \in F$.
-\end{theorem}
+\end{definition}
 
 Gli automi a stati finiti non deterministici sono simili ai DFA, la differenza principale risiede nella
 funzione di transizione che è definita come $\delta: Q \times \Sigma \rightarrow 2^Q$ che ne cambia di
@@ -178,6 +178,7 @@ DFA che riconosce lo stesso linguaggio e viceversa.
 \end{table}
 
 \section{Minimizzazione di DFA}
+\label{min-dfa}
 
 Uno dei problemi di maggiore interesse nel campo della teoria degli automi è quello riguardante la minimizzazione di 
 automi a stati finiti deterministici. Il problema consiste, dato un automa $A = (Q, \Sigma, \delta, q_I, F)$,
@@ -185,12 +186,12 @@ nel trovare un automa $A' = (Q', \Sigma, \delta', q_I', F')$ tale che $L(A') = L
 
 Il concetto alla base della minimizzazione è quello di equivalenza tra stati:
 
-\begin{theorem}
-  \label{th:eq-states}
+\begin{definition}
+  \label{def:eq-states}
   Due stati $q_A$ e $q_B$ sono detti \emph{equivalenti}, denotato con $q_A \equiv q_B$, 
   se $\forall w \in \Sigma^*$, $\hat{\delta}(q_A, w) \in F$ se e solo se $\hat{\delta}(q_B, w) \in F$.
   Specularmente, due stati $q_A$ e $q_B$ non equivalenti sono detti distinguibili.
-\end{theorem}
+\end{definition}
 
 \begin{theorem}
   \label{th:eq-rel-states}
@@ -217,8 +218,9 @@ $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q
 $A_1$ è detto \emph{equivalente} ad $A_2$, denotato con $A_1 \equiv A_2$, se $q_{I_1} \equiv q_{I_2}$.
 É banale osservare che, se $A_1 \equiv A_2$, questi accettano gli stessi input, pertanto $L(A_1) = L(A_2)$.
 
-Si introduce inoltre, dato un insieme $S$ e una relazione di equivalenza $R$ su $S$, la notazione $S \slash R$
-per indicare l'insieme quoziente di $S$ rispetto a $R$.
+Ricordando inoltre che una classe di equivalenza è un sottoinsieme della partizione $P$ di un insieme $S$ determinata da
+una relazione di equivalenza $R$ su $S$ \cite{Ros18}, si introduce il concetto di \emph{insieme quoziente},
+denotato da $S \slash R$, come l'insieme delle classi di equivalenza di $R$ su $S$.
 
 \begin{theorem}
   \label{th:min-dfa}
@@ -249,13 +251,61 @@ Si passa quindi al collasso degli stati, in particolare, gli unici stati equival
 $G$ e $H$ che vengono sostituiti da un unico stato $G$, ottenendo l'automa in Figura \ref{fig:minified-dfa}.
 
 In ultima istanza, si sottolinea come sia ben noto un algoritmo per la minimizzazione di automi a stati finiti deterministici, 
-l'algoritmo di Hopcroft \cite{Hopc71}, che permette, partendo da un DFA in ingresso, di ottenere l'automa minimo in tempo $n \cdot log(n)$.
+l'algoritmo di Hopcroft \cite{Hop71}, che permette, partendo da un DFA in ingresso, di ottenere l'automa minimo in tempo $n \cdot log(n)$.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.7\linewidth]{minified-dfa.png}
   \caption{\label{fig:minified-dfa}L'automa in Figura \ref{fig:dfa} minimizzato.}
 \end{figure}
+
+% CHAPTER 2
+
+% SKELETON
+
+% \chapter{Iperminimizzazione di DFA}
+% \label{cap2}
+% 
+% Come visto nella sezione \ref{min-dfa}
+% 
+% \section{Definizione del problema}
+% 
+% \section{Tecniche di iperminimizzazione}
+% 
+% \subsection{Algoritmo di Badr, Geffert e Shipman}
+% 
+% \subsection{Algoritmo di Badr}
+% 
+% \subsection{Algoritmo di Holzer e Maletti}
+
+
+% CHAPTER 3
+
+% SKELETON
+
+% \chapter{Implementazione delle tecniche di iperminimizzazione}
+% \label{cap3}
+% 
+% \section{Scelte implementative}
+% 
+% \section{Strutture comuni}
+% 
+% \section{Algoritmo di Badr, Geffert e Shipman}
+% 
+% \section{Algoritmo di Badr}
+% 
+% \section{Algoritmo di Holzer e Maletti}
+
+% CHAPTER 4
+
+% SKELETON
+
+% \chapter{Risultati sperimentali}
+% \label{cap4}
+% 
+% \section{Generazione di DFA}
+% 
+% \section{Risultati}
 
 % BIBLIOGRAPHY
 

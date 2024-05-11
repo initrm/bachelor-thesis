@@ -93,9 +93,9 @@ Si è in grado a questo punto di introdurre il concetto di linguaggio.
   parole formate dalla giustappozione di simboli appartenenti a $\Sigma$.
 \end{definition}
 
-Due esempi particolari possono essere il linguaggio vuoto $L_\emptyset = \emptyset$ ed il linguaggio composto
-solo dalla parola vuota $L_\varepsilon = \{\varepsilon\}$, puntualizzando il fatto che $L_\emptyset \neq L_\varepsilon$,
-infatti $|L_\emptyset| = 0$ mentre $|L_\varepsilon| = 1$.
+Due esempi particolari possono essere il linguaggio vuoto $L_\varnothing = \varnothing$ ed il linguaggio composto
+solo dalla parola vuota $L_\varepsilon = \{\varepsilon\}$, puntualizzando il fatto che $L_\varnothing \neq L_\varepsilon$,
+infatti $|L_\varnothing| = 0$ mentre $|L_\varepsilon| = 1$.
 
 Convenzionalmente, fissato un alfabeto $\Sigma$, viene indicato con $\Sigma^*$ il linguaggio composto da tutte
 le parole su $\Sigma$, compresa la parola vuota.
@@ -288,6 +288,7 @@ Più formalmente dunque, dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, l'ipe
 un automa $A' = (Q', \Sigma, \delta', q_I', F')$ tale che $L(A') \sim L(A)$ e $||Q'||$ sia minimo.
 
 \section{Classi di quasi-equivalenza}
+\label{sec:aeq-classes}
 
 Analogamente al concetto classico di minimizzazione, in cui è di centrale rilevanza l'equivalenza tra stati,
 è necessario introdurre la nozione di quasi-equivalenza tra stati per poter affrontare il problema
@@ -333,6 +334,7 @@ definizione formale di un automa a stati finiti deterministico iperminimo.
 \end{definition}
 
 \section{Stati preambolo e kernel}
+\label{sec:preamble-kernel}
 
 Dato un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$, è importante, come ulteriore
 passo verso la risoluzione del problema dell'iperminimizzazione, distinguere le diverse tipologie di stati 
@@ -356,10 +358,9 @@ la trattazione, viene fornita di seguito la definizione degli stati preambolo e 
   In altri termini, $q$ è raggiungibile da un numero infinito di input a partire dallo stato iniziale.
 \end{definition}
 
-Nell'automa $A$ riportato in Figura \ref{fig:minified-dfa}, ad esempio, è possibile osservare come, seguendo le 
-Definizioni \ref{def:preamble-state} e \ref{def:kernel-state}, gli stati $A$, $B$, $C$ ed $E$ siano stati preambolo
-mentre gli stati $F$, $G$ ed $E$ siano stati kernel. Risulta dunque immediato affermare che, in questo caso,
-$P(A) = \{ A, B, C, E \}$ e $K(A) = \{ F, G, E \}$.
+Nell'automa $A$ riportato in Figura \ref{fig:minified-dfa}, ad esempio, è possibile osservare come gli stati 
+$A$, $B$, $C$ e $D$ siano stati preambolo mentre gli stati $F$, $G$ ed $E$ siano stati kernel, o ancora, come
+$P(A) = \{ A, B, C, D \}$ e $K(A) = \{ F, G, E \}$.
 
 Si sottolinea un'importante differenza nel parallelismo tra automa minimo ed iperminimo: l'automa iperminimo
 non è necessariamente unico. Si possono trovare esempi in cui un automa minimo $M$ con $n$ stati può essere 
@@ -414,25 +415,10 @@ classica mentre i preamboli sono isomorfi, eccetto per i valori accettati.
   Siano $A_1$ e $A_2$ due automi iperminimi quasi-equivalenti, allora i loro preamboli sono isomorfi ($A_1 \sim_P A_2$).
 \end{theorem}
 
-% \begin{theorem}[Caratterizzazione di un DFA iperminimo]
-%   \label{th:char-hyper-min-dfa}
-%   Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ è iperminimo e non può quindi essere
-%   sostituito da un automa quasi-equivalente $A' = (Q', \Sigma, \delta', q_I', F')$ con $||Q'|| < ||Q||$, se e solo se:
-%   \begin{enumerate}[label=(\alph*)]
-%     \item $A$ è minimo
-%     \item $\forall q_A \in Q, \forall q_B \in Q \setminus \{ q_A \}$ si ha che $q_A \sim q_B \implies q_A \in K(A) \vee q_B \in K(A)$
-%   \end{enumerate}
-% \end{theorem}
+\section{Strategia generale}
 
-\section{Tecniche}
-
-Nel corso degli anni sono emerse diverse tecniche per l'iperminimizzazione di automi a stati finiti deterministici,
-ciascuna della quali, cambiando e/o raffinando le metodologie di identificazione degli stati preambolo, degli 
-stati kernel e delle classi di quasi-equivalenza, e come queste siano manipolate, ha portato a differenti risultati,
-migliorando la complessità algoritmica delle precedenti.
-
-Tutte le tecniche note condividono quella che è una struttura generale ad alto livello per poi specializzarsi, in
-maniera differente sul come le operazioni vengono svolte.
+Grazie alle nozioni presentate nelle Sezioni \ref{sec:aeq-classes} e \ref{sec:preamble-kernel}, è possibile
+presentare una strategia generale per l'iperminimizzazione di automi a stati finiti deterministici.
 
 Dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, la procedura generale per l'iperminimizzazione consiste nel:
 \begin{enumerate}
@@ -440,20 +426,64 @@ Dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, la procedura generale per l'ip
   minimo tale che $L(A') = L(A)$
   \item identificare l'insieme degli stati preambolo $P(A')$ e degli stati kernel $K(A')$
   \item determinare le classi di quasi-equivalenza su $Q'$ e costruire dunque l'insieme quoziente $\partitioned{Q'}{\sim}$
-  \item ottenere l'automa $A''$ collassando, $\forall Q_i \in \partitioned{Q'}{\sim}$ tale che $||Q_i|| > 1$ ed $\exists q_{i_1} \in Q_i$ tale che $q_{i_1} \in P(A')$:
+  \item ottenere l'automa $A''$, $\forall Q_i \in \partitioned{Q'}{\sim}$ tale che $||Q_i|| > 1$ ed $\exists q_{i_1} \in Q_i$ tale che $q_{i_1} \in P(A')$:
   \begin{enumerate}
     \item se $\exists q_{i_2} \in Q_i$ tale che $q_{i_2} \in K(A')$, collassando tutti gli stati in $Q_i \cap P(A')$ in $q_{i_2}$
-    \item se ...
+    \item altrimenti, collassando tutti gli stati in $Q_i \setminus \{q_{i_1}\}$ in $q_{i_1}$
   \end{enumerate}
 \end{enumerate}
 
-L'automa $A''$ ottenuto secondo la procedura sopra descritta è l'automa iperminimo.
+L'automa $A''$ così ottenuto è l'automa iperminimo.
 
-\subsection{Algoritmo di Badr, Geffert e Shipman}
+Si osservi che il primo passo della procedura, ovvero la minimizzazione dell'automa, permette di garantire 
+che l'automa minimo ottenuto $A'$, sul quale poi eseguire i successivi passi per arrivare all'automa iperminimo,
+sia privo di stati irraggiungibili ($U(A') = \emptyset$) e che quindi l'insieme degli stati possa essere partizionato
+esclusivamente in due parti, gli stati preambolo e gli stati kernel ($Q' = P(A') \cup K(A')$).
 
-\subsection{Algoritmo di Badr}
+Prendendo ancora una volta come esempio l'automa $A = (Q, \Sigma, \delta, q_I, F)$ in Figura \ref{fig:dfa},
+si procede alla sua iperminimizzazione seguendo la strategia generale appena descritta.
+La minimizzazione dell'automa, discussa in precedenza, porta all'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$
+in Figura \ref{fig:minified-dfa}.
+Ricordando ora che $P(A') = \{ A, B, C, D \}$, $K(A') = \{ F, G, E \}$ e che 
+$\partitioned{Q'}{\sim} \ = \{ \{ A \}, \{ C \}, \{ D, G \}, \{ F, B \}, \{ E \} \}$,
+si procede con il collasso degli stati:
+\begin{enumerate}[label=--]
+  \item essendo $D \sim G$, $D \in P(A')$ e $G \in K(A')$, si collassa $D$ in $G$
+  \item essendo $F \sim B$, $B \in P(A')$ e $F \in K(A')$, si collassa $B$ in $F$
+\end{enumerate}
+ottenendo l'automa $A''$ iperminimo in Figura \ref{fig:hyper-minified-dfa}.
 
-\subsection{Algoritmo di Holzer e Maletti}
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=0.7\linewidth]{hyper-minified-dfa.png}
+  \caption{\label{fig:hyper-minified-dfa}L'automa in Figura \ref{fig:minified-dfa} iperminimizzato.}
+\end{figure}
+
+\begin{theorem}[Caratterizzazione di un DFA iperminimo]
+  \label{th:char-hyper-min-dfa}
+  Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ è iperminimo e non può quindi essere
+  sostituito da un automa quasi-equivalente $A' = (Q', \Sigma, \delta', q_I', F')$ con $||Q'|| < ||Q||$, se e solo se:
+  \begin{enumerate}[label=(\alph*)]
+    \item $A$ è minimo
+    \item $\forall q_A \in Q, \forall q_B \in Q \setminus \{ q_A \}$ si ha che $q_A \sim q_B \implies q_A \in K(A) \vee q_B \in K(A)$
+  \end{enumerate}
+\end{theorem}
+
+% \chapter{Algoritmi di iperminimizzazione}
+
+% preamble {A, B, C, D}
+% kernel {F, G, E}
+% equivalence [{A}, {C}, {D, G}, {F, B}, {E}]
+
+% Nel corso degli anni sono emerse diverse tecniche per l'iperminimizzazione di automi a stati finiti deterministici,
+% ciascuna della quali, cambiando e/o raffinando le metodologie di identificazione degli stati preambolo, degli 
+% stati kernel e delle classi di quasi-equivalenza, e come queste siano manipolate, ha portato a differenti risultati,
+% migliorando la complessità algoritmica delle precedenti.
+% 
+% Tutte le tecniche note condividono quella che è una struttura generale ad alto livello per poi specializzarsi, in
+% maniera differente sul come le operazioni vengono svolte.
+
+% \chapter{Risultati sperimentali}
 
 % preamble {frozenset({'A'}), frozenset({'B'}), frozenset({'C'}), frozenset({'D'})}
 % kernel {frozenset({'F'}), frozenset({'G'}), frozenset({'E'})}

@@ -1,38 +1,38 @@
-% Tesi D.S.I. - modello preso da
-% Stanford University PhD thesis style -- modifications to the report style
+% this latex style file has been created by Andrea Tinelli
+% and is based on the Stanford University PhD thesis style file 
+% (suthesis-2e.sty) and on the template downloaded from the Computer Science
+% department of the University of Milan website.
+
+\RequirePackage{setspace}
 
 % not necessary for LaTeX style files
 % \makeatletter
 
-% commenting each one results in a centered text in pages: should be fixed (?)
-
-% this is the stanford thesis original
-% \if@twoside
-% 	\setlength\oddsidemargin   {36.1\p@}
-% 	\setlength\evensidemargin  {0\p@}
-% 	\setlength\marginparwidth {40\p@}
-% \else
-% 	\setlength\oddsidemargin   {36.1\p@}
-% 	\setlength\evensidemargin  {36.1\p@}
-% 	\setlength\marginparwidth  {40\p@}
-% \fi
-% \marginparsep 10pt
-
-% this is the one provided from the university of milano
-% \oddsidemargin 0.5in \evensidemargin 0in
-% \marginparwidth 40pt
+% this sets the page layout, the pages on the right have more margin on the left
+% and viceversa due to the printing process which "eats" some space
+% the if is triggered into the main.tex file by the twoside option
+% example: \documentclass[a4paper,12pt,twoside]{report}
+\if@twoside
+	\setlength\oddsidemargin{36.1\p@}
+	\setlength\evensidemargin{0\p@}
+	\setlength\marginparwidth{40\p@}
+\else
+	\setlength\oddsidemargin{36.1\p@}
+	\setlength\evensidemargin{36.1\p@}
+	\setlength\marginparwidth{40\p@}
+\fi
 
 \marginparsep 10pt
 \topmargin 0pt \headsep .5in
 \textheight 8.1in \textwidth 6in
 
-% Disallow page breaks at hyphens (this will give some underfull vbox's,
+% disallow page breaks at hyphens (this will give some underfull vbox's,
 % so an alternative is to use \brokenpenalty=100 and manually search
 % for and fix such page breaks)
 \brokenpenalty=10000
 
-% Use 1.3 times the normal baseline-to-baseline skip
-\renewcommand{\baselinestretch}{1.0}		% ERA 1.3
+% use 1.3 times the normal baseline-to-baseline skip
+\renewcommand{\baselinestretch}{1.0}
 
 % Figures and tables are to be numbered sequentially throughout the
 % thesis, rather than within chapters; for style consistency, do
@@ -44,37 +44,57 @@
 \def\thetable{\@arabic\c@table}
 \def\theequation{\arabic{equation}}
 
-% Redefine the macro used for floats (including figures and tables)
-% so that single spacing is used.
-% (Note \def\figure{\@float{figure}set single spacing} doesn't work
-%  because figure has an optional argument)
-% \def\@xfloat#1[#2]{\ifhmode \@bsphack\@floatpenalty -\@Mii\else
-%    \@floatpenalty-\@Miii\fi\def\@captype{#1}\ifinner
-%       \@parmoderr\@floatpenalty\z@
-%     \else\@next\@currbox\@freelist{\@tempcnta\csname ftype@#1\endcsname
-%        \multiply\@tempcnta\@xxxii\advance\@tempcnta\sixt@@n
-%        \@tfor \@tempa :=#2\do
-%                         {\if\@tempa h\advance\@tempcnta \@ne\fi
-%                          \if\@tempa t\advance\@tempcnta \tw@\fi
-%                          \if\@tempa b\advance\@tempcnta 4\relax\fi
-%                          \if\@tempa p\advance\@tempcnta 8\relax\fi
-%          }\global\count\@currbox\@tempcnta}\@fltovf\fi
-%     \global\setbox\@currbox\vbox\bgroup 
-%     \def\baselinestretch{1}\@normalsize
-%     \boxmaxdepth\z@
-%     \hsize\columnwidth \@parboxrestore}
+% this code brokes my thesis so has been commented out,
+% choose yourself if you want to use it
 
-% Redefine the macro used for footnotes to use single spacing
-\long\def\@footnotetext#1{\insert\footins{\def\baselinestretch{1}\footnotesize
+% redefine the macro used for floats (including figures and tables)
+% so that single spacing is used.
+% (Note \def\figure{\@float{figure}set single spacing} doesn't work because figure has an optional argument)
+% \def\@xfloat#1[#2]{
+% 	\ifhmode 
+% 		\@bsphack\@floatpenalty -\@Mii
+% 	\else
+%    	\@floatpenalty-\@Miii
+% 	\fi
+% 	\def\@captype{#1}
+% 	\ifinner
+%     \@parmoderr\@floatpenalty\z@
+%   \else
+% 		\@next\@currbox\@freelist{
+% 			\@tempcnta\csname ftype@#1\endcsname
+%       \multiply\@tempcnta\@xxxii\advance\@tempcnta\sixt@@n
+%       \@tfor \@tempa :=#2\do{
+% 				\if\@tempa h\advance\@tempcnta \@ne\fi
+%         \if\@tempa t\advance\@tempcnta \tw@\fi
+%         \if\@tempa b\advance\@tempcnta 4\relax\fi
+%         \if\@tempa p\advance\@tempcnta 8\relax\fi
+%       }
+% 			\global\count\@currbox\@tempcnta
+% 		}
+% 		\@fltovf
+% 	\fi
+% 	\global\setbox\@currbox\vbox\bgroup 
+%   \def\baselinestretch{1}\@normalsize
+%   \boxmaxdepth\z@
+%   \hsize\columnwidth \@parboxrestore
+% }
+
+% redefine the macro used for footnotes to use single spacing
+\long\def\@footnotetext#1{
+	\insert\footins{
+		\def\baselinestretch{1}\footnotesize
     \interlinepenalty\interfootnotelinepenalty 
     \splittopskip\footnotesep
     \splitmaxdepth \dp\strutbox \floatingpenalty \@MM
     \hsize\columnwidth \@parboxrestore
-   \edef\@currentlabel{\csname p@footnote\endcsname\@thefnmark}\@makefntext
-    {\rule{\z@}{\footnotesep}\ignorespaces
-      #1\strut}}}
+   	\edef\@currentlabel{\csname p@footnote\endcsname\@thefnmark}\@makefntext{
+			\rule{\z@}{\footnotesep}\ignorespaces
+			#1\strut
+		}
+	}
+}
 
-% \author, \title are defined in report; here are the rest of the
+% \author, \title are defined in report, here are the rest of the
 % front matter defining macros
 \def\dept#1{\gdef\@dept{#1}}
 \def\relatore#1{\gdef\@relatore{#1}}
@@ -93,18 +113,21 @@
 \def\@principaladviser{}\def\@firstreader{}\def\@secondreader{}
 \def\@relatore{}\def\@correlatore{}\def\@anno{}\def\@matricola{}
 
-\def\@submitdate{\ifcase\the\month\or
-  January\or February\or March\or April\or May\or June\or
-  July\or August\or September\or October\or November\or December\fi
-  \space \number\the\year}
-% Stanford says that December theses should have the next year as the
-% copyright year
+\def\@submitdate{
+	\ifcase\the\month\or
+		January\or February\or March\or April\or May\or June\or
+  	July\or August\or September\or October\or November\or December
+	\fi
+  \space \number\the\year
+}
+	
 \ifnum\month=12
     \@tempcnta=\year \advance\@tempcnta by 1
     \edef\@copyrightyear{\number\the\@tempcnta}
 \else
     \def\@copyrightyear{\number\the\year}
 \fi
+
 \newif\ifcopyright \newif\iffigurespage \newif\iftablespage
 \copyrightfalse
 \figurespagefalse
@@ -112,69 +135,72 @@
 
 \def\titlep{
 	\thispagestyle{empty}
-    \begin{center}
-    	\includegraphics[width=1\linewidth]{logo_facolta.jpg}
-      \Large{\em \@dept}
-    \end{center}
-    \vskip1in
-		\begin{center}
-      \begin{doublespace}
-				{\Huge\uppercase\expandafter{\@title}}
-      \end{doublespace}
-		\end{center}
-		\vfill
-    \begin{description}
-      \item[Relatore:] \@relatore
-      % \item[Correlatore:] \@correlatore
-    \end{description}
-		\vskip0.5in
-        \null\hfill
-        \parbox{3in}{
-          Autore: \\
-          \expandafter{\@author}
-	  \\ Matricola: \@matricola
-          }
-        \vfill
+  \begin{center}
+  	\includegraphics[width=1\linewidth]{logo_facolta.jpg}
+    \Large{\em \@dept}
+  \end{center}
+  \vskip1in
 	\begin{center}
-         \large   Anno Accademico \@anno
-        \end{center}
-        \newpage}
+    \begin{doublespace}
+			{\Huge\uppercase\expandafter{\@title}}
+    \end{doublespace}
+	\end{center}
+	\vfill
+  \begin{description}
+    \item[Relatore:] \@relatore
+  \end{description}
+	\vskip0.5in
+  \null\hfill
+	\begin{flushright}
+		Autore:\\\@author\\Matricola: \@matricola
+	\end{flushright}
+  \vfill
+	\begin{center}
+    \large   Anno Accademico \@anno
+  \end{center}
+\newpage}
 
 \def\beforepreface{
 	\pagenumbering{roman}
 	\pagestyle{plain}
-	\titlep}
-%	\ifcopyright\copyrightpage\fi
-%	\signaturepage}
+	\titlep
+}
 
-\def\prefacesection#1{%
+\def\prefacesection#1{
 	\chapter*{#1}
-	\addcontentsline{toc}{chapter}{#1}}
+	\addcontentsline{toc}{chapter}{#1}
+}
 
-% The \addvspace business below is to avoid the extra space that gets put
+% the \addvspace business below is to avoid the extra space that gets put
 % in the tables of figures and tables between chapters (it makes no sense
 % now that the numbering is continuous)
-\def\afterpreface{\newpage
+\def\afterpreface{
+	\newpage
 	\tableofcontents
 	\newpage
-	\iftablespage
-		{\addvspace{10pt}
+	\iftablespage{
+		\addvspace{10pt}
 		\let\saveaddvspace=\addvspace
 		\def\addvspace##1{}
 		\listoftables
-		\let\addvspace=\saveaddvspace}
+		\let\addvspace=\saveaddvspace
+	}
 		\newpage
 	\fi
-	\iffigurespage
-		{\addvspace{10pt}
+	\iffigurespage{
+		\addvspace{10pt}
 		\let\saveaddvspace=\addvspace
 		\def\addvspace##1{}
 		\listoffigures
-		\let\addvspace=\saveaddvspace}
+		\let\addvspace=\saveaddvspace
+	}
 		\newpage
 	\fi
 	\pagenumbering{arabic}
-	\pagestyle{headings}}
+	\pagestyle{headings}
+}
 
 \pagestyle{headings}
-% \makeatother           --not necessary for LaTeX style files
+
+% not necessary for LaTeX style files
+% \makeatother

@@ -12,13 +12,44 @@
 \usepackage{thesis}
 \usepackage{parskip}
 \usepackage{booktabs}
+\usepackage{nicematrix}
+\usepackage[linesnumbered, ruled]{algorithm2e}
 \usepackage[utf8]{inputenc}
 
-\newcommand{\partitioned}[2]{#1\slash\!\!#2}
+% CUSTOM COMMANDS
 
-\newtheorem{theorem}{Teorema}[chapter]
-\newtheorem{definition}{Definizione}[chapter]
-\newtheorem{lemma}{Lemma}[chapter]
+\newcommand{\partitioned}[2]{#1\slash\!\!#2}  % partitioned set
+\newcommand{\bigo}[0]{\mathcal{O}}            % big O notation
+
+% THEOREMS ENVIRONMENTS
+
+\newtheorem{theorem}{Teorema}[chapter]        % theorem
+\newtheorem{definition}{Definizione}[chapter] % definition
+\newtheorem{lemma}{Lemma}[chapter]            % lemma
+
+% ALGORITHM ENVIRONMENT
+
+\SetKwComment{Comment}{/* }{ */}  % comment style
+\SetKwInOut{Input}{Parametri}     % input text
+\SetKwInOut{Output}{Output}       % output text
+\newenvironment{algo}[3]{
+  \IncMargin{1.3em}
+  \begin{algorithm}
+    \SetAlgorithmName{Algoritmo}{}{}
+    \DontPrintSemicolon
+    \caption{#1}
+    \vspace{0.1em}
+    \Indmm\Indmm
+    \Input{#2}
+    \Output{#3}
+    \Indpp\Indpp
+    \vspace{0.1em}
+}{
+  \end{algorithm}
+  \DecMargin{1.3em}
+}
+
+% DOCUMENT
 
 \begin{document}
 
@@ -157,7 +188,7 @@ DFA che riconosce lo stesso linguaggio e viceversa.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.7\linewidth]{dfa.png}
+  \includegraphics[width=0.7\linewidth]{images/dfa.png}
   \caption{\label{fig:dfa}Un esempio di automa a stati finiti deterministico.}
 \end{figure}
 
@@ -258,7 +289,7 @@ l'algoritmo di Hopcroft \cite{Hop71}, che permette, partendo da un DFA in ingres
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.7\linewidth]{minified-dfa.png}
+  \includegraphics[width=0.7\linewidth]{images/minified-dfa.png}
   \caption{\label{fig:minified-dfa}L'automa in Figura \ref{fig:dfa} minimizzato.}
 \end{figure}
 
@@ -284,8 +315,9 @@ dall'automa ottenuto.
   simmetrica tra i linguaggi.
 \end{definition}
 
-Più formalmente dunque, dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, l'iperminimizzazione consiste nel trovare
-un automa $A' = (Q', \Sigma, \delta', q_I', F')$ tale che $L(A') \sim L(A)$ e $||Q'||$ sia minimo.
+Più formalmente dunque, dato un DFA $A = (Q, \Sigma, \delta, q_I, F)$,
+l'iperminimizzazione consiste nel trovare un automa $A' = (Q', \Sigma, \delta', q_I', F')$ tale
+che $L(A') \sim L(A)$ e $||Q'||$ sia minimo.
 
 \section{Classi di quasi-equivalenza}
 \label{sec:aeq-classes}
@@ -306,12 +338,11 @@ dell'iperminimizzazione.
 
 Si introduce inoltre un importante risultato relativo alla quasi-equivalenza tra stati:
 
-\begin{lemma}\label{lem:aeq-states-imp-aeq-delta}
-  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico e siano $q_A, q_B \in Q$ tali che
-  $q_A \sim q_B$, allora $\forall w \in \Sigma^*$, $\hat{\delta}(q_A, w) \sim \hat{\delta}(q_B, w)$.
+\begin{lemma}\label{lem:aeq-states}
+  $q_A \sim q_B \Leftrightarrow \forall \sigma \in \Sigma, \delta(q_A, \sigma) \sim \delta(q_B, \sigma)$
 \end{lemma}
 
-Risulta evidente dunque come, grazie al Teorema \ref{th:aeq-rel-states} sia possibile partizionare l'insieme 
+Risulta evidente dunque come, grazie al Teorema \ref{th:aeq-rel-states}, sia possibile partizionare l'insieme 
 degli stati $Q$ di un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ in classi di quasi 
 equivalenza e costruire dunque l'insieme quoziente $\partitioned{Q}{\sim}$.
 
@@ -357,6 +388,11 @@ la trattazione, viene fornita di seguito la definizione degli stati preambolo e 
   in ingresso $w \in \Sigma^*$ tali che $\hat{\delta}(q_I, w) = q$.
   In altri termini, $q$ è raggiungibile da un numero infinito di input a partire dallo stato iniziale.
 \end{definition}
+
+\begin{lemma}\label{lem:kernel-state}
+  Uno stato $q_1 \in Q$ è in $K(A)$ se e solo se può essere raggiunto dallo stato iniziale $q_I$ attraverso
+  un cammino passante per uno stato $q_2$ tale che esiste un ciclo in $A$ che inizia e termina in $q_2$.
+\end{lemma}
 
 Nell'automa $A$ riportato in Figura \ref{fig:minified-dfa}, ad esempio, è possibile osservare come gli stati 
 $A$, $B$, $C$ e $D$ siano stati preambolo mentre gli stati $F$, $G$ ed $E$ siano stati kernel, o ancora, come
@@ -416,6 +452,7 @@ classica mentre i preamboli sono isomorfi, eccetto per i valori accettati.
 \end{theorem}
 
 \section{Strategia generale}
+\label{sec:hyperminimization-strategy}
 
 Grazie alle nozioni presentate nelle Sezioni \ref{sec:aeq-classes} e \ref{sec:preamble-kernel}, è possibile
 presentare una strategia generale per l'iperminimizzazione di automi a stati finiti deterministici.
@@ -455,7 +492,7 @@ ottenendo l'automa $A''$ iperminimo in Figura \ref{fig:hyper-minified-dfa}.
 
 \begin{figure}[hbt!]
   \centering
-  \includegraphics[width=0.7\linewidth]{hyper-minified-dfa.png}
+  \includegraphics[width=0.7\linewidth]{images/hyper-minified-dfa.png}
   \caption{\label{fig:hyper-minified-dfa}L'automa in Figura \ref{fig:minified-dfa} iperminimizzato.}
 \end{figure}
 
@@ -469,21 +506,184 @@ ottenendo l'automa $A''$ iperminimo in Figura \ref{fig:hyper-minified-dfa}.
   \end{enumerate}
 \end{theorem}
 
+\section{Algoritmi}
+
+Nel corso degli anni sono emersi diversi algoritmi per l'iperminimizzazione di automi a stati finiti deterministici,
+ciascuno della quali, cambiando e/o raffinando le metodologie di identificazione degli stati preambolo, degli 
+stati kernel e delle classi di quasi-equivalenza, e come queste siano manipolate, ha portato a differenti risultati,
+migliorando la complessità temporale dei precendenti.
+
+Tutte le tecniche note condividono lo schema ad alto livello riportato nella Sezione
+\ref{sec:hyperminimization-strategy} per poi specializzarsi, in
+maniera differente sul come le singole operazioni vengono svolte.
+
+\subsection{Algoritmo di Badr, Geffert e Shipman}
+
+L'algoritmo di Badr, Geffert e Shipman \cite{BGS09} è stato il primo algoritmo proposto per l'iperminimizzazione
+in grado, dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, di ottenere l'automa iperminimo 
+$A'' = (Q'', \Sigma, \delta'', q_I'', F'')$ in tempo polinomiale.
+
+Come primo passo, l'algoritmo minimizza l'automa in ingresso $A$ ottenendo l'automa minimo 
+$A' = (Q', \Sigma, \delta', q_I', F')$ attraverso l'algoritmo di Hopcroft.
+
+Successivamente, viene costruita una matrice $E$ di dimensione $||Q'|| \times ||Q'||$, utilizzata nel
+passo successivo per semplificare la fase di identificazione degli insiemi $P(A')$ e $K(A')$, tale che:
+\begin{equation*}
+  e_{i,j} =
+  \begin{cases}
+    1 & \text{se } \exists w \in \Sigma^* \setminus \{ \varepsilon \} \text{ tale che } \hat{\delta}(q_i, w) = q_j \\
+    0 & \text{altrimenti}
+  \end{cases}
+\end{equation*}
+
+In altri termini, trattando l'automa come un grafo, il problema può essere ricondotto, per ogni coppia di stati
+$q_i, q_j \in Q$ alla ricerca di un cammino di lunghezza maggiore di 1 tra $q_i$ e $q_j$. Sono note diverse
+tecniche per risolvere il problema della ricerca di cammini in un grafo \cite{DFI08}, un possibile 
+approccio potrebbe essere quello di utilizzare una visita in ampiezza (Breadth-First Search).
+
+Ricordando ancora una volta che grazie alla minimizzazione nell'automa $A'$ non sono presenti stati irraggiungibili,
+è ora possibile distinguere in $Q'$ gli stati kernel da quelli preambolo, si costruisce a questo scopo
+un vettore $V$ di dimensione $||Q'||$ tale che $v_i = 1$ se e solo se $q_i \in K(A')$, altrimenti $v_i = 0$.
+Grazie al Lemma \ref{lem:kernel-state} la costruzione del vettore $V$ si riduce nel determinare se per ogni
+stato $q_i \in Q'$, esista uno stato $q_j \in Q'$ tale che $e_{1,j} = e_{j,j} = e_{j,i} = 1$.
+
+Si procede con la determinazione delle classi di quasi-equivalenza, a questo scopo, viene creato un vettore
+$R$ di dimensione $||Q'||$ che conterrà in posizione $i$ l'indice $j$ della classe di quasi-equivalenza 
+$Q_j \in \partitioned{Q}{\sim}$ a cui lo stato $q_i$ appartiene. 
+
+Inizialmente, $R$ viene inizializzato in modo tale che rappresenti la partizione di $Q'$ composta esclusivamente
+da singoletti $Q' = \{ q_1 \} \cup \{ q_2 \} \cup \dots \cup \{ q_{||Q'||} \}$, ovvero, 
+$\forall i \in \{ 1, \dots, ||Q'|| \}, r_i = i$. 
+La costruzione avviene iterativamente, si cercano coppie di stati $q_i \in Q_i$ e $q_j \in Q_j$,
+con $i \neq j$, tali che $\forall \sigma \in \Sigma$ si abbia
+che $\delta'(q_i, \sigma)$ e $\delta'(q_j, \sigma)$ appartengano alla stessa classe di
+quasi-equivalenza $Q_l \in \partitioned{Q'}{\sim}$.
+Se tale coppia di stati viene trovata, seguendo quanto riportato nel Lemma \ref{lem:aeq-states},
+significa che $q_i \sim q_j$ pertanto si uniscono le classi $Q_i$ e $Q_j$ in un'unica classe e si
+aggiorna il vettore $R$ di conseguenza. Il processo termina quando non vengono trovate nuove coppie
+di stati che soddisfino i requisiti, il che genera al più $||Q'|| - 1$ iterazioni.
+
+Infine, per ottenere l'automa $A''$ iperminimo, considerando l'insieme delle classi di quasi-equivalenza
+rappresentato dal vettore $R$, si processano iterativamente tutti i $Q_i \in \partitioned{Q'}{\sim}$
+collassando ove possibile gli stati seguendo quanto descritto nel punto 4 della strategia generale riportata
+nella Sezione \ref{sec:hyperminimization-strategy}.
+
+Supponendo, a titolo di esempio, di stare iperminimizzando l'automa $A'$ in Figura \ref{fig:minified-dfa},
+la matrice $E$ costruita dall'algoritmo risulterebbe essere:
+\begin{center}
+  $E = \begin{bNiceMatrix}[last-col, first-row]
+    \scriptstyle{A} & \scriptstyle{B} & \scriptstyle{C} & \scriptstyle{D} & \scriptstyle{E} & \scriptstyle{F} & \scriptstyle{G} \\
+    0 & 1 & 1 & 1 & 1 & 1 & 1 & \scriptstyle{A} \\
+    0 & 0 & 0 & 1 & 1 & 1 & 1 & \scriptstyle{B} \\
+    0 & 0 & 0 & 1 & 1 & 1 & 1 & \scriptstyle{C} \\
+    0 & 0 & 0 & 0 & 0 & 0 & 1 & \scriptstyle{D} \\
+    0 & 0 & 0 & 0 & 1 & 1 & 1 & \scriptstyle{E} \\
+    0 & 0 & 0 & 0 & 1 & 1 & 1 & \scriptstyle{F} \\
+    0 & 0 & 0 & 0 & 0 & 0 & 1 & \scriptstyle{G} \\
+  \end{bNiceMatrix}$
+\end{center}
+
+mentre i vettori $V$ dei kernel e $R$ delle classi di quasi-equivalenza risulterebbero essere:
+
+\begin{center}
+  $V = \begin{bNiceMatrix}[last-row]
+    0 & 0 & 0 & 0 & 1 & 1 & 1 \\
+    \scriptstyle{A} & \scriptstyle{B} & \scriptstyle{C} & \scriptstyle{D} & \scriptstyle{E} & \scriptstyle{F} & \scriptstyle{G}
+  \end{bNiceMatrix}$, 
+  \
+  $R = \begin{bNiceMatrix}[last-row]
+    A & F & C & D & E & F & D \\
+    \scriptstyle{A} & \scriptstyle{B} & \scriptstyle{C} & \scriptstyle{D} & \scriptstyle{E} & \scriptstyle{F} & \scriptstyle{G}
+  \end{bNiceMatrix}$
+\end{center}
+
+\subsection{Algoritmo di Badr}
+
+L'algoritmo proposto da Andrew Badr \cite{Badr} migliora la complessità algoritmica dell'algoritmo
+di Badr, Geffert e Shipman cambiando quella che è la strategia utilizzata per identificare le classi di
+quasi-equivalenza.
+
+%La differenza sostanziale risiede nel modo in cui vengono identificate le classi di quasi-equivalenza.
+
+Equivalentemente all'algoritmo precedente, l'algoritmo di Badr minimizza come prima operazione l'automa
+in ingresso $A$ ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$.
+
+Il passo successivo prevede di identificare le classi di quasi-equivalenza, a questo scopo, si introduce
+una nuova operazione tra automi a stati finiti deterministici.
+
+\begin{definition}
+  Siano $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ due DFA,
+  si definisce lo \emph{XOR cross product} tra $A_1$ e $A_2$, denotato con $A_1 \otimes A_2$, come l'automa 
+  $A^\otimes = (Q^\otimes, \Sigma, \delta^\otimes, q_{I}^\otimes, F^\otimes)$ tale che:
+  \begin{enumerate}
+    \item $Q^\otimes = \{ (q_1, q_2) : q_1 \in Q_1 \wedge q_2 \in Q_2 \}$
+    \item $\forall q_1 \in Q_1, \forall q_2 \in Q_2, \forall \sigma \in \Sigma : \delta^\otimes((q_1, q_2), \sigma) = (\delta_1(q_1, \sigma), \delta_2(q_2, \sigma))$
+    \item $q_{I}^\otimes = (q_{I_1}, q_{I_2})$
+    \item $F^\otimes = \{ (q_1, q_2) : (q_1 \in F_1) \otimes (q_2 \in F_2) \}$, con $\otimes$ operazione di XOR
+  \end{enumerate}
+\end{definition}
+
+Un esempio di XOR cross product è quello dell'automa in Figura \ref{fig:xcp_start} con se stesso, il cui 
+risultato è riportato in figura \ref{fig:xcp_end}.
+
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=0.6\linewidth]{images/xcp_start.png}
+  \caption{\label{fig:xcp_start}Un ulteriore esempio automa a stati finiti deterministico.}
+\end{figure}
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/xcp_end.png}
+  \caption{\label{fig:xcp_end}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
+\end{figure}
+
+L'idea alla base dell'algoritmo di Badr è quella di utilizzare l'automa $A^\otimes$ prodotto dallo 
+XOR cross product tra l'automa minimo $A'$ e se stesso per computare $\partitioned{Q}{\sim}$.
+ a
+% First, we prove that if a state is removed, then it induces a finite language. Note that there are no transitions from S to a state in S′. Otherwise, the state in S′ would also induce an empty language, so by assumption it would be in S. Next, assign to each removed state q a distance d(q) from S, equal to the length of the longest path from q to a state in S. We obtain the result by induction on d. If d(q) = 0, then q ∈ S and |L(q)| = 0 by definition. The size of L(q) for any state q in a DFA is bounded above by 1 + Σq′∈Outgoingq L(q′). Therefore, if all removed states with d <= n induce finite languages, it follows that all states with d = n + 1 also induce a finite language, completing this direction.
+% Second, we prove that if a state q induces a finite language, it is removed by the algorithm. Again we use a simple inductive proof. Let l(q) be the length of some longest word w in L(q). If l(q) = 0 then q is in S, so it is removed by the algorithm. If l = n, then for every state q′ ∈ Outgoingq, l(q′) < l(q). Therefore, if every state with l <= n is removed by the algorithm, then every state with l = n + 1 is also removed, because all states it transitions to are removed.
+
+\subsection{Algoritmo di Holzer e Maletti}
+
 % \chapter{Algoritmi di iperminimizzazione}
 
 % preamble {A, B, C, D}
 % kernel {F, G, E}
 % equivalence [{A}, {C}, {D, G}, {F, B}, {E}]
 
-% Nel corso degli anni sono emerse diverse tecniche per l'iperminimizzazione di automi a stati finiti deterministici,
-% ciascuna della quali, cambiando e/o raffinando le metodologie di identificazione degli stati preambolo, degli 
-% stati kernel e delle classi di quasi-equivalenza, e come queste siano manipolate, ha portato a differenti risultati,
-% migliorando la complessità algoritmica delle precedenti.
-% 
-% Tutte le tecniche note condividono quella che è una struttura generale ad alto livello per poi specializzarsi, in
-% maniera differente sul come le operazioni vengono svolte.
+\chapter{Risultati sperimentali}
 
-% \chapter{Risultati sperimentali}
+\section{Implementazione}
+
+\subsection{Scelte implementativa}
+
+\subsection{Strutture comuni}
+
+\subsection{Algoritmo di Badr, Geffert e Shipman}
+
+\subsection{Algoritmo di Badr}
+
+\subsection{Algoritmo di Holzer e Maletti}
+
+\section{Generazione del campione}
+
+\subsection{Problema}
+
+\subsection{Tecnica}
+
+\section{Risultati}
+
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance-comparison-line.png}
+  \caption{\label{fig:performance-comparison-line}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
+\end{figure}
+
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance-comparison-violin.png}
+  \caption{\label{fig:performance-comparison-violin}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
+\end{figure}
 
 % preamble {frozenset({'A'}), frozenset({'B'}), frozenset({'C'}), frozenset({'D'})}
 % kernel {frozenset({'F'}), frozenset({'G'}), frozenset({'E'})}
@@ -491,6 +691,35 @@ ottenendo l'automa $A''$ iperminimo in Figura \ref{fig:hyper-minified-dfa}.
 
 % è dunque chiaro che, uno stato preambolo nella medesima classe di quasi equivalenza,
 % può essere collassato in uno stato kernel o preambolo
+
+% {
+%   A: {C, F, E, D, B, G}, 
+%   C: {F, D, G, E}, 
+%   D: {G}, 
+%   F: {F, G, E}, 
+%   B: {F, D, G, E},
+%   G: {G}, 
+%   E: {F, G, E}
+% }
+
+% \begin{algo}
+%   {Algoritmo di Badr, Geffert e Shipman}
+%   {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$}
+%   {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
+%   $A' \gets minimize(A)$\;
+%   $E \gets \text{matrice di zeri di dimensione } ||Q'|| \times ||Q'||$\;
+% 
+%   
+% 
+%   \For{$i \gets 1$ \KwTo $||Q'||$}{
+%     \For{$j \gets 1$ \KwTo $||Q'||$}{
+%       \If{$q_i \neq q_j$}{
+%         $E[i,j] \gets 1$\;
+%       }
+%     }
+%   }
+% \end{algo}
+% 
 
 % Come visto nella sezione \ref{min-dfa}
 % 

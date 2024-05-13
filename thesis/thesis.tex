@@ -511,11 +511,13 @@ ottenendo l'automa $A''$ iperminimo in Figura \ref{fig:hyper-minified-dfa}.
 Nel corso degli anni sono emersi diversi algoritmi per l'iperminimizzazione di automi a stati finiti deterministici,
 ciascuno della quali, cambiando e/o raffinando le metodologie di identificazione degli stati preambolo, degli 
 stati kernel e delle classi di quasi-equivalenza, e come queste siano manipolate, ha portato a differenti risultati,
-migliorando la complessità temporale dei precendenti.
+migliorando la complessità temporale dei precendenti. Tutti gli algoritmi presentati di seguito condividono lo schema
+ad alto livello riportato nella Sezione \ref{sec:hyperminimization-strategy} per poi specializzarsi,
+in maniera differente, sulle strategie utilizzate per portare a termine le singole operazioni.
 
-Tutte le tecniche note condividono lo schema ad alto livello riportato nella Sezione
-\ref{sec:hyperminimization-strategy} per poi specializzarsi, in
-maniera differente sul come le singole operazioni vengono svolte.
+Si porta all'attenzione del lettore come, da qui in seguito, sia $A = (Q, \Sigma, \delta, q_I, F)$
+l'automa in ingresso ad un algoritmo di iperminimizzazione, si utilizzerà $n$ per fare riferimento
+al numero di stati $||Q||$ ed $m$ per il numero di simboli in ingresso $||\Sigma||$.
 
 \subsection{Algoritmo di Badr, Geffert e Shipman}
 
@@ -536,10 +538,11 @@ passo successivo per semplificare la fase di identificazione degli insiemi $P(A'
   \end{cases}
 \end{equation*}
 
-In altri termini, trattando l'automa come un grafo, il problema può essere ricondotto, per ogni coppia di stati
-$q_i, q_j \in Q$ alla ricerca di un cammino di lunghezza maggiore di 1 tra $q_i$ e $q_j$. Sono note diverse
-tecniche per risolvere il problema della ricerca di cammini in un grafo \cite{DFI08}, un possibile 
-approccio potrebbe essere quello di utilizzare una visita in ampiezza (Breadth-First Search).
+In altri termini, essendo che l'algoritmo verifica l'esistenza di un cammino di lunghezza maggiore di
+1 tra ogni coppia di stati $q_i, q_j \in Q'$, trattando l'automa come un grafo, il problema può essere ricondotto 
+al calcolo della chiusura transitiva di quest'ultimo. 
+Sono noti diversi algoritmi per lo svolgimento di tale compito \cite{DFI08}, un possibile approccio potrebbe
+essere quello di utilizzare l'algoritmo di Floyd-Warshall, che richiede tempo $\bigo(n^3)$.
 
 Ricordando ancora una volta che grazie alla minimizzazione nell'automa $A'$ non sono presenti stati irraggiungibili,
 è ora possibile distinguere in $Q'$ gli stati kernel da quelli preambolo, si costruisce a questo scopo
@@ -547,7 +550,10 @@ un vettore $V$ di dimensione $||Q'||$ tale che $v_i = 1$ se e solo se $q_i \in K
 Grazie al Lemma \ref{lem:kernel-state} la costruzione del vettore $V$ si riduce nel determinare se per ogni
 stato $q_i \in Q'$, esista uno stato $q_j \in Q'$ tale che $e_{1,j} = e_{j,j} = e_{j,i} = 1$.
 
-Si procede con la determinazione delle classi di quasi-equivalenza, a questo scopo, viene creato un vettore
+É banale dunque osservare come la costruzione del vettore $V$ sia eseguita in tempo $\bigo(n)$ essendo che 
+per ogni stato $q_i \in Q'$ la verifica di appartenenza a $K(A')$ richiede un tempo costante $\bigo(1)$.
+
+L'algoritmo procede con la determinazione delle classi di quasi-equivalenza, a questo scopo, viene creato un vettore
 $R$ di dimensione $||Q'||$ che conterrà in posizione $i$ l'indice $j$ della classe di quasi-equivalenza 
 $Q_j \in \partitioned{Q}{\sim}$ a cui lo stato $q_i$ appartiene. 
 
@@ -563,10 +569,20 @@ significa che $q_i \sim q_j$ pertanto si uniscono le classi $Q_i$ e $Q_j$ in un'
 aggiorna il vettore $R$ di conseguenza. Il processo termina quando non vengono trovate nuove coppie
 di stati che soddisfino i requisiti, il che genera al più $||Q'|| - 1$ iterazioni.
 
+Risulta immediato stabilire che il tempo richiesto per l'inizializzazione del vettore $R$ sia lineare rispetto
+al numero di stati dell'automa e che pertanto il tempo necessario a tale operazione sia $\bigo(n)$.
+Necessita invece un'analisi più approfondita il calcolo della complessità temporale relativa
+alla costruzione di $R$: scandire le coppie di stati in $Q'$ richiede un tempo $\bigo(n^2)$, mentre la verifica
+della quasi-equivalenza per ciascuna coppia richiede un tempo $\bigo(m)$, essendo inoltre il processo iterato
+al più $||Q'|| - 1$ volte, la complessità temporale totale risulta essere $\bigo(n^3 \cdot m)$.
+
 Infine, per ottenere l'automa $A''$ iperminimo, considerando l'insieme delle classi di quasi-equivalenza
 rappresentato dal vettore $R$, si processano iterativamente tutti i $Q_i \in \partitioned{Q'}{\sim}$
 collassando ove possibile gli stati seguendo quanto descritto nel punto 4 della strategia generale riportata
 nella Sezione \ref{sec:hyperminimization-strategy}.
+
+Il tempo complessivo richiesto dall'algoritmo per la costruzione dell'automa
+iperminimo $A''$ risulta quindi essere $\bigo(n^3 \cdot m)$.
 
 Supponendo, a titolo di esempio, di stare iperminimizzando l'automa $A'$ in Figura \ref{fig:minified-dfa},
 la matrice $E$ costruita dall'algoritmo risulterebbe essere:

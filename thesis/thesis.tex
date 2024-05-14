@@ -26,6 +26,7 @@
 \newtheorem{theorem}{Teorema}[chapter]        % theorem
 \newtheorem{definition}{Definizione}[chapter] % definition
 \newtheorem{lemma}{Lemma}[chapter]            % lemma
+\newtheorem{corollary}{Corollario}[theorem]    % corollary
 
 % ALGORITHM ENVIRONMENT
 
@@ -615,11 +616,9 @@ mentre i vettori $V$ dei kernel e $R$ delle classi di quasi-equivalenza risulter
 
 \subsection{Algoritmo di Badr}
 
-L'algoritmo proposto da Andrew Badr \cite{Badr} migliora la complessità algoritmica dell'algoritmo
+L'algoritmo proposto da Andrew Badr \cite{Badr} migliora la complessità temporale dell'algoritmo
 di Badr, Geffert e Shipman cambiando quella che è la strategia utilizzata per identificare le classi di
 quasi-equivalenza.
-
-%La differenza sostanziale risiede nel modo in cui vengono identificate le classi di quasi-equivalenza.
 
 Equivalentemente all'algoritmo precedente, l'algoritmo di Badr minimizza come prima operazione l'automa
 in ingresso $A$ ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$.
@@ -642,21 +641,111 @@ una nuova operazione tra automi a stati finiti deterministici.
 Un esempio di XOR cross product è quello dell'automa in Figura \ref{fig:xcp_start} con se stesso, il cui 
 risultato è riportato in figura \ref{fig:xcp_end}.
 
-\begin{figure}[hbt!]
+\begin{figure}
   \centering
-  \includegraphics[width=0.6\linewidth]{images/xcp_start.png}
+  \includegraphics[width=0.5\linewidth]{images/xcp_start.png}
   \caption{\label{fig:xcp_start}Un ulteriore esempio automa a stati finiti deterministico.}
 \end{figure}
-\begin{figure}[hbt!]
+\begin{figure}
   \centering
   \includegraphics[width=0.7\linewidth]{images/xcp_end.png}
   \caption{\label{fig:xcp_end}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
 \end{figure}
 
+\begin{theorem}\label{th:cross-prod-state-aeq}
+  Siano $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico e 
+  $A^\otimes = (Q^\otimes, \Sigma, \delta^\otimes, q_{I}^\otimes, F^\otimes)$ l'automa risultante dallo 
+  XOR cross product di $A$ con se stesso, allora: $\forall w \in \Sigma^*$ e $\forall (q, r) \in Q^\otimes$
+  si ha $w \in L((q, r)) \Leftrightarrow \delta^\otimes((q, r), w) \in F^\otimes \Leftrightarrow 
+  (\delta(q, w) \in F) \otimes (\delta(r, w) \in F)$, dove $L(q)$ è il linguaggio indotto dallo stato $q$.
+  In altri termini, il linguaggio $L((q, r))$ di ogni stato nel contesto $A^\otimes$, è uguale al linguaggio
+  $L(q) \Delta L(r)$ nel contesto $A$.
+\end{theorem}
+\begin{corollary}\label{cor:cross-prod-state-aeq-S}
+  sls
+\end{corollary}
+\begin{corollary}\label{cor:cross-prod-state-aeq-states}
+  sls
+\end{corollary}
+
 L'idea alla base dell'algoritmo di Badr è quella di utilizzare l'automa $A^\otimes$ prodotto dallo 
-XOR cross product tra l'automa minimo $A'$ e se stesso per computare $\partitioned{Q}{\sim}$.
- a
-% First, we prove that if a state is removed, then it induces a finite language. Note that there are no transitions from S to a state in S′. Otherwise, the state in S′ would also induce an empty language, so by assumption it would be in S. Next, assign to each removed state q a distance d(q) from S, equal to the length of the longest path from q to a state in S. We obtain the result by induction on d. If d(q) = 0, then q ∈ S and |L(q)| = 0 by definition. The size of L(q) for any state q in a DFA is bounded above by 1 + Σq′∈Outgoingq L(q′). Therefore, if all removed states with d <= n induce finite languages, it follows that all states with d = n + 1 also induce a finite language, completing this direction.
+XOR cross product tra l'automa minimo $A'$ e se stesso, la cui costruzione richiede tempo $\bigo(n^2)$,
+per computare $\partitioned{Q'}{\sim}$.
+In particolare, l'algoritmo utilizza il sottoinsieme $R \subset Q^\otimes$ di tutti gli stati
+che inducono un linguaggio finito in $A^\otimes$ per calcolare le classi di quasi-equivalenza su $Q'$.
+
+A questo scopo si calcola l'insieme degli stati che inducono il linguaggio vuoto $S$ in $A^\otimes$ ed il suo 
+insieme complementare $S^C$. Si osservi come, dato un automa a stati finiti deterministico generico 
+$M = (Q_M, \Sigma_M, \delta_M, q_{I_M}, F_M)$, l'insieme degli stati che inducono un linguaggio finito in $M$
+è per definizione $S_M = \{q \in Q_M \ t.c. \ \forall w \in \Sigma^*_M, \ \delta_M(q, w) \notin F_M\}$ che in
+$A^\otimes$, per il Corollario \ref{cor:cross-prod-state-aeq-S}, corrisponde all'insieme $S = \{ (q, q) : q \in Q' \}$. É banale dunque osservare come la costruzione di $S$ e $S^C$
+richiede un tempo $\bigo(n)$.
+
+Una volta calcolati $S$ e $S^C$, l'algoritmo procede istanziando per ogni stato $q \in Q^\otimes$ due insiemi
+$T^\rightarrow_q = \emptyset$ e $T^\leftarrow_q = \emptyset$ che conterranno rispettivamente gli stati raggiungibili
+da $q$ e gli stati che possono raggiungere $q$. La costruzione di $T^\rightarrow_q$ e $T^\leftarrow_q$ avviene
+iterativamente: per ogni stato $q \in S^C$ e per ogni $\sigma \in \Sigma$, sia $q' = \delta^\otimes(q, \sigma)$,
+allora $T^\rightarrow_q = T^\rightarrow_q \cup \{ (q', \sigma) \}$ e 
+$T^\leftarrow_{q'} = T^\leftarrow_{q'} \cup \{ (q, \sigma) \}$.
+
+In seguito, viene costruito l'insieme $R$, inizializzato come $R = \emptyset$, iterativamente: fino a quando
+$S \neq \emptyset$: si estrae uno stato $q \in S$ e lo si aggiunge ad $R$, si rimuove $q$ da $S$ e 
+$\forall (q', \sigma) \in T_q^\leftarrow$ si rimuove $(q, \sigma)$ da $T_{q'}^\rightarrow$ e se, in seguito
+a tale rimozione, $T_{q'}^\rightarrow = \emptyset$, si aggiunge $q'$ a $S$.
+
+\begin{theorem}\label{th:rfs-correctness}
+  L'algoritmo appena descritto aggiunge uno stato all'insieme $R$ se e solo se induce un linguaggio finito in $A^\otimes$.
+\end{theorem}
+
+Al termine di questo processo, grazie al risultato esposto nel Teorema \ref{th:rfs-correctness}, per la cui dimostrazione
+il lettore è rimandato a \cite{Badr}, l'insieme $R$ conterrà come da obiettivo tutti gli stati che inducono
+un linguaggio finito in $A^\otimes$ e sarà possibile costruire $\partitioned{Q'}{\sim}$.
+
+Essendo il numero di transizioni lineare rispetto al numero di stati, il tempo necessario alla costruzione 
+di $T^\rightarrow_q$ e $T^\leftarrow_q$ per tutti gli stati corrisponde complessivamente a $\bigo(n)$, inoltre,
+l'aggiunta di ogni stato ad $R$ richiede un tempo costante $\bigo(1)$ più un tempo trascurabile per ciascuno
+stato da cui si raggiunge quello corrente, pertanto la costruzione di $R$ richiede anch'essa un tempo lineare $\bigo(n)$.
+
+La costruzione di $\partitioned{Q'}{\sim}$ avviene ora semplicemente, utilizzando una struttura dati QuickUnion $U$ con 
+union-by-rank e compressione del cammino \cite{DFI08}. La struttura viene inizializzata per rappresentare la partizione
+di $Q'$ composta esclusivamente da singoletti, quindi, per ogni stato $(q, r) \in R$, siano $Q_i$ e $Q_j$
+rispettivamente i risultati delle operazioni di $find(q)$ e $find(r)$ in $U$, se $Q_i \neq Q_j$, 
+allora si uniscono gli insiemi $Q_i$ e $Q_j$ tramite l'operazione $union(Q_i, Q_j)$ in $U$. 
+
+
+Essendo per ogni (q, p) in R q quasi equivalente P grazie a corollario 2.2, al termine dell'operazione bla bla
+
+In questo modo, 
+seguendo quanto riportato nel Corollario \ref{cor:cross-prod-state-aeq-states}, al termine dell'operazione, $U$ rappresenterà
+$\partitioned{Q'}{\sim}$.
+
+% For every word w ∈ Σ∗ and state (q, r) ∈ Q⊗ we have w ∈ L((q, r)) ⇔ δ⊗((q, r), w) ∈ A⊗ ⇔ (δ(q, w) ∈ A)⊗(δ(r, w) ∈ A) by definition. In other words, the language L((q, r)) of every state in the D⊗ context equals the language L(q) △ L(r) in the D context. The first consequence of this is that S is exactly the set of states in D⊗ that induce the empty language, because the given DFA D is minimized (so no two distinct states induce the same language). This proves that the input to right finite states is correct, and the result F is as desired. Thus, as a second consequence of the above, we see that L((q, r)) is finite if and only if q ∼ r. There- fore, F is the f-equivalence relation on the states in D. Step 4 turns this relation, represented as a set of pairs, into a partition.
+
+, si uniscono le classi $Q_i$ e $Q_j$ tramite $U.union(Q_i, Q_j)$.
+% 
+% For each (q,r) in F:
+% i. Let Pq = P.find(q) ii. Let Pr = P.find(r)
+% iii. If Pr ̸= Pq, then P.union(Pq,Pr)
+% Use the state-pairs in F to construct a partition P of Q:
+% (1) Let P be a new Union-Find data structure
+% (2) Foreachstateq∈Q:makeanewset{q}inU (3) For each (q,r) in F:
+% i. Let Pq = P.find(q) ii. Let Pr = P.find(r)
+% iii. If Pr ̸= Pq, then P.union(Pq,Pr) Return P
+% 
+% è chiaro come questa sia una maniera alternativa di fare quanto fs algo uno con matrice e
+
+% In altre parole, gli stati che inducono un linguaggio finito sono gli stati che possono essere raggiunti
+% a partire dallo stato iniziale seguendo una sequenza di transizioni etichettate con stringhe finite.
+
+
+% First, we prove that if a state is removed, then it induces a finite language. 
+% Note that there are no transitions from S to a state in S′. 
+% Otherwise, the state in S′ would also induce an empty language, so by assumption it would be in S. 
+% Next, assign to each removed state q a distance d(q) from S, equal to the length of the longest path from q 
+% to a state in S. We obtain the result by induction on d. If d(q) = 0, then q ∈ S and |L(q)| = 0 by definition. 
+% The size of L(q) for any state q in a DFA is bounded above by 1 + Σq′∈Outgoingq L(q′). Therefore, if all 
+% removed states with d <= n induce finite languages, it follows that all states with d = n + 1 also induce a
+% finite language, completing this direction.
 % Second, we prove that if a state q induces a finite language, it is removed by the algorithm. Again we use a simple inductive proof. Let l(q) be the length of some longest word w in L(q). If l(q) = 0 then q is in S, so it is removed by the algorithm. If l = n, then for every state q′ ∈ Outgoingq, l(q′) < l(q). Therefore, if every state with l <= n is removed by the algorithm, then every state with l = n + 1 is also removed, because all states it transitions to are removed.
 
 \subsection{Algoritmo di Holzer e Maletti}

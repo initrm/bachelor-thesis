@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{report}
+\documentclass[a4paper,12pt,twoside,openright]{report} % 
 
 \usepackage[a4paper]{geometry}
 \usepackage{amssymb,amsmath,amsthm}
@@ -9,9 +9,11 @@
 \usepackage{epsfig}
 \usepackage[italian]{babel}
 \usepackage{setspace}
+\usepackage{emptypage}
 \usepackage{thesis}
 \usepackage{parskip}
 \usepackage{booktabs}
+\usepackage[justification=centering]{caption}
 \usepackage{nicematrix}
 \usepackage[linesnumbered, ruled]{algorithm2e}
 \usepackage[utf8]{inputenc}
@@ -53,6 +55,7 @@
 % DOCUMENT
 
 \begin{document}
+% \raggedbottom with this the last line of the page is not aligned with the bottom of the page
 
 % FRONTPAGE
 
@@ -68,11 +71,11 @@
 % from the next line and from the thesis.sty file
 % \correlatore{nome COGNOME}
 
-% DEDICATIONS
+% BLANK PAGE
 
 \beforepreface
 \prefacesection{}
-{\hfill \Large {\sl dedicato a \dots}}
+{\hfill {\sl Questa pagina è stata lasciata intenzionalmente vuota.}}
 
 % PREFACE
 
@@ -638,8 +641,9 @@ una nuova operazione tra automi a stati finiti deterministici.
   \end{enumerate}
 \end{definition}
 
-Un esempio di XOR cross product è quello dell'automa in Figura \ref{fig:xcp_start} con se stesso, il cui 
-risultato è riportato in figura \ref{fig:xcp_end}.
+Un esempio di XOR cross product è quello tra l'automa in Figura \ref{fig:minified-dfa} e se stesso, il cui
+risultato è riportato in Figura \ref{fig:dfa-xcp} e di cui, per una maggiore chiarezza, si riporta la tabella
+di transizione in Tabella \ref{tab:dfa-xcp-transitions}.
 
 \begin{theorem}\label{th:cross-prod-state-aeq}
   Siano $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico minimo e 
@@ -663,13 +667,8 @@ risultato è riportato in figura \ref{fig:xcp_end}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.5\linewidth]{images/xcp_start.png}
-  \caption{\label{fig:xcp_start}Un ulteriore esempio automa a stati finiti deterministico.}
-\end{figure}
-\begin{figure}
-  \centering
-  \includegraphics[width=0.9\linewidth]{images/xcp_end.png}
-  \caption{\label{fig:xcp_end}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
+  \includegraphics[width=0.5\linewidth]{images/dfa_xcp.png}
+  \caption{\label{fig:dfa-xcp}L'automa in Figura \ref{fig:minified-dfa} in XOR cross product con se stesso.}
 \end{figure}
 
 L'idea alla base dell'algoritmo di Badr è quella di utilizzare l'automa $A^\otimes$ prodotto dallo 
@@ -737,12 +736,210 @@ tramite intersezione di $Q_i$ rispettivamente con $P$ e $K$. Si procede dunque a
 in $P_{Q_i}$ in uno stato $q_K \in K_{Q_i}$, se $K_{Q_i}$ è non vuoto, o al collasso in 
 $q_P \in P_{Q_i}$ degli stati in $P_{Q_i} \setminus \{ q_P \}$ altrimenti.
 
-% Esempio esecuzione su automa
+Utilizzando ancora una volta come esempio l'automa $A'$ in Figura \ref{fig:minified-dfa}, l'automa $A^\otimes$
+risultante dallo XOR cross product tra $A'$ e se stesso è stato mostrato essere quello descritto in Tabella 
+\ref{tab:dfa-xcp-transitions}. L'insieme $S$ degli stati che inducono un linguaggio finito in $A^\otimes$ 
+ne segue essere $S = \{ (A, A), (B, B), (C, C), (D, D), (E, E), (F, F), (G, G) \}$, da cui l'insieme $R$ 
+degli stati che inducono un linguaggio finito in $A'$ costruito dall'algoritmo è 
+$R = S \cup \{ (B, F), (F, B), (D, G), (G, D) \}$. L'insieme delle classi di quasi-equivalenza
+rappresentato da $U$ risulta correttamente essere $\{ \{ A \}, \{ B, F \}, \{ C \}, \{ D, G \}, \{ E \} \}$.
 
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}[t]{r|c|c}
+    \toprule
+                          & $a$       & $b$       \\
+    \midrule
+    $\rightarrow (A, A)$  & $(B, B)$  & $(C, C)$  \\
+    $(A, B)$              & $(B, E)$  & $(C, D)$  \\
+    $(A, C)$              & $(B, D)$  & $(C, F)$  \\
+    $(A, D)$              & $(B, G)$  & $(C, G)$  \\
+    $(A, E)$              & $(B, F)$  & $(C, G)$  \\
+    $(A, F)$              & $(B, E)$  & $(C, G)$  \\
+    $(A, G)$              & $(B, G)$  & $(C, G)$  \\
+    $(B, A)$              & $(E, B)$  & $(D, C)$  \\
+    $(B, B)$              & $(E, E)$  & $(D, D)$  \\
+    $(B, C)$              & $(E, D)$  & $(D, F)$  \\
+    $(B, D)$              & $(E, G)$  & $(D, G)$  \\
+    $(B, E)$              & $(E, F)$  & $(D, G)$  \\
+    $(B, F)$              & $(E, E)$  & $(D, G)$  \\
+    $(B, G)$              & $(E, G)$  & $(D, G)$  \\
+    $(D, B)$              & $(G, E)$  & $(G, D)$  \\
+    $(D, C)$              & $(G, D)$  & $(G, F)$  \\
+    $(D, D)$              & $(G, G)$  & $(G, G)$  \\
+    $(C, A)$              & $(D, B)$  & $(F, C)$  \\
+    $(C, B)$              & $(D, E)$  & $(F, D)$  \\
+    $(C, C)$              & $(D, D)$  & $(F, F)$  \\
+    $(C, D)$              & $(D, G)$  & $(F, G)$  \\
+    $(C, E)$              & $(D, F)$  & $(F, G)$  \\
+    $(C, F)$              & $(D, E)$  & $(F, G)$  \\
+    $(C, G)$              & $(D, G)$  & $(F, G)$  \\
+    $(D, A)$              & $(G, B)$  & $(G, C)$  \\
+    \bottomrule
+  \end{tabular}
+  \quad
+  \begin{tabular}[t]{r|c|c}
+    \toprule
+              & $a$       & $b$       \\
+    \midrule
+    $(D, E)$  & $(G, F)$  & $(G, G)$  \\
+    $(D, F)$  & $(G, E)$  & $(G, G)$  \\
+    $(D, G)$  & $(G, G)$  & $(G, G)$  \\
+    $(E, A)$  & $(F, B)$  & $(G, C)$  \\
+    $(E, B)$  & $(F, E)$  & $(G, D)$  \\
+    $(E, C)$  & $(F, D)$  & $(G, F)$  \\
+    $(E, D)$  & $(F, G)$  & $(G, G)$  \\
+    $*(E, E)$ & $(F, F)$  & $(G, G)$  \\
+    $(E, F)$  & $(F, E)$  & $(G, G)$  \\
+    $*(E, G)$ & $(F, G)$  & $(G, G)$  \\
+    $(F, A)$  & $(E, B)$  & $(G, C)$  \\
+    $(F, B)$  & $(E, E)$  & $(G, D)$  \\
+    $(F, C)$  & $(E, D)$  & $(G, F)$  \\
+    $(F, D)$  & $(E, G)$  & $(G, G)$  \\
+    $(F, E)$  & $(E, F)$  & $(G, G)$  \\
+    $(F, F)$  & $(E, E)$  & $(G, G)$  \\
+    $(F, G)$  & $(E, G)$  & $(G, G)$  \\
+    $(G, A)$  & $(G, B)$  & $(G, C)$  \\
+    $(G, B)$  & $(G, E)$  & $(G, D)$  \\
+    $(G, C)$  & $(G, D)$  & $(G, F)$  \\
+    $(G, D)$  & $(G, G)$  & $(G, G)$  \\
+    $*(G, E)$ & $(G, F)$  & $(G, G)$  \\
+    $(G, F)$  & $(G, E)$  & $(G, G)$  \\
+    $*(G, G)$ & $(G, G)$  & $(G, G)$  \\
+    \bottomrule
+  \end{tabular}
+  \caption{\label{tab:dfa-xcp-transitions}Tabella di transizione dell'automa in Figura \ref{fig:dfa-xcp}.}
+\end{table}
 
 \subsection{Algoritmo di Holzer e Maletti}
 
-% \chapter{Algoritmi di iperminimizzazione}
+L'ultimo algoritmo presentato è quello proposto da Holzer e Maletti \cite{HM10}, questo migliora i risultati
+ottenuti in precedenza infatti, indroducento una nuova stategia per l'identificazione degli stati
+kernel e per la costruzione delle classi di equivalenza, riduce la complessità temporale a $\bigo(n\log n)$.
+
+Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico e $q_A, q_B \in Q$ due stati,
+si definisce formalmente una funzione \emph{merge} utilizzata in seguito dall'algoritmo per il collasso
+degli stati come $merge(\delta, q_I, q_A, q_B) = (\delta', q_I')$ tale che $\forall q' \in Q$ e
+$\forall \sigma \in \Sigma$:
+\begin{equation*}
+  \delta'(q', \sigma) =
+  \begin{cases}
+    q_B                 & \text{se } \delta(q', \sigma) = q_A \\
+    \delta(q', \sigma)  & \text{altrimenti}
+  \end{cases}
+  \text{ e } 
+  q_I' =
+  \begin{cases}
+    q_B & \text{se } q_I = q_A \\
+    q_I & \text{altrimenti}
+  \end{cases}
+\end{equation*}
+
+L'algoritmo inizia seguendo quella che è la linea generale degli algoritmi precedenti: minimizza 
+l'automa in ingresso ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$.
+
+\begin{definition}
+  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, uno stato $q \in Q$ è detto
+  \emph{stato centrale} se $\exists w \in \Sigma^* \setminus \{ \varepsilon \}$ tale che $\delta(q, w) = q$.
+\end{definition}
+
+Il passo successivo prevede di identificare l'insieme $K(A')$ degli stati kernel in $A'$. L'idea alla base
+della strategia utilizzata dall'algoritmo è quella di identificare l'insieme $C$ degli stati centrali in $A'$ 
+attraverso una versione semplificata dell'algoritmo di Tarjan \cite{DFI08}, in quanto essendo $A'$ minimo 
+tutti gli stati in $Q'$ sono raggiungibili da $q_I'$, per l'identificazione delle componenti fortemente
+connesse. Questo avviene semplicemente in quanto, per definizione, gli stati centrali sono parte di una
+componente fortemente connessa di almeno due stati o hanno un ciclo su loro stessi.
+Una volta costruito l'insieme $C$ una Depth-First Search \cite{DFI08} viene utilizzata per identificare tutti
+gli stati raggiungibili da uno stato centrale, questi stati sono gli stati kernel per il Lemma \ref{lem:kernel-state}.
+
+L'algoritmo passa ora ad occuparsi della costruzione delle classi di quasi-equivalenza. Per ottenere una migliore
+complessità temporale rispetto agli algoritmi precedenti, la strategia utilizzata prevede di evitare i confronti
+tra coppie, che migliora la complessità di un fattore $\bigo(n)$, e di collassare gli stati con una metodologia 
+specifica che riduce un fattore $\bigo(n)$ a $\bigo(\log n)$. 
+
+\begin{definition}
+  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, si definisce
+  \emph{vettore dei successori} di $q \in Q$ il vettore $V(q) = [\delta(q, \sigma) \ | \ \sigma \in \Sigma]$.
+\end{definition}
+
+Nel dettaglio, l'algoritmo mantiene un insieme $I$ degli stati che devono essere processati e 
+un insieme $P$ degli stati che sono ancora utili, entrambi inizializzati uguali a $Q'$,
+una tabella hash $H$ inizialmente vuota che mappa vettori dei successori a stati,
+una partizione $R$ di $Q'$ che ne rappresenta in partenza la partizione in singoletti, 
+una funzione $\delta_\sim = \delta'$ e uno stato $q_{I_\sim} = q_I'$. 
+A questo punto, fin tanto che $I \neq \emptyset$, iterativamente viene rimosso uno stato $q_A$ da $I$ e ne viene
+calcolato $V(q_A)$, se a $V(q_A)$ non è associato alcun valore in $H$ allora si assegna a $V(q_A)$ lo stato $q_A$ in
+$H$ e si prosegue con l'iterazione successiva, altrimenti, se è già associato uno stato $q_B$ a $V(q_A)$ in $H$, 
+si determina lo stato tra $q_A$ e $q_B$ la cui cardinalità della parte in $R$ della quale è elemento è minore.
+Supponendo che tale stato sia $q_A$, questo viene viene rimosso da $P$ trattandosi di uno stato inutile
+in quanto collassato in $q_B$ nei prossimi passaggi, 
+vengono aggiunti a $I$ tutti gli stati $q \in Q'$ per i quali $\exists \sigma \in \Sigma$ tale che
+$\delta_\sim(q, \sigma) = q_A$, si effettua il $merge(\delta_\sim, q_{I_\sim}, q_A, q_B)$ aggiornando
+con i valori restituiti la funzione di transizione $\delta_\sim$ e lo stato $q_{I_\sim}$ e 
+si modifica la partizione $R$ unendo le parti in $R$ a cui appartengono $q_A$ e $q_B$. In ultima istanza, 
+sempre in tale caso, si aggiorna il valore associato a $V(q_A)$ in $H$ con $q_B$.
+
+\begin{theorem}\label{th:aeq-correctness}
+  L'algoritmo appena descritto costruisce correttamente $\partitioned{Q'}{\sim}$.
+\end{theorem}
+
+\begin{theorem}
+  \label{th:hm-complexity}
+  Gli algoritmi descritti per l'identificazione degli stati kernel e per la costruzione di
+  $\partitioned{Q'}{\sim}$ possono essere implementati in modo tale che la loro computazione richieda rispettivamente
+  tempo $\bigo(m)$ e $\bigo(m \log n)$.
+\end{theorem}
+
+Le dimostrazioni dei Teoremi \ref{th:aeq-correctness} e \ref{th:hm-complexity} risultano essere particolarmente
+lunghe e complesse, nonchè il fulcro del lavoro di Holzer e Maletti, pertanto sono volontariamente omesse 
+nel presente elaborato ed il lettore è rimandato a \cite{HM10}.
+
+Banalmente, l'ultimo passaggio dell'algoritmo consiste nel costruire l'automa iperminimo $A''$ a partire dai 
+risultati ottenuti dai passaggi precedenti. Iterativamente, per ogni classe di equivalenza $Q_i \in R$, 
+se l'intersezione tra $Q_i$ e $K(A')$ è non vuota, si sceglie arbitrariamente uno stato $q$ al suo interno,
+altrimenti si sceglie un qualsiasi stato $q$ in $Q_i$, e $\forall q' \in Q_i \setminus K(A')$ si 
+collassa $q'$ in $q$ e si aggiornano i valori di $\delta'$ e $q_I'$ tramite $merge(\delta', q_{I}', q, q')$
+ottenendo l'automa iperminimo $A''$.
+
+Ipotizzando di eseguire l'algoritmo sull'automa $A'$ in Figura \ref{fig:minified-dfa}, l'insieme $C$ degli stati
+centrali risulta essere $C = \{ F, G, E \}$ dal quale viene correttamente identificato
+l'insieme $K(A')$ degli stati kernel in $A'$ attraverso la visita in profondità. Ulteriormente, l'insieme $R$ delle
+classi di quasi-equivalenza, costruito sulla tabella $H$ il cui contenuto al termine dell'algoritmo è riportato
+in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q}{\sim}$.
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{r|c}
+    \toprule
+    Chiave & Valore  \\
+    \midrule
+    $[B, C]$  & $A$  \\
+    $[D, F]$  & $C$  \\
+    $[G, G]$  & $D$  \\
+    $[E, G]$  & $F$  \\
+    $[E, D]$  & $B$  \\
+    $[F, D]$  & $E$  \\
+    $[B, D]$  & $E$  \\
+    $[D, D]$  & $D$  \\
+    $[D, B]$  & $C$  \\
+    \bottomrule
+  \end{tabular}
+  \caption{\label{tab:hm-hash-table}Tabella hash $H$ al termine dell'esecuzione dell'algoritmo\\sull'automa in Figura \ref{fig:minified-dfa}.}
+\end{table}
+
+
+% HASH {
+%   (frozenset({'B'}), frozenset({'C'})): frozenset({'A'}), 
+%   (frozenset({'D'}), frozenset({'F'})): frozenset({'C'}), 
+%   (frozenset({'G'}), frozenset({'G'})): frozenset({'D'}), 
+%   (frozenset({'E'}), frozenset({'G'})): frozenset({'F'}), 
+%   (frozenset({'E'}), frozenset({'D'})): frozenset({'B'}), 
+%   (frozenset({'F'}), frozenset({'D'})): frozenset({'E'}), 
+%   (frozenset({'B'}), frozenset({'D'})): frozenset({'E'}), 
+%   (frozenset({'D'}), frozenset({'D'})): frozenset({'D'}), 
+%   (frozenset({'D'}), frozenset({'B'})): frozenset({'C'})
+% }
+% center {F, G, E}
 
 % preamble {A, B, C, D}
 % kernel {F, G, E}
@@ -770,18 +967,18 @@ $q_P \in P_{Q_i}$ degli stati in $P_{Q_i} \setminus \{ q_P \}$ altrimenti.
 
 \section{Risultati}
 
-\begin{figure}[hbt!]
-  \centering
-  \includegraphics[width=1\linewidth]{images/performance-comparison-line.png}
-  \caption{\label{fig:performance-comparison-line}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
-\end{figure}
-
-\begin{figure}[hbt!]
-  \centering
-  \includegraphics[width=1\linewidth]{images/performance-comparison-violin.png}
-  \caption{\label{fig:performance-comparison-violin}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
-\end{figure}
-
+% \begin{figure}[hbt!]
+%   \centering
+%   \includegraphics[width=1\linewidth]{images/performance-comparison-line.png}
+%   \caption{\label{fig:performance-comparison-line}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
+% \end{figure}
+% 
+% \begin{figure}[hbt!]
+%   \centering
+%   \includegraphics[width=1\linewidth]{images/performance-comparison-violin.png}
+%   \caption{\label{fig:performance-comparison-violin}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
+% \end{figure}
+% 
 % preamble {frozenset({'A'}), frozenset({'B'}), frozenset({'C'}), frozenset({'D'})}
 % kernel {frozenset({'F'}), frozenset({'G'}), frozenset({'E'})}
 % equivalence [{frozenset({'A'})}, {frozenset({'C'})}, {frozenset({'D'}), frozenset({'G'})}, {frozenset({'F'}), frozenset({'B'})}, {frozenset({'E'})}]

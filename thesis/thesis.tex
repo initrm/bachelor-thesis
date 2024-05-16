@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt,twoside,openright]{report} % 
+\documentclass[a4paper,12pt,twoside,openright]{report}
 
 \usepackage[a4paper]{geometry}
 \usepackage{amssymb,amsmath,amsthm}
@@ -394,8 +394,8 @@ la trattazione, viene fornita di seguito la definizione degli stati preambolo e 
 \end{definition}
 
 \begin{lemma}\label{lem:kernel-state}
-  Uno stato $q_1 \in Q$ è in $K(A)$ se e solo se può essere raggiunto dallo stato iniziale $q_I$ attraverso
-  un cammino passante per uno stato $q_2$ tale che esiste un ciclo in $A$ che inizia e termina in $q_2$.
+  Uno stato $q_A \in Q$ è in $K(A)$ se e solo se può essere raggiunto dallo stato iniziale $q_I$ attraverso
+  un cammino passante per uno stato $q_B \in Q$ tale che esiste un ciclo in $A$ che inizia e termina in $q_B$.
 \end{lemma}
 
 Nell'automa $A$ riportato in Figura \ref{fig:minified-dfa}, ad esempio, è possibile osservare come gli stati 
@@ -403,35 +403,23 @@ $A$, $B$, $C$ e $D$ siano stati preambolo mentre gli stati $F$, $G$ ed $E$ siano
 $P(A) = \{ A, B, C, D \}$ e $K(A) = \{ F, G, E \}$.
 
 Si sottolinea un'importante differenza nel parallelismo tra automa minimo ed iperminimo: l'automa iperminimo
-non è necessariamente unico. Si possono trovare esempi in cui un automa minimo $M$ con $n$ stati può essere 
+non è necessariamente unico. Si possono trovare esempi in cui un automa minimo $A'$ con $n$ stati può essere 
 sostituito da diversi automi iperminimi differenti, tutti con il medesimo numero di stati $m \le n$,
-ciascuno dei quali accetta un diverso linguaggio $L$ f-equivalente a $L(M)$. Tali automi possono tuttavia
+ciascuno dei quali accetta un diverso linguaggio $L$ f-equivalente a $L(A')$. Tali automi possono tuttavia
 differire solo per le transizioni in uscita da uno stato preambolo e in ingresso ad uno stato kernel, per i
-valori accettati dagli stati preambolo, o per gli stati iniziali.
-
-In particolare, i kernel di due automi iperminimi quasi-equivalenti sono isomorfi secondo la definizione
+valori accettati dagli stati preambolo, o per gli stati iniziali. In particolare, i kernel di due automi
+iperminimi quasi-equivalenti sono isomorfi secondo la definizione
 classica mentre i preamboli sono isomorfi, eccetto per i valori accettati.
-
-\begin{theorem}\label{th:aeq-morphism}
-  Siano $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ due DFA
-  tali che $A_1 \sim A_2$, allora esiste una funzione $h: Q_1 \rightarrow Q_2$ tale che:
-  \begin{enumerate}[label=(\alph*)]
-    \item se $q_{A_1} \in P(A_1)$, allora $q_{A_1} \sim h(q_{A_1})$
-    \item se $q_{A_1} \in K(A_1)$, allora $q_{A_1} \equiv h(q_{A_1})$ e $h(q_{A_1}) \in K(A_2)$
-  \end{enumerate}
-\end{theorem}
 
 \begin{definition}[Isomorfismo tra kernel]\label{def:kernel-isomorphism}
   Siano $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ due DFA,
-  $A_1$ e $A_2$ hanno kernel isomorfi, denotato $A_1 \sim_K A_2$, quando esiste una corrispondenza
-  biunivoca $h: K(A_1) \rightarrow K(A_2)$ tale che:
+  $A_1$ e $A_2$ hanno kernel isomorfi, denotato $A_1 \sim_K A_2$,
+  se esiste una corrispondenza biunivoca $h: K(A_1) \rightarrow K(A_2)$ tale che:
   \begin{enumerate}[label=(\alph*)]
-    \item le condizioni (a) e (b) del Teorema \ref{th:aeq-morphism} siano soddisfatte
-    \item $\forall q_{A_1} \in K(A_1)$ e $\forall \sigma \in \Sigma$, $h(\delta_1(q_{A_1}, \sigma))
-    = \delta_2(h(q_{A_1}), \sigma)$;
-    \item $\forall q_{A_1} \in K(A_1)$, $h(q_{A_1}) \in F_2$ se e solo se $q_{A_1} \in F_1$;
+    \item $\forall q \in K(A_1)$ e $\forall \sigma \in \Sigma$, $h(\delta_1(q, \sigma))
+    = \delta_2(h(q), \sigma)$;
+    \item $\forall q \in K(A_1)$, $h(q) \in F_2$ se e solo se $q \in F_1$;
   \end{enumerate}
-  ovvero, nei kernel, $h$ preserva il comportamento dell'automa ad eccezione dello stato iniziale.
 \end{definition}
 
 \begin{theorem}\label{th:kernel-isomorphism}
@@ -439,16 +427,11 @@ classica mentre i preamboli sono isomorfi, eccetto per i valori accettati.
 \end{theorem}
 
 \begin{definition}[Isomorfismo tra preamboli]\label{def:preamble-isomorphism}
-  Siano $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ due DFA
-  iperminimi tali che $A_1 \sim A_2$, $A_1$ e $A_2$ hanno preamboli isomorfi, denotato $A_1 \sim_P A_2$,
-  quando esiste una corrispondenza biunivoca $h: P(A_1) \rightarrow P(A_2)$ tale che:
-  \begin{enumerate}[label=(\alph*)]
-    \item le condizioni (a)-(c) della definizione \ref{def:kernel-isomorphism} siano soddisfatte
-    \item se $q_{I_1} \in P(A_1)$, allora $h(q_{I_1}) = q_{I_2}$
-    \item $\forall q_{A_1} \in P(A_1)$ e $\forall \sigma \in \Sigma$ tali che $\delta_1(q_{A_1}, \sigma) \in P(A_1)$,
-    $h(\delta_1(q_{A_1}, \sigma)) = \delta_2(h(q_{A_1}), \sigma)$
-  \end{enumerate}
-  ovvero, nei preamboli, $h$ preserva il comportamento dell'automa ad eccezione degli stati finali e delle transizioni in uscita dal preambolo.
+  Siano $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ due DFA,
+  $A_1$ e $A_2$ hanno preamboli isomorfi, denotato $A_1 \sim_P A_2$,
+  se esiste una corrispondenza biunivoca $h: P(A_1) \rightarrow P(A_2)$ tale che 
+  $\forall q_{A}, q_{B} \in P(A_1)$ e $\forall \sigma \in \Sigma$ tali che $\delta_1(q_{A}, \sigma) = q_{B}$
+  si ha che $\delta_2(h(q_{A}), \sigma) = h(q_{B})$.
 \end{definition}
 
 \begin{theorem}\label{th:preamble-isomorphism}
@@ -463,22 +446,30 @@ presentare una strategia generale per l'iperminimizzazione di automi a stati fin
 
 Dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, la procedura generale per l'iperminimizzazione consiste nel:
 \begin{enumerate}
-  \item minimizzare, nella maniera classica, l'automa $A$ ottendendo l'automa $A' = (Q', \Sigma, \delta', q_I', F')$
-  minimo tale che $L(A') = L(A)$
+  \item ottenere l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$ minimizzando classicamente $A$
   \item identificare l'insieme degli stati preambolo $P(A')$ e degli stati kernel $K(A')$
-  \item determinare le classi di quasi-equivalenza su $Q'$ e costruire dunque l'insieme quoziente $\partitioned{Q'}{\sim}$
-  \item ottenere l'automa $A''$, $\forall Q_i \in \partitioned{Q'}{\sim}$ tale che $||Q_i|| > 1$ ed $\exists q_{i_1} \in Q_i$ tale che $q_{i_1} \in P(A')$:
+  \item determinare le classi di quasi-equivalenza su $Q'$ e costruire l'insieme $\partitioned{Q'}{\sim}$
+  \item $\forall Q_i \in \partitioned{Q'}{\sim}$ tale che $||Q_i|| > 1$ ed $\exists q_{i_1} \in Q_i$ tale che $q_{i_1} \in P(A')$:
   \begin{enumerate}
-    \item se $\exists q_{i_2} \in Q_i$ tale che $q_{i_2} \in K(A')$, collassando tutti gli stati in $Q_i \cap P(A')$ in $q_{i_2}$
-    \item altrimenti, collassando tutti gli stati in $Q_i \setminus \{q_{i_1}\}$ in $q_{i_1}$
+    \item se $\exists q_{i_2} \in Q_i$ tale che $q_{i_2} \in K(A')$, $\forall q \in Q_i \cap P(A')$ si collassa $q$ in $q_{i_2}$
+    \item altrimenti, tutti gli stati in $Q_i \setminus \{q_{i_1}\}$ sono collassati in $q_{i_1}$
   \end{enumerate}
 \end{enumerate}
 
 L'automa $A''$ così ottenuto è l'automa iperminimo.
 
+\begin{theorem}[Caratterizzazione di un DFA iperminimo]
+  \label{th:char-hyper-min-dfa}
+  Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ è iperminimo se e solo se:
+  \begin{enumerate}[label=(\alph*)]
+    \item $A$ è minimo
+    \item non esiste una coppia di stati $q_A, q_B \in Q$ tali che $q_A \neq q_B$, $q_A \sim q_B$ e almeno uno dei due sia in $P(A)$
+  \end{enumerate}
+\end{theorem}
+
 Si osservi che il primo passo della procedura, ovvero la minimizzazione dell'automa, permette di garantire 
-che l'automa minimo ottenuto $A'$, sul quale poi eseguire i successivi passi per arrivare all'automa iperminimo,
-sia privo di stati irraggiungibili ($U(A') = \emptyset$) e che quindi l'insieme degli stati possa essere partizionato
+che l'automa minimo ottenuto $A'$, sia privo di stati irraggiungibili ($U(A') = \emptyset$) e che quindi nei passaggi
+successivi della strategia l'insieme degli stati possa essere partizionato
 esclusivamente in due parti, gli stati preambolo e gli stati kernel ($Q' = P(A') \cup K(A')$).
 
 Prendendo ancora una volta come esempio l'automa $A = (Q, \Sigma, \delta, q_I, F)$ in Figura \ref{fig:dfa},
@@ -499,16 +490,6 @@ ottenendo l'automa $A''$ iperminimo in Figura \ref{fig:hyper-minified-dfa}.
   \includegraphics[width=0.7\linewidth]{images/hyper-minified-dfa.png}
   \caption{\label{fig:hyper-minified-dfa}L'automa in Figura \ref{fig:minified-dfa} iperminimizzato.}
 \end{figure}
-
-\begin{theorem}[Caratterizzazione di un DFA iperminimo]
-  \label{th:char-hyper-min-dfa}
-  Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ è iperminimo e non può quindi essere
-  sostituito da un automa quasi-equivalente $A' = (Q', \Sigma, \delta', q_I', F')$ con $||Q'|| < ||Q||$, se e solo se:
-  \begin{enumerate}[label=(\alph*)]
-    \item $A$ è minimo
-    \item $\forall q_A \in Q, \forall q_B \in Q \setminus \{ q_A \}$ si ha che $q_A \sim q_B \implies q_A \in K(A) \vee q_B \in K(A)$
-  \end{enumerate}
-\end{theorem}
 
 \section{Algoritmi}
 
@@ -545,16 +526,19 @@ passo successivo per semplificare la fase di identificazione degli insiemi $P(A'
 In altri termini, essendo che l'algoritmo verifica l'esistenza di un cammino di lunghezza maggiore di
 1 tra ogni coppia di stati $q_i, q_j \in Q'$, trattando l'automa come un grafo, il problema può essere ricondotto 
 al calcolo della chiusura transitiva di quest'ultimo. 
-Sono noti diversi algoritmi per lo svolgimento di tale compito \cite{DFI08}, un possibile approccio potrebbe
-essere quello di utilizzare l'algoritmo di Floyd-Warshall, che richiede tempo $\bigo(n^3)$.
+Sono noti diversi algoritmi per lo svolgimento di tale compito \cite{DFI08}, un possibile approccio classico potrebbe
+essere quello di utilizzare l'algoritmo di Floyd-Warshall, che richiede tempo $\bigo(n^3)$, tuttavia, in questo 
+caso specifico, è possibile sfruttare una ricerca in ampiezza (BFS) partendo da ogni stato $q_i \in Q'$ per
+ottenere gli stati raggiungibili da $q_i$ e popolare la corrispondente riga nella matrice $E$, ottenendo
+così un tempo di esecuzione $\bigo(n^2 \cdot m)$.
 
 Ricordando ancora una volta che grazie alla minimizzazione nell'automa $A'$ non sono presenti stati irraggiungibili,
 è ora possibile distinguere in $Q'$ gli stati kernel da quelli preambolo, si costruisce a questo scopo
-un vettore $V$ di dimensione $||Q'||$ tale che $v_i = 1$ se e solo se $q_i \in K(A')$, altrimenti $v_i = 0$.
-Grazie al Lemma \ref{lem:kernel-state} la costruzione del vettore $V$ si riduce nel determinare se per ogni
+un vettore $K$ di dimensione $||Q'||$ tale che $k_i = 1$ se e solo se $q_i \in K(A')$, altrimenti $k_i = 0$.
+Grazie al Lemma \ref{lem:kernel-state} la costruzione del vettore $K$ si riduce nel determinare se per ogni
 stato $q_i \in Q'$, esista uno stato $q_j \in Q'$ tale che $e_{1,j} = e_{j,j} = e_{j,i} = 1$.
 
-É banale dunque osservare come la costruzione del vettore $V$ sia eseguita in tempo $\bigo(n)$ essendo che 
+É banale dunque osservare come la costruzione del vettore $K$ sia eseguita in tempo $\bigo(n)$ essendo che 
 per ogni stato $q_i \in Q'$ la verifica di appartenenza a $K(A')$ richiede un tempo costante $\bigo(1)$.
 
 L'algoritmo procede con la determinazione delle classi di quasi-equivalenza, a questo scopo, viene creato un vettore
@@ -603,10 +587,10 @@ la matrice $E$ costruita dall'algoritmo risulterebbe essere:
   \end{bNiceMatrix}$
 \end{center}
 
-mentre i vettori $V$ dei kernel e $R$ delle classi di quasi-equivalenza risulterebbero essere:
+mentre i vettori $K$ dei kernel e $R$ delle classi di quasi-equivalenza risulterebbero essere:
 
 \begin{center}
-  $V = \begin{bNiceMatrix}[last-row]
+  $K = \begin{bNiceMatrix}[last-row]
     0 & 0 & 0 & 0 & 1 & 1 & 1 \\
     \scriptstyle{A} & \scriptstyle{B} & \scriptstyle{C} & \scriptstyle{D} & \scriptstyle{E} & \scriptstyle{F} & \scriptstyle{G}
   \end{bNiceMatrix}$, 
@@ -627,7 +611,7 @@ Equivalentemente all'algoritmo precedente, l'algoritmo di Badr minimizza come pr
 in ingresso $A$ ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$.
 
 Il passo successivo prevede di identificare le classi di quasi-equivalenza, a questo scopo, si introduce
-una nuova operazione tra automi a stati finiti deterministici.
+una nuova operazione tra automi a stati finiti deterministici e un importante risultato ad essa associato.
 
 \begin{definition}
   Siano $A_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1)$ e $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ due DFA,
@@ -645,14 +629,20 @@ Un esempio di XOR cross product è quello tra l'automa in Figura \ref{fig:minifi
 risultato è riportato in Figura \ref{fig:dfa-xcp} e di cui, per una maggiore chiarezza, si riporta la tabella
 di transizione in Tabella \ref{tab:dfa-xcp-transitions}.
 
+\begin{definition}
+  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, si estende la nozione
+  di linguaggio riconosciuto da $A$ ad un generico stato $q \in Q$, denotato con $L(q)$ e definito \emph{linguaggio
+  indotto} da $q$, come l'insieme $L(q) = \{ w \in \Sigma^* : \delta(q, w) \in F \}$.
+\end{definition}
+
 \begin{theorem}\label{th:cross-prod-state-aeq}
   Siano $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico minimo e 
   $A^\otimes = (Q^\otimes, \Sigma, \delta^\otimes, q_{I}^\otimes, F^\otimes)$ l'automa risultante dallo 
-  XOR cross product di $A$ con se stesso, allora: $\forall w \in \Sigma^*$ e $\forall (q, r) \in Q^\otimes$
-  si ha $w \in L((q, r)) \Leftrightarrow \delta^\otimes((q, r), w) \in F^\otimes \Leftrightarrow 
-  (\delta(q, w) \in F) \otimes (\delta(r, w) \in F)$, dove $L(q)$ è il linguaggio indotto dallo stato $q$.
-  In altri termini, il linguaggio $L((q, r))$ di ogni stato nel contesto $A^\otimes$, è uguale al linguaggio
-  $L(q) \Delta L(r)$ nel contesto $A$.
+  XOR cross product di $A$ con se stesso, allora: $\forall w \in \Sigma^*$ e $\forall (q_A, q_B) \in Q^\otimes$
+  si ha $w \in L((q_A, q_B)) \Leftrightarrow \delta^\otimes((q_A, q_B), w) \in F^\otimes \Leftrightarrow 
+  (\delta(q_A, w) \in F) \otimes (\delta(q_B, w) \in F)$.
+  In altri termini, il linguaggio $L((q_A, q_B))$ di ogni stato nel contesto $A^\otimes$, è uguale al linguaggio
+  $L(q_A) \Delta L(q_B)$ nel contesto $A$.
 \end{theorem}
 \begin{corollary}\label{cor:cross-prod-state-aeq-S}
   Siccome $A$ è minimo e dunque non esistono due stati $q_A, q_B \in Q$, con $q_A \neq q_B$, tali che inducano 
@@ -660,16 +650,10 @@ di transizione in Tabella \ref{tab:dfa-xcp-transitions}.
   stati in $A^\otimes$ che inducono $L_\emptyset$.
 \end{corollary}
 \begin{corollary}\label{cor:cross-prod-state-aeq-states}
-  Il linguaggio indotto da uno stato $(q, r) \in Q^\otimes$ è finito se e solo se $q \sim r$, pertanto, 
+  Il linguaggio indotto da uno stato $(q_A, q_B) \in Q^\otimes$ è finito se e solo se $q_A \sim q_B$, pertanto, 
   l'insieme degli stati in $A^\otimes$ che inducono un linguaggio finito è la relazione di quasi-equivalenza
   sugli stati in $A$.
 \end{corollary}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.5\linewidth]{images/dfa_xcp.png}
-  \caption{\label{fig:dfa-xcp}L'automa in Figura \ref{fig:minified-dfa} in XOR cross product con se stesso.}
-\end{figure}
 
 L'idea alla base dell'algoritmo di Badr è quella di utilizzare l'automa $A^\otimes$ prodotto dallo 
 XOR cross product tra l'automa minimo $A'$ e se stesso, la cui costruzione richiede tempo $\bigo(n^2)$,
@@ -684,65 +668,11 @@ $M = (Q_M, \Sigma_M, \delta_M, q_{I_M}, F_M)$, l'insieme degli stati che inducon
 $A^\otimes$, per il Corollario \ref{cor:cross-prod-state-aeq-S}, corrisponde all'insieme $S = \{ (q, q) : q \in Q' \}$. É banale dunque osservare come la costruzione di $S$ e $S^C$
 richiede un tempo $\bigo(n)$.
 
-Una volta calcolati $S$ e $S^C$, l'algoritmo procede istanziando per ogni stato $q \in Q^\otimes$ due insiemi
-$T^\rightarrow_q = \emptyset$ e $T^\leftarrow_q = \emptyset$ che conterranno rispettivamente gli stati raggiungibili
-da $q$ e gli stati che possono raggiungere $q$. La costruzione di $T^\rightarrow_q$ e $T^\leftarrow_q$ avviene
-iterativamente: per ogni stato $q \in S^C$ e per ogni $\sigma \in \Sigma$, sia $q' = \delta^\otimes(q, \sigma)$,
-allora $T^\rightarrow_q = T^\rightarrow_q \cup \{ (q', \sigma) \}$ e 
-$T^\leftarrow_{q'} = T^\leftarrow_{q'} \cup \{ (q, \sigma) \}$.
-
-In seguito, viene costruito l'insieme $R$, inizializzato come $R = \emptyset$, iterativamente: fino a quando
-$S \neq \emptyset$: si estrae uno stato $q \in S$ e lo si aggiunge ad $R$, si rimuove $q$ da $S$ e 
-$\forall (q', \sigma) \in T_q^\leftarrow$ si rimuove $(q, \sigma)$ da $T_{q'}^\rightarrow$ e se, in seguito
-a tale rimozione, $T_{q'}^\rightarrow = \emptyset$, si aggiunge $q'$ a $S$.
-
-\begin{theorem}\label{th:rfs-correctness}
-  L'algoritmo appena descritto aggiunge uno stato all'insieme $R$ se e solo se induce un linguaggio finito in $A^\otimes$.
-\end{theorem}
-
-Al termine di questo processo, grazie al risultato esposto nel Teorema \ref{th:rfs-correctness}, per la cui dimostrazione
-il lettore è rimandato a \cite{Badr}, l'insieme $R$ conterrà come da obiettivo tutti gli stati che inducono
-un linguaggio finito in $A^\otimes$ e sarà possibile costruire $\partitioned{Q'}{\sim}$.
-
-Essendo il numero di transizioni lineare rispetto al numero di stati, il tempo necessario alla costruzione 
-di $T^\rightarrow_q$ e $T^\leftarrow_q$ per tutti gli stati corrisponde complessivamente a $\bigo(||Q^\otimes||)$,
-inoltre, l'aggiunta di ogni stato ad $R$ richiede un tempo costante $\bigo(1)$ più un tempo trascurabile per ciascuno
-stato da cui si raggiunge quello corrente, pertanto la costruzione di $R$ richiede anch'essa un tempo
-lineare $\bigo(||Q^\otimes||)$. Ricordando che $A^\otimes$ è lo XOR cross product di $A'$ con se stesso, la complessità
-temporale di questo passaggio è $\bigo(n^2)$.
-
-La costruzione di $\partitioned{Q'}{\sim}$ avviene ora semplicemente, utilizzando una struttura dati QuickFind $U$ con 
-bilanciamento \cite{DFI08}. La struttura viene inizializzata per rappresentare la partizione
-di $Q'$ composta esclusivamente da singoletti, quindi, per ogni stato $(q, r) \in R$, siano $Q_i$ e $Q_j$
-rispettivamente i risultati delle operazioni di $find(q)$ e $find(r)$ in $U$, se $Q_i \neq Q_j$, 
-allora si uniscono gli insiemi $Q_i$ e $Q_j$ tramite l'operazione $union(Q_i, Q_j)$ in $U$. Per il 
-Corollario \ref{cor:cross-prod-state-aeq-states}, al termine dell'operazione, $U$ rappresenterà $\partitioned{Q'}{\sim}$.
-
-Dato l'utilizzo di una struttura dati QuickFind con bilanciamento, il costo della singola operazione di $find$
-è costante, mentre il costo della singola operazione di $union$ è lineare, pertanto
-essendo che per la costruzione di $\partitioned{Q'}{\sim}$ vengono eseguite al più $n - 1$ operazioni di $union$ e si
-cicla lungo tutti gli stati in $R$, la complessità temporale di questo passaggio è $\bigo(n^2)$.
-
-Il calcolo degli insieme $K(A')$ e $P(A')$ avviene in tempo $\bigo(n^2)$, l'idea è simile a quella dell'algoritmo di 
-Badr, Geffert e Shipman, ma in questo caso ne viene cambiata la messa in pratica. Si inizializza l'insieme 
-$K = \emptyset$ che conterrà gli stati kernel e si procede iterativamente: per ogni stato $q \in Q'$ si ottiene
-l'insieme degli stati raggiungibili da $q$ in $A'$ con un cammino di lunghezza maggiore di 1, se tale insieme
-contiene $q$ allora si aggiunge $q$ a $K$. Al termine del processo, $K$ conterrà tutti gli stati kernel e l'insieme
-$P = P(A')$ sarà dato da $Q' \setminus K$.
-
-Infine, l'automa iperminimo $A''$ viene costruito: per ogni classe di quasi-equivalenza $Q_i \in U$,
-si ottiene l'insieme $P_{Q_i}$ degli stati preambolo in $Q_i$ e l'insieme $K_{Q_i}$ degli stati kernel in $Q_i$
-tramite intersezione di $Q_i$ rispettivamente con $P$ e $K$. Si procede dunque al collasso di tutti gli stati
-in $P_{Q_i}$ in uno stato $q_K \in K_{Q_i}$, se $K_{Q_i}$ è non vuoto, o al collasso in 
-$q_P \in P_{Q_i}$ degli stati in $P_{Q_i} \setminus \{ q_P \}$ altrimenti.
-
-Utilizzando ancora una volta come esempio l'automa $A'$ in Figura \ref{fig:minified-dfa}, l'automa $A^\otimes$
-risultante dallo XOR cross product tra $A'$ e se stesso è stato mostrato essere quello descritto in Tabella 
-\ref{tab:dfa-xcp-transitions}. L'insieme $S$ degli stati che inducono un linguaggio finito in $A^\otimes$ 
-ne segue essere $S = \{ (A, A), (B, B), (C, C), (D, D), (E, E), (F, F), (G, G) \}$, da cui l'insieme $R$ 
-degli stati che inducono un linguaggio finito in $A'$ costruito dall'algoritmo è 
-$R = S \cup \{ (B, F), (F, B), (D, G), (G, D) \}$. L'insieme delle classi di quasi-equivalenza
-rappresentato da $U$ risulta correttamente essere $\{ \{ A \}, \{ B, F \}, \{ C \}, \{ D, G \}, \{ E \} \}$.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\linewidth]{images/dfa_xcp.png}
+  \caption{\label{fig:dfa-xcp}L'automa in Figura \ref{fig:minified-dfa} in XOR cross product con se stesso.}
+\end{figure}
 
 \begin{table}[!htb]
   \centering
@@ -811,13 +741,73 @@ rappresentato da $U$ risulta correttamente essere $\{ \{ A \}, \{ B, F \}, \{ C 
   \caption{\label{tab:dfa-xcp-transitions}Tabella di transizione dell'automa in Figura \ref{fig:dfa-xcp}.}
 \end{table}
 
+Una volta calcolati $S$ e $S^C$, l'algoritmo procede istanziando per ogni stato $q \in Q^\otimes$ due insiemi
+$T^\rightarrow_q = \emptyset$ e $T^\leftarrow_q = \emptyset$ che conterranno rispettivamente gli stati raggiungibili
+da $q$ e gli stati che possono raggiungere $q$. La costruzione di $T^\rightarrow_q$ e $T^\leftarrow_q$ avviene
+iterativamente: per ogni stato $q \in S^C$ e per ogni $\sigma \in \Sigma$, sia $q' = \delta^\otimes(q, \sigma)$,
+allora $T^\rightarrow_q = T^\rightarrow_q \cup \{ (q', \sigma) \}$ e 
+$T^\leftarrow_{q'} = T^\leftarrow_{q'} \cup \{ (q, \sigma) \}$.
+
+In seguito, viene costruito l'insieme $R$, inizializzato come $R = \emptyset$, iterativamente: fino a quando
+$S \neq \emptyset$, si estrae uno stato $q \in S$ e lo si aggiunge ad $R$, si rimuove $q$ da $S$ e 
+$\forall (q', \sigma) \in T_q^\leftarrow$ si rimuove $(q, \sigma)$ da $T_{q'}^\rightarrow$ e se, in seguito
+a tale rimozione, $T_{q'}^\rightarrow = \emptyset$, si aggiunge $q'$ a $S$.
+
+\begin{theorem}\label{th:rfs-correctness}
+  L'algoritmo appena descritto aggiunge uno stato all'insieme $R$ se e solo se induce un linguaggio finito in $A^\otimes$.
+\end{theorem}
+
+Al termine di questo processo, grazie al risultato esposto nel Teorema \ref{th:rfs-correctness}, per la cui dimostrazione
+il lettore è rimandato a \cite{Badr}, l'insieme $R$ conterrà come da obiettivo tutti gli stati che inducono
+un linguaggio finito in $A^\otimes$ e sarà possibile costruire $\partitioned{Q'}{\sim}$.
+
+Essendo il numero di transizioni lineare rispetto al numero di stati, il tempo necessario alla costruzione 
+di $T^\rightarrow_q$ e $T^\leftarrow_q$ per tutti gli stati corrisponde complessivamente a $\bigo(||Q^\otimes||)$,
+inoltre, l'aggiunta di ogni stato ad $R$ richiede un tempo costante $\bigo(1)$ più un tempo trascurabile per ciascuno
+stato da cui si raggiunge quello corrente, pertanto la costruzione di $R$ richiede anch'essa un tempo
+lineare $\bigo(||Q^\otimes||)$. Ricordando che $A^\otimes$ è lo XOR cross product di $A'$ con se stesso, la complessità
+temporale di questo passaggio è $\bigo(n^2)$.
+
+La costruzione di $\partitioned{Q'}{\sim}$ avviene ora semplicemente, utilizzando una struttura dati QuickFind $U$ con 
+bilanciamento \cite{DFI08}. La struttura viene inizializzata per rappresentare la partizione
+di $Q'$ composta esclusivamente da singoletti, quindi, per ogni stato $(q_A, q_B) \in R$, siano $Q_i$ e $Q_j$
+rispettivamente i risultati delle operazioni di $find(q_A)$ e $find(q_B)$ in $U$, se $Q_i \neq Q_j$, 
+allora si uniscono gli insiemi $Q_i$ e $Q_j$ tramite l'operazione $union(Q_i, Q_j)$ in $U$. Per il 
+Corollario \ref{cor:cross-prod-state-aeq-states}, al termine dell'operazione, $U$ rappresenterà $\partitioned{Q'}{\sim}$.
+
+Dato l'utilizzo di una struttura dati QuickFind con bilanciamento, il costo della singola operazione di $find$
+è costante, mentre il costo della singola operazione di $union$ è lineare, pertanto
+essendo che per la costruzione di $\partitioned{Q'}{\sim}$ vengono eseguite al più $n - 1$ operazioni di $union$ e si
+cicla lungo tutti gli stati in $R$, la complessità temporale di questo passaggio è $\bigo(n^2)$.
+
+Il calcolo degli insieme $K(A')$ e $P(A')$ avviene in tempo $\bigo(n^2)$, l'idea è simile a quella dell'algoritmo di 
+Badr, Geffert e Shipman, ma in questo caso ne viene cambiata la messa in pratica. Si inizializza l'insieme 
+$K = \emptyset$ che conterrà gli stati kernel e si procede iterativamente: per ogni stato $q \in Q'$ si ottiene
+l'insieme degli stati raggiungibili da $q$ in $A'$ con un cammino di lunghezza maggiore di 1, se tale insieme
+contiene $q$ allora si aggiunge $q$ a $K$. Al termine del processo, $K$ conterrà tutti gli stati kernel e l'insieme
+$P = P(A')$ sarà dato da $Q' \setminus K$.
+
+Infine, l'automa iperminimo $A''$ viene costruito: per ogni classe di quasi-equivalenza $Q_i \in U$,
+si ottiene l'insieme $P_{Q_i}$ degli stati preambolo in $Q_i$ e l'insieme $K_{Q_i}$ degli stati kernel in $Q_i$
+tramite intersezione di $Q_i$ rispettivamente con $P$ e $K$. Si procede dunque al collasso di tutti gli stati
+in $P_{Q_i}$ in uno stato $q_K \in K_{Q_i}$, se $K_{Q_i}$ è non vuoto, o al collasso in 
+$q_P \in P_{Q_i}$ degli stati in $P_{Q_i} \setminus \{ q_P \}$ altrimenti.
+
+Utilizzando ancora una volta come esempio l'automa $A'$ in Figura \ref{fig:minified-dfa}, l'automa $A^\otimes$
+risultante dallo XOR cross product tra $A'$ e se stesso è stato mostrato essere quello descritto in Tabella 
+\ref{tab:dfa-xcp-transitions}. L'insieme $S$ degli stati che inducono un linguaggio finito in $A^\otimes$ 
+ne segue essere $S = \{ (A, A), (B, B), (C, C), (D, D), (E, E), (F, F), (G, G) \}$, da cui l'insieme $R$ 
+degli stati che inducono un linguaggio finito in $A'$ costruito dall'algoritmo è 
+$R = S \cup \{ (B, F), (F, B), (D, G), (G, D) \}$. L'insieme delle classi di quasi-equivalenza
+rappresentato da $U$ risulta correttamente essere $\{ \{ A \}, \{ B, F \}, \{ C \}, \{ D, G \}, \{ E \} \}$.
+
 \subsection{Algoritmo di Holzer e Maletti}
 
 L'ultimo algoritmo presentato è quello proposto da Holzer e Maletti \cite{HM10}, questo migliora i risultati
 ottenuti in precedenza infatti, indroducento una nuova stategia per l'identificazione degli stati
 kernel e per la costruzione delle classi di equivalenza, riduce la complessità temporale a $\bigo(n\log n)$.
 
-Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico e $q_A, q_B \in Q$ due stati,
+Siano $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico e $q_A, q_B \in Q$ due stati,
 si definisce formalmente una funzione \emph{merge} utilizzata in seguito dall'algoritmo per il collasso
 degli stati come $merge(\delta, q_I, q_A, q_B) = (\delta', q_I')$ tale che $\forall q' \in Q$ e
 $\forall \sigma \in \Sigma$:
@@ -845,9 +835,9 @@ l'automa in ingresso ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I',
 
 Il passo successivo prevede di identificare l'insieme $K(A')$ degli stati kernel in $A'$. L'idea alla base
 della strategia utilizzata dall'algoritmo è quella di identificare l'insieme $C$ degli stati centrali in $A'$ 
-attraverso una versione semplificata dell'algoritmo di Tarjan \cite{DFI08}, in quanto essendo $A'$ minimo 
-tutti gli stati in $Q'$ sono raggiungibili da $q_I'$, per l'identificazione delle componenti fortemente
-connesse. Questo avviene semplicemente in quanto, per definizione, gli stati centrali sono parte di una
+attraverso una versione dell'algoritmo di Tarjan \cite{DFI08} per l'identificazione delle componenti fortemente
+connesse semplificata in quanto, essendo $A'$ minimo, tutti gli stati in $Q'$ sono raggiungibili da $q_I'$. 
+Questo avviene semplicemente in quanto, per definizione, gli stati centrali sono parte di una
 componente fortemente connessa di almeno due stati o hanno un ciclo su loro stessi.
 Una volta costruito l'insieme $C$ una Depth-First Search \cite{DFI08} viene utilizzata per identificare tutti
 gli stati raggiungibili da uno stato centrale, questi stati sono gli stati kernel per il Lemma \ref{lem:kernel-state}.
@@ -905,7 +895,8 @@ Ipotizzando di eseguire l'algoritmo sull'automa $A'$ in Figura \ref{fig:minified
 centrali risulta essere $C = \{ F, G, E \}$ dal quale viene correttamente identificato
 l'insieme $K(A')$ degli stati kernel in $A'$ attraverso la visita in profondità. Ulteriormente, l'insieme $R$ delle
 classi di quasi-equivalenza, costruito sulla tabella $H$ il cui contenuto al termine dell'algoritmo è riportato
-in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q}{\sim}$.
+in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q'}{\sim}$ come previsto dal Teorema
+\ref{th:aeq-correctness}.
 
 \begin{table}[!htb]
   \centering

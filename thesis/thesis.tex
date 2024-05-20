@@ -35,6 +35,7 @@
 \SetKwComment{Comment}{/* }{ */}  % comment style
 \SetKwInOut{Input}{Parametri}     % input text
 \SetKwInOut{Output}{Output}       % output text
+\SetKwRepeat{DoWhile}{do}{while}  % do while loop
 \newenvironment{algo}[3]{
   \IncMargin{1.3em}
   \begin{algorithm}
@@ -89,13 +90,25 @@ Prefazione
 La tesi \`e organizzata come segue:
 \begin{itemize}
   \item nel Capitolo 1 sono presentate le nozioni preliminari e necessarie alla comprensione dell'elaborato riguardanti la teoria degli automi;
-  \item nel Capitolo 2 è presentato il problema dell'iperminimizzazione di automi a stati finiti deterministici;
+  \item nel Capitolo 2 è presentato il problema dell'iperminimizzazione di automi a stati finiti deterministici
+  ed i diversi algoritmi proposti per la sua risoluzione;
+  \item nel Capitolo 3 sono presentate delle possibili implementazioni degli algoritmi proposti;
+  \item nel Capitolo 4 sono presentati i risultati sperimentali ottenuti;
 \end{itemize}
 
 % THANKS TO
 
 \prefacesection{Ringraziamenti}
-grazie a 
+Prima di tutto, voglio ringraziare il mio relatore, Prof. Giovanni Pighizzini,
+per la sua guida e il suo supporto durante questo progetto.
+
+Voglio ringraziare la mia famiglia, per il loro costante supporto ed incoraggiamento
+durante l'intero percorso accademico e la mia ragazza, Beatrice, per essere stata sempre al mio fianco,
+anche nei momenti più difficili.
+
+Ci tengo inoltre a ringraziare le persone con le quali ho condiviso questi anni di studio, in particolare
+Tomas, con il quale ho condiviso la maggior parte delle giornate in ateneo e che è stato un eccezionale
+compagno di studio.
 \afterpreface
 
 % CHAPTER 1
@@ -294,7 +307,7 @@ di ottenere l'automa minimo in tempo $\bigo(n \log n)$.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.7\linewidth]{images/minified-dfa.png}
+  \includegraphics[width=0.7\linewidth]{images/minified_dfa.png}
   \caption{\label{fig:minified-dfa}L'automa in Figura \ref{fig:dfa} minimizzato.}
 \end{figure}
 
@@ -488,7 +501,7 @@ ottenendo l'automa $A''$ iperminimo in Figura \ref{fig:hyper-minified-dfa}.
 
 \begin{figure}[hbt!]
   \centering
-  \includegraphics[width=0.7\linewidth]{images/hyper-minified-dfa.png}
+  \includegraphics[width=0.7\linewidth]{images/hyper_minified_dfa.png}
   \caption{\label{fig:hyper-minified-dfa}L'automa in Figura \ref{fig:minified-dfa} iperminimizzato.}
 \end{figure}
 
@@ -919,6 +932,312 @@ in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q
   \caption{\label{tab:hm-hash-table}Tabella hash $H$ al termine dell'esecuzione dell'algoritmo\\sull'automa in Figura \ref{fig:minified-dfa}.}
 \end{table}
 
+% CHAPTER 3
+
+\chapter{Implementazione}
+\label{cap3}
+
+\section{Introduzione}
+
+In questo capitolo vengono presentate delle possibili implementazioni degli algoritmi riportati
+nel Capitolo \ref{cap2}. Ciascun algoritmo è suddiviso in funzioni che implementano i singoli
+passaggi descritti nella sezione corrispondente, in modo da rendere il codice più leggibile.
+
+\section{Algoritmo di Badr, Geffert e Shipman}
+
+Si presenta in primo luogo l'implementazione della funzione principale dell'algoritmo di Badr, Geffert e
+Shipman il cui pseudocodice è riportato nell'Algoritmo \ref{algo:bgs-algorithm}.
+
+Successivamente, vengono mostrate le implementazioni delle funzioni ausiliarie 
+utilizzate dall'algoritmo principale.
+
+\begin{algo}{Algoritmo di Badr, Geffert e Shipman.}
+  {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$}
+  {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
+  \label{algo:bgs-algorithm}
+
+  $A' \gets minimize(A)$\;
+
+  $K \gets kernelStates(A')$ \Comment*[r]{Algoritmo \ref{algo:bgs-kernel-states}}
+
+  $R \gets almostEquivalenceClasses(A')$ \Comment*[r]{Algoritmo \ref{algo:bgs-almost-equivalence-classes}}
+
+  $A'' \gets mergeStates(A', K, R)$ \Comment*[r]{Algoritmo \ref{bgs:bgs-merge-states}}
+
+  \Return{$A''$}
+\end{algo}
+
+Nel dettaglio:
+\begin{enumerate}[label=--]
+  \item l'Algoritmo \ref{algo:bgs-kernel-states} implementa la funzione \emph{kernelStates} che dato un
+  automa minimo in ingresso, restituisce l'insieme degli stati kernel nell'automa;
+  \item l'Algoritmo \ref{algo:bgs-almost-equivalence-classes} implementa la funzione \emph{almostEquivalenceClasses}
+  che dato un automa minimo in ingresso, restituisce un vettore che associa ad ogni stato dell'automa l'indice della
+  classe di quasi-equivalenza a cui appartiene;
+  \item l'Algoritmo \ref{bgs:bgs-merge-states} implementa la funzione \emph{mergeStates} che dato un automa
+  minimo in ingresso costruisce uno dei possibili automi iperminimi quasi-equivalenti ad esso.
+\end{enumerate}
+
+\begin{algo}{Algoritmo per l'ottenimento dell'insieme degli stati kernel.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
+  {L'insieme degli stati kernel $K(A)$}
+  \label{algo:bgs-kernel-states}
+
+  $E \gets \text{matrice di zeri di dimensione } ||Q|| \times ||Q||$\;
+
+  \For{$i \gets 1$ \KwTo $||Q||$}{
+    $V_i \gets breadthFirstSearch(A, q_i)$\;
+    \For{$j \gets 1$ \KwTo $||Q||$}{
+      \lIf{$q_j \in V_i$}{$E[i][j] \gets 1$}
+    }
+  }
+
+  $K \gets \emptyset$\;
+  \For{$i \gets 1$ \KwTo $||Q||$}{
+    \For{$j \gets 1$ \KwTo $||Q||$}{
+      \If{$E[1][j] = 1$ and $E[j][j] = 1$ and $E[j][i] = 1$}{
+        $K \gets K \cup \{ q_i \}$\;
+        \textbf{break}\;
+      }
+    }
+  }
+
+  \Return{$K$}\;
+\end{algo}
+
+Si ritiene importante puntualizzare come, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo
+\ref{algo:bgs-kernel-states} per ottenere l'insieme $V_i$ degli stati raggiungibili da uno stato $q_i$ in $A$,
+non sia la versione più classica della Breadth-First Search, ma una versione modificata che non aggiunge nella
+prima iterazione lo stato $q_i$ di partenza all'insieme degli stati visitati. Ne segue che $q_i$ si troverà
+nell'insieme $V_i$ se e solo se raggiungibile da uno stato $q_j$, con $q_j \neq q_i$,
+tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
+
+\begin{algo}{Algoritmo per la computazione delle classi di quasi-equivalenza.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
+  {Un vettore che associa ad ogni stato $q_i \in Q$ l'indice $j$ della classe di quasi-equivalenza $Q_j$ a cui appartiene}
+  \label{algo:bgs-almost-equivalence-classes}
+
+  $R \gets \text{vettore di dimensione } ||Q||$\;
+  \For{$i \gets 1$ \KwTo $||Q||$}{
+    $R[i] \gets i$\;
+  }
+  \DoWhile{$ae\_found$}{
+    $ae\_found \gets false$\;
+    \ForEach{$q_i \in Q$}{
+      \ForEach{$q_j \in Q$}{
+        \If{$R[i] \neq R[j]$}{
+          $ae \gets true$\;
+          \ForEach{$\sigma \in \Sigma$}{
+            \If{$R[\delta(q_i, \sigma)] \neq R[\delta(q_j, \sigma)]$}{
+              $ae \gets false$\;
+              \textbf{break}\;
+            }
+          }
+          \If{$ae$}{
+            $R[j] \gets R[i]$\;
+            $ae\_found \gets true$\;
+          }
+        }
+      }
+    }
+  }
+
+  \Return{$R$}\;
+\end{algo}
+
+\begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
+  degli stati kernel $K(A)$ e il vettore delle classi di quasi-equivalenza $R$}
+  {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
+  \label{bgs:bgs-merge-states}
+
+  \For{$i \gets 1$ \KwTo $||Q'||$}{
+    $K_{Q_i}$, $P_{Q_i} \gets \emptyset, \emptyset$\;
+    \For{$j \gets 1$ \KwTo $||Q'||$}{
+      \If{$R[j] = i$}{
+        \lIf{$q_j \in K$}{$K_{Q_i} \gets K_{Q_i} \cup \{ q_j \}$}
+        \lElse{$P_{Q_i} \gets P_{Q_i} \cup \{ q_j \}$}
+      }
+    }
+
+    $q \gets null$\;
+    \If{$P_{Q_i} \neq \emptyset$}{
+      \lIf{$K_{Q_i} \neq \emptyset$}{$q \gets q_K \in K_{Q_i}$}
+      \lElse{$q \gets q_P \in P_{Q_i}$}
+    }
+
+    \ForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{
+      collassa lo stato $q'$ in $q$\;
+    }
+  }
+
+  \Return{$A$}
+\end{algo}
+
+\section{Algoritmo di Badr}
+
+Seguendo la medesima linea dell'algoritmo precedente, si presenta l'implementazione dell'algoritmo di Badr
+iniziando dalla funzione principale e procedendo con le funzioni ausiliarie.
+
+\begin{algo}{Algoritmo di Badr.}
+  {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$}
+  {Uno dei possibili automi iperminimi $A''$ quasi-equivalenti ad $A$}
+  \label{algo:badr}
+
+  $A' \gets minimize(A)$\;
+
+  $U \gets almostEquivalenceClasses(A')$ \Comment*[r]{Algoritmo \ref{algo:badr-almost-equivalence-classes}}
+  
+  $P, K \gets preambleAndKernelStates(A')$ \Comment*[r]{Algoritmo \ref{algo:badr-kernel-states}}
+
+  $A'' \gets mergeStates(A', U, P, K)$ \Comment*[r]{Algoritmo \ref{algo:badr-merge-states}}
+  
+  \Return{$A''$}
+\end{algo}
+
+In questo caso, le funzioni ausiliarie sono implementate come segue:
+\begin{enumerate}[label=--]
+  \item l'Algoritmo \ref{algo:badr-almost-equivalence-classes} implementa la funzione \emph{almostEquivalenceClasses}
+  che dato un automa minimo in ingresso, restituisce la partizione degli stati in classi di quasi-equivalenza;
+  \item l'Algoritmo \ref{algo:badr-kernel-states} implementa la funzione \emph{preambleAndKernelStates} che dato un
+  automa minimo in ingresso, restituisce l'insieme degli stati preambolo e l'insieme degli stati kernel nell'automa;
+  \item l'Algoritmo \ref{algo:badr-merge-states} implementa la funzione \emph{mergeStates} che dato in ingresso
+  un automa minimo $A$, la partizione dei suoi stati in classi di quasi-equivalenza ed i suoi stati kernel e preambolo,
+  costruisce uno dei possibili automi iperminimi quasi-equivalenti ad $A$.
+\end{enumerate}
+
+\begin{algo}{Algoritmo per l'ottenimento degli stati kernel e preambolo.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
+  {Gli insiemi $P(A)$ e $K(A)$}
+  \label{algo:badr-kernel-states}
+
+  $K \gets \emptyset$\;
+
+  \ForEach{$q \in Q$}{
+    $V \gets breadthFirstSearch(A, q)$\;
+    \lIf{$q \in V$}{$K \gets K \cup V$}
+  }
+
+  \Return{$(Q \setminus K, K)$}
+\end{algo}
+
+\begin{algo}{Algoritmo per la computazione delle classi di quasi-equivalenza.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
+  {L'insieme quoziente $\partitioned{Q}{\sim}$}
+  \label{algo:badr-almost-equivalence-classes}
+
+  $A^\otimes \gets A \otimes A$\;
+
+  $S \gets \{ (q, q) : q \in Q \}$\;
+
+  $R \gets finiteLanguageStates(A^\otimes, S)$ \Comment*[r]{Algoritmo \ref{algo:badr-right-finite-states}}
+  
+  $U \gets \text{struttura } QuickFind \text{ vuota}$\;
+  \lForEach{$q \in Q$}{$U.makeset(q)$}
+  \ForEach{$(q_A, q_B) \in R$}{
+    $Q_i \gets U.find(q_A)$\;
+    $Q_j \gets U.find(q_B)$\;
+    \lIf{$Q_i \neq Q_j$}{$U.union(Q_i, Q_j)$}
+  }
+
+  \Return{$U$}\;
+\end{algo}
+
+Poiché l'implementazione dell'Algoritmo \ref{algo:badr-almost-equivalence-classes} per la costruzione delle classi
+di quasi-equivalenza risulta essere particolarmente lunga, si utilizza un'ulteriore funzione ausiliaria
+\emph{finiteLanguageStates} la cui implementazione è definita nell'Algoritmo \ref{algo:badr-right-finite-states}.
+
+\begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
+  quoziente $\partitioned{Q}{\sim}$ e gli insiemi $P(A)$ e $K(A)$}
+  {Uno dei possibili automi iperminimi $A'$ quasi-equivalenti ad $A$}
+  \label{algo:badr-merge-states}
+
+  \ForEach{$Q_i \in \partitioned{Q}{\sim}$}{
+    $P_{Q_i} \gets Q_i \cap P$\;
+    $K_{Q_i} \gets Q_i \cap K$\;
+
+    $q \gets q_P \in P_{Q_i}$\;
+    \lIf{$K_{Q_i} \neq \emptyset$}{$q \gets q_K \in K_{Q_i}$}
+    
+    \lForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{collassa lo stato $q'$ in $q$}
+  }
+
+  \Return{$A'$}
+\end{algo}
+
+Inoltre, si puntualizza nuovamente come, essendo l'idea dell'identificazione degli stati kernel basata
+sulle medesime osservazioni fatte nell'algoritmo di Badr, Geffert e Shipman e dunque l'implementazione
+molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \ref{algo:badr-kernel-states}
+è affetta dalla stessa modifica descritta in precedenza.
+
+\begin{algo}{Algoritmo per l'identificazione degli stati che inducono un linguaggio finito.}
+  {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ e l'insieme $S$ degli stati che
+  inducono un linguaggio finito in $A$}
+  {L'insieme degli stati in $A$ che inducono un linguaggio finito}
+  \label{algo:badr-right-finite-states}
+  
+  $S^C \gets Q \setminus S$\;
+
+  \ForEach{$q \in Q$}{
+    $T^\rightarrow_q \gets \emptyset$\;
+    $T^\leftarrow_q \gets \emptyset$\;
+  }
+
+  \ForEach{$q \in S^C$}{
+    \ForEach{$\sigma \in \Sigma$}{
+      $q' \gets \delta(q, \sigma)$\;
+      $T^\rightarrow_q \gets T^\rightarrow_q \cup \{(q', \sigma)\} $\;
+      $T^\leftarrow_{q'} \gets T^\leftarrow_{q'} \cup \{(q, \sigma)\} $\;
+    }
+  }
+
+  $R \gets \emptyset$\;
+  \While{$S \neq \emptyset$}{
+    $q \gets $\;
+    $S \gets S \setminus \{q\}$\;
+    $R \gets R \cup \{q\}$\;
+    \ForEach{$(q', \sigma) \in T^\leftarrow_q$}{
+      $T^\rightarrow_{q'} \gets T^\rightarrow_{q'} \setminus \{(q, \sigma)\}$\;
+      \If{$T^\rightarrow_{q'} = \emptyset$}{
+        $S \gets S \cup \{q'\}$\;
+      }
+    }
+  }
+
+  \Return{$R$}\;
+\end{algo}
+
+\section{Algoritmo di Holzer e Maletti}
+
+% CHAPTER 4
+
+\chapter{Risultati sperimentali}
+\label{cap4}
+
+\section{Ambiente e scelte implementative}
+
+\section{Generazione del campione}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/dfa_gen_fstates_nstates.png}
+  \caption{\label{fig:dfa-gen-fstates-nstates}Lorem ipsum.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/dfa_gen_fstates_pstates.png}
+  \caption{\label{fig:dfa-gen-fstates-pstates}Lorem ipsum.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/dfa_gen_pstates_nstates.png}
+  \caption{\label{fig:dfa-gen-pstates-nstates}Lorem ipsum.}
+\end{figure}
+
+\section{Risultati}
 
 % HASH {
 %   (frozenset({'B'}), frozenset({'C'})): frozenset({'A'}), 
@@ -937,27 +1256,6 @@ in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q
 % kernel {F, G, E}
 % equivalence [{A}, {C}, {D, G}, {F, B}, {E}]
 
-\chapter{Risultati sperimentali}
-
-\section{Implementazione}
-
-\subsection{Scelte implementativa}
-
-\subsection{Strutture comuni}
-
-\subsection{Algoritmo di Badr, Geffert e Shipman}
-
-\subsection{Algoritmo di Badr}
-
-\subsection{Algoritmo di Holzer e Maletti}
-
-\section{Generazione del campione}
-
-\subsection{Problema}
-
-\subsection{Tecnica}
-
-\section{Risultati}
 
 % preamble {frozenset({'A'}), frozenset({'B'}), frozenset({'C'}), frozenset({'D'})}
 % kernel {frozenset({'F'}), frozenset({'G'}), frozenset({'E'})}
@@ -976,34 +1274,7 @@ in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q
 %   E: {F, G, E}
 % }
 
-% \begin{algo}
-%   {Algoritmo di Badr, Geffert e Shipman}
-%   {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$}
-%   {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
-%   $A' \gets minimize(A)$\;
-% 
-%   $E \gets \text{matrice di zeri di dimensione } ||Q'|| \times ||Q'||$\;
-% 
-%   \For{$i \gets 1$ \KwTo $||Q'||$}{
-%     $reachable_i \gets breadthFirstSearch(A', q_i)$\;
-%     \For{$j \gets 1$ \KwTo $||Q'||$}{
-%       \If{$q_j \in reachable_i$}{
-%         $E[i][j] \gets 1$\;
-%       }
-%     }
-%   }
-% 
-%   $K \gets \emptyset$\;
-%   \For{$i \gets 1$ \KwTo $||Q'||$}{
-%     \For{$j \gets 1$ \KwTo $||Q'||$}{
-%       \If{$E[1][j] = 1$ and $E[j][j] = 1$ and $E[j][i] = 1$}{
-%         $K \gets K \cup \{ q_i \}$\;
-%         \textbf{break}\;
-%       }
-%     }
-%   }
-% 
-% \end{algo}
+
 
 % P = {i:i for i in minimal_dfa.states}
 % 
@@ -1018,43 +1289,6 @@ in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q
 %           almost_equivalent = all(P[minimal_dfa.transitions[i_1][sigma]] == P[minimal_dfa.transitions[i_2][sigma]] for sigma in minimal_dfa.input_symbols)
 %           if almost_equivalent:
 %             P[i_2] = P[i_1]
-
-
-%% 
-
-% Come visto nella sezione \ref{min-dfa}
-% 
-% \section{Definizione del problema}
-% 
-% \section{Tecniche di iperminimizzazione}
-
-% CHAPTER 3
-
-% SKELETON
-
-% \chapter{Implementazione delle tecniche di iperminimizzazione}
-% \label{cap3}
-% 
-% \section{Scelte implementative}
-% 
-% \section{Strutture comuni}
-% 
-% \section{Algoritmo di Badr, Geffert e Shipman}
-% 
-% \section{Algoritmo di Badr}
-% 
-% \section{Algoritmo di Holzer e Maletti}
-
-% CHAPTER 4
-
-% SKELETON
-
-% \chapter{Risultati sperimentali}
-% \label{cap4}
-% 
-% \section{Generazione di DFA}
-% 
-% \section{Risultati}
 
 % BIBLIOGRAPHY
 

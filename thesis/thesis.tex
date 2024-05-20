@@ -28,7 +28,7 @@
 \newtheorem{theorem}{Teorema}[chapter]        % theorem
 \newtheorem{definition}{Definizione}[chapter] % definition
 \newtheorem{lemma}{Lemma}[chapter]            % lemma
-\newtheorem{corollary}{Corollario}[theorem]    % corollary
+\newtheorem{corollary}{Corollario}[theorem]   % corollary
 
 % ALGORITHM ENVIRONMENT
 
@@ -109,7 +109,7 @@ ne vengono presentati i concetti fondamentali. Per un'esposizione più completa 
 \section{Alfabeti, parole e linguaggi}
 
 Un \emph{alfabeto}, generalmente indicato con la lettera $\Sigma$, è un insieme finito di simboli,
-entità astratte non definite formalmente cui esempi possono essere lettere e numeri.
+entità astratte non definite formalmente cui esempi possono essere lettere e cifre.
 
 Una \emph{parola} (o \emph{stringa}) è una sequenza finita di simboli giustapposti, in particolare, una parola su un alfabeto $\Sigma$
 è una sequenza finita di simboli appartenenti a $\Sigma$.
@@ -141,7 +141,7 @@ Sia $\Sigma = \{a, b\}$, allora $\Sigma^* = \{\varepsilon, a, b, aa, ab, ba, bb,
 
 In generale, un automa è un modello matematico di una macchina che esegue delle operazioni predefinite.
 
-Una delle principali tipologie di automi è quella degli automi a stati finiti (FSA), questi, sono sistemi
+Una delle principali tipologie di automi è quella degli automi a stati finiti (FSA). Questi, sono sistemi
 con un numero finito di input, che possono trovarsi in un numero finito di configurazioni interne chiamate stati. 
 In questa categoria rientrano gli automi a stati finiti deterministici (DFA) e gli automi a stati finiti 
 non deterministici (NFA).
@@ -247,7 +247,7 @@ $\delta'(q', \sigma) = \delta(q_A, \sigma)$ per ogni $\sigma \in \Sigma$, presta
 se necessario, anche alla conseguente ridefinizione dello stato iniziale e degli stati finali in $A'$.
 
 Il Teorema \ref{th:eq-rel-states} permette di estendere il risultato sopra riportato ad un numero arbitrario di
-stati equivalenti, più formalmente, siano $q_1, q_2, \dots, q_n \in Q$ con $n \in \mathbb{N}$ tali che
+stati equivalenti. Più formalmente, siano $q_1, q_2, \dots, q_n \in Q$ con $n \in \mathbb{N}$ tali che
 $q_1 \equiv q_2 \equiv \dots \equiv q_n$, allora è possibile collassare gli stati $q_1, q_2, \dots, q_n$ in un
 singolo stato $q'$ mantenendo il linguaggio riconosciuto dall'automa inalterato.
 
@@ -288,8 +288,9 @@ $\partitioned{Q}{\equiv} \ = \{ \{A\}, \{B\}, \{C\}, \{D\}, \{E\}, \{F\}, \{G, H
 Si passa quindi al collasso degli stati, in particolare, gli unici stati equivalenti risultano essere
 $G$ e $H$ che vengono sostituiti da un unico stato $G$, ottenendo l'automa in Figura \ref{fig:minified-dfa}.
 
-In ultima istanza, si sottolinea come sia ben noto un algoritmo per la minimizzazione di automi a stati finiti deterministici, 
-l'algoritmo di Hopcroft \cite{Hop71}, che permette, partendo da un DFA in ingresso, di ottenere l'automa minimo in tempo $n \cdot log(n)$.
+In ultima istanza, si sottolinea come sia ben noto un algoritmo per la minimizzazione di automi a stati 
+finiti deterministici, l'algoritmo di Hopcroft \cite{Hop71}, che permette, partendo da un DFA in ingresso, 
+di ottenere l'automa minimo in tempo $\bigo(n \log n)$.
 
 \begin{figure}[!htb]
   \centering
@@ -308,7 +309,7 @@ Recentemente è stato introdotto un nuovo problema, affine a quello della minimi
 iperminimizzazione di automi a stati finiti deterministici \cite{BGS09}.
 
 Il problema dell'iperminimizzazione può essere visto come un'estensione del problema della minimizzazione: dove la
-minimizzazione premette di ridurre al minimo il numero di stati di un DFA mantenendo inalterato il linguaggio
+minimizzazione permette di ridurre al minimo il numero di stati di un DFA mantenendo inalterato il linguaggio
 riconosciuto, l'imperminimizzazione prevede un'ulteriore riduzione al minimo numero di stati mantenendo invece
 finita la differenza simmetrica tra il linguaggio riconosciuto dall'automa originale e quello riconosciuto
 dall'automa ottenuto.
@@ -375,7 +376,7 @@ Dato un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$, 
 passo verso la risoluzione del problema dell'iperminimizzazione, distinguere le diverse tipologie di stati 
 che possono essere presenti in $A$.
 
-É possibile partizionare l'insieme degli stati $Q$ di $A$ in tre parti: l'insieme degli stati irraggiungibili $U(A)$, 
+È possibile partizionare l'insieme degli stati $Q$ di $A$ in tre parti: l'insieme degli stati irraggiungibili $U(A)$, 
 l'insieme degli stati preambolo $P(A)$ e l'insieme degli stati kernel $K(A)$.
 
 Sorvolando sulla definizione formale degli stati irraggiungibili, ben nota e non di centrale importanza per
@@ -446,13 +447,13 @@ presentare una strategia generale per l'iperminimizzazione di automi a stati fin
 
 Dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, la procedura generale per l'iperminimizzazione consiste nel:
 \begin{enumerate}
-  \item ottenere l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$ minimizzando classicamente $A$
-  \item identificare l'insieme degli stati preambolo $P(A')$ e degli stati kernel $K(A')$
-  \item determinare le classi di quasi-equivalenza su $Q'$ e costruire l'insieme $\partitioned{Q'}{\sim}$
+  \item ottenere l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$ minimizzando classicamente $A$;
+  \item identificare l'insieme degli stati preambolo $P(A')$ e degli stati kernel $K(A')$;
+  \item determinare le classi di quasi-equivalenza su $Q'$ e costruire l'insieme $\partitioned{Q'}{\sim}$;
   \item $\forall Q_i \in \partitioned{Q'}{\sim}$ tale che $||Q_i|| > 1$ ed $\exists q_{i_1} \in Q_i$ tale che $q_{i_1} \in P(A')$:
   \begin{enumerate}
-    \item se $\exists q_{i_2} \in Q_i$ tale che $q_{i_2} \in K(A')$, $\forall q \in Q_i \cap P(A')$ si collassa $q$ in $q_{i_2}$
-    \item altrimenti, tutti gli stati in $Q_i \setminus \{q_{i_1}\}$ sono collassati in $q_{i_1}$
+    \item se $\exists q_{i_2} \in Q_i$ tale che $q_{i_2} \in K(A')$, $\forall q \in Q_i \cap P(A')$ si collassa $q$ in $q_{i_2}$,
+    \item altrimenti, tutti gli stati in $Q_i \setminus \{q_{i_1}\}$ sono collassati in $q_{i_1}$.
   \end{enumerate}
 \end{enumerate}
 
@@ -500,7 +501,7 @@ migliorando la complessità temporale dei precendenti. Tutti gli algoritmi prese
 ad alto livello riportato nella Sezione \ref{sec:hyperminimization-strategy} per poi specializzarsi,
 in maniera differente, sulle strategie utilizzate per portare a termine le singole operazioni.
 
-Si porta all'attenzione del lettore come, da qui in seguito, sia $A = (Q, \Sigma, \delta, q_I, F)$
+Si porta all'attenzione del lettore come, da qui in seguito, detto $A = (Q, \Sigma, \delta, q_I, F)$
 l'automa in ingresso ad un algoritmo di iperminimizzazione, si utilizzerà $n$ per fare riferimento
 al numero di stati $||Q||$ ed $m$ per il numero di simboli in ingresso $||\Sigma||$.
 
@@ -523,10 +524,10 @@ passo successivo per semplificare la fase di identificazione degli insiemi $P(A'
   \end{cases}
 \end{equation*}
 
-In altri termini, essendo che l'algoritmo verifica l'esistenza di un cammino di lunghezza maggiore di
+In altri termini, poiché che l'algoritmo verifica l'esistenza di un cammino di lunghezza maggiore di
 1 tra ogni coppia di stati $q_i, q_j \in Q'$, trattando l'automa come un grafo, il problema può essere ricondotto 
 al calcolo della chiusura transitiva di quest'ultimo. 
-Sono noti diversi algoritmi per lo svolgimento di tale compito \cite{DFI08}, un possibile approccio classico potrebbe
+Sono noti diversi algoritmi per lo svolgimento di tale compito \cite{DFI08}. Un possibile approccio classico potrebbe
 essere quello di utilizzare l'algoritmo di Floyd-Warshall, che richiede tempo $\bigo(n^3)$, tuttavia, in questo 
 caso specifico, è possibile sfruttare una ricerca in ampiezza (BFS) partendo da ogni stato $q_i \in Q'$ per
 ottenere gli stati raggiungibili da $q_i$ e popolare la corrispondente riga nella matrice $E$, ottenendo
@@ -610,7 +611,7 @@ quasi-equivalenza.
 Equivalentemente all'algoritmo precedente, l'algoritmo di Badr minimizza come prima operazione l'automa
 in ingresso $A$ ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$.
 
-Il passo successivo prevede di identificare le classi di quasi-equivalenza, a questo scopo, si introduce
+Il passo successivo prevede di identificare le classi di quasi-equivalenza. A questo scopo, si introduce
 una nuova operazione tra automi a stati finiti deterministici e un importante risultato ad essa associato.
 
 \begin{definition}
@@ -665,8 +666,8 @@ A questo scopo si calcola l'insieme degli stati che inducono il linguaggio vuoto
 insieme complementare $S^C$. Si osservi come, dato un automa a stati finiti deterministico generico 
 $M = (Q_M, \Sigma_M, \delta_M, q_{I_M}, F_M)$, l'insieme degli stati che inducono un linguaggio finito in $M$
 è per definizione $S_M = \{q \in Q_M \ t.c. \ \forall w \in \Sigma^*_M, \ \delta_M(q, w) \notin F_M\}$ che in
-$A^\otimes$, per il Corollario \ref{cor:cross-prod-state-aeq-S}, corrisponde all'insieme $S = \{ (q, q) : q \in Q' \}$. É banale dunque osservare come la costruzione di $S$ e $S^C$
-richiede un tempo $\bigo(n)$.
+$A^\otimes$, per il Corollario \ref{cor:cross-prod-state-aeq-S}, corrisponde all'insieme $S = \{ (q, q) : q \in Q' \}$. 
+È banale dunque osservare come la costruzione di $S$ e $S^C$ richiede un tempo $\bigo(n)$.
 
 \begin{figure}
   \centering
@@ -777,10 +778,10 @@ Corollario \ref{cor:cross-prod-state-aeq-states}, al termine dell'operazione, $U
 
 Dato l'utilizzo di una struttura dati QuickFind con bilanciamento, il costo della singola operazione di $find$
 è costante, mentre il costo della singola operazione di $union$ è lineare, pertanto
-essendo che per la costruzione di $\partitioned{Q'}{\sim}$ vengono eseguite al più $n - 1$ operazioni di $union$ e si
-cicla lungo tutti gli stati in $R$, la complessità temporale di questo passaggio è $\bigo(n^2)$.
+poiché per la costruzione di $\partitioned{Q'}{\sim}$ vengono eseguite al più $n - 1$ operazioni di $union$ e si
+itera su tutti gli stati in $R$, la complessità temporale di questo passaggio è $\bigo(n^2)$.
 
-Il calcolo degli insieme $K(A')$ e $P(A')$ avviene in tempo $\bigo(n^2)$, l'idea è simile a quella dell'algoritmo di 
+Il calcolo degli insieme $K(A')$ e $P(A')$ avviene in tempo $\bigo(n^2)$. L'idea è simile a quella dell'algoritmo di 
 Badr, Geffert e Shipman, ma in questo caso ne viene cambiata la messa in pratica. Si inizializza l'insieme 
 $K = \emptyset$ che conterrà gli stati kernel e si procede iterativamente: per ogni stato $q \in Q'$ si ottiene
 l'insieme degli stati raggiungibili da $q$ in $A'$ con un cammino di lunghezza maggiore di 1, se tale insieme
@@ -804,7 +805,7 @@ rappresentato da $U$ risulta correttamente essere $\{ \{ A \}, \{ B, F \}, \{ C 
 \subsection{Algoritmo di Holzer e Maletti}
 
 L'ultimo algoritmo presentato è quello proposto da Holzer e Maletti \cite{HM10}, questo migliora i risultati
-ottenuti in precedenza infatti, indroducento una nuova stategia per l'identificazione degli stati
+ottenuti in precedenza infatti, introducendo una nuova stategia per l'identificazione degli stati
 kernel e per la costruzione delle classi di equivalenza, riduce la complessità temporale a $\bigo(n\log n)$.
 
 Siano $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico e $q_A, q_B \in Q$ due stati,
@@ -848,7 +849,7 @@ tra coppie, che migliora la complessità di un fattore $\bigo(n)$, e di collassa
 specifica che riduce un fattore $\bigo(n)$ a $\bigo(\log n)$. 
 
 \begin{definition}
-  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, si definisce
+  Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico. Si definisce
   \emph{vettore dei successori} di $q \in Q$ il vettore $V(q) = [\delta(q, \sigma) \ | \ \sigma \in \Sigma]$.
 \end{definition}
 
@@ -958,18 +959,6 @@ in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q
 
 \section{Risultati}
 
-% \begin{figure}[hbt!]
-%   \centering
-%   \includegraphics[width=1\linewidth]{images/performance-comparison-line.png}
-%   \caption{\label{fig:performance-comparison-line}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
-% \end{figure}
-% 
-% \begin{figure}[hbt!]
-%   \centering
-%   \includegraphics[width=1\linewidth]{images/performance-comparison-violin.png}
-%   \caption{\label{fig:performance-comparison-violin}L'automa in Figura \ref{fig:xcp_start} in XOR cross product con se stesso.}
-% \end{figure}
-% 
 % preamble {frozenset({'A'}), frozenset({'B'}), frozenset({'C'}), frozenset({'D'})}
 % kernel {frozenset({'F'}), frozenset({'G'}), frozenset({'E'})}
 % equivalence [{frozenset({'A'})}, {frozenset({'C'})}, {frozenset({'D'}), frozenset({'G'})}, {frozenset({'F'}), frozenset({'B'})}, {frozenset({'E'})}]
@@ -992,19 +981,46 @@ in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q
 %   {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$}
 %   {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
 %   $A' \gets minimize(A)$\;
+% 
 %   $E \gets \text{matrice di zeri di dimensione } ||Q'|| \times ||Q'||$\;
 % 
-%   
-% 
 %   \For{$i \gets 1$ \KwTo $||Q'||$}{
+%     $reachable_i \gets breadthFirstSearch(A', q_i)$\;
 %     \For{$j \gets 1$ \KwTo $||Q'||$}{
-%       \If{$q_i \neq q_j$}{
-%         $E[i,j] \gets 1$\;
+%       \If{$q_j \in reachable_i$}{
+%         $E[i][j] \gets 1$\;
 %       }
 %     }
 %   }
-% \end{algo}
 % 
+%   $K \gets \emptyset$\;
+%   \For{$i \gets 1$ \KwTo $||Q'||$}{
+%     \For{$j \gets 1$ \KwTo $||Q'||$}{
+%       \If{$E[1][j] = 1$ and $E[j][j] = 1$ and $E[j][i] = 1$}{
+%         $K \gets K \cup \{ q_i \}$\;
+%         \textbf{break}\;
+%       }
+%     }
+%   }
+% 
+% \end{algo}
+
+% P = {i:i for i in minimal_dfa.states}
+% 
+%   # n-1 iterations needed to find all the almost-equivalence relations
+%   for _ in range(len(minimal_dfa.states)-1):
+% 
+%     # search for almost-equivalent states i.e. couples of states q_i1 and q_i2, with i1 ≠ i2, that
+%     # are not already in the same set of the partition P but are almost-equivalent and merges the corresponding sets
+%     for i_1 in minimal_dfa.states:
+%       for i_2 in minimal_dfa.states:
+%         if P[i_1] != P[i_2]:
+%           almost_equivalent = all(P[minimal_dfa.transitions[i_1][sigma]] == P[minimal_dfa.transitions[i_2][sigma]] for sigma in minimal_dfa.input_symbols)
+%           if almost_equivalent:
+%             P[i_2] = P[i_1]
+
+
+%% 
 
 % Come visto nella sezione \ref{min-dfa}
 % 

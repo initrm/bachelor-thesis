@@ -816,6 +816,7 @@ $R = S \cup \{ (B, F), (F, B), (D, G), (G, D) \}$. L'insieme delle classi di qua
 rappresentato da $U$ risulta correttamente essere $\{ \{ A \}, \{ B, F \}, \{ C \}, \{ D, G \}, \{ E \} \}$.
 
 \subsection{Algoritmo di Holzer e Maletti}
+\label{sec:hm-algorithm}
 
 L'ultimo algoritmo presentato è quello proposto da Holzer e Maletti \cite{HM10}, questo migliora i risultati
 ottenuti in precedenza infatti, introducendo una nuova stategia per l'identificazione degli stati
@@ -877,7 +878,7 @@ $H$ e si prosegue con l'iterazione successiva, altrimenti, se è già associato 
 si determina lo stato tra $q_A$ e $q_B$ la cui cardinalità della parte in $R$ della quale è elemento è minore.
 Supponendo che tale stato sia $q_A$, questo viene viene rimosso da $P$ trattandosi di uno stato inutile
 in quanto collassato in $q_B$ nei prossimi passaggi, 
-vengono aggiunti a $I$ tutti gli stati $q \in Q'$ per i quali $\exists \sigma \in \Sigma$ tale che
+vengono aggiunti a $I$ tutti gli stati $q \in P$ per i quali $\exists \sigma \in \Sigma$ tale che
 $\delta_\sim(q, \sigma) = q_A$, si effettua il $merge(\delta_\sim, q_{I_\sim}, q_A, q_B)$ aggiornando
 con i valori restituiti la funzione di transizione $\delta_\sim$ e lo stato $q_{I_\sim}$ e 
 si modifica la partizione $R$ unendo le parti in $R$ a cui appartengono $q_A$ e $q_B$. In ultima istanza, 
@@ -1055,19 +1056,24 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
     $K_{Q_i}$, $P_{Q_i} \gets \emptyset, \emptyset$\;
     \For{$j \gets 1$ \KwTo $||Q'||$}{
       \If{$R[j] = i$}{
-        \lIf{$q_j \in K$}{$K_{Q_i} \gets K_{Q_i} \cup \{ q_j \}$}
-        \lElse{$P_{Q_i} \gets P_{Q_i} \cup \{ q_j \}$}
+        \If{$q_j \in K$}{
+          $K_{Q_i} \gets K_{Q_i} \cup \{ q_j \}$\;
+        }
+        \Else{
+          $P_{Q_i} \gets P_{Q_i} \cup \{ q_j \}$\;
+        }
       }
     }
 
-    $q \gets null$\;
-    \If{$P_{Q_i} \neq \emptyset$}{
-      \lIf{$K_{Q_i} \neq \emptyset$}{$q \gets q_K \in K_{Q_i}$}
-      \lElse{$q \gets q_P \in P_{Q_i}$}
-    }
+    \If{$P_{Q_i} \cup K_{Q_i} \neq \emptyset$}{
+      $q \gets q' \in P_{Q_i} \cup K_{Q_i}$\;
+      \If{$P_{Q_i} \neq \emptyset$ and $K_{Q_i} \neq \emptyset$ and $q \notin K_{Q_i}$}{
+        $q \gets q_K \in K_{Q_i}$\;
+      }
 
-    \ForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{
-      collassa lo stato $q'$ in $q$\;
+      \ForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{
+        collassa lo stato $q'$ in $q$\;
+      }
     }
   }
 
@@ -1163,7 +1169,7 @@ di quasi-equivalenza risulta essere particolarmente lunga, si utilizza un'ulteri
     \lForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{collassa lo stato $q'$ in $q$}
   }
 
-  \Return{$A'$}
+  \Return{$A$}
 \end{algo}
 
 Inoltre, si puntualizza nuovamente come, essendo l'idea dell'identificazione degli stati kernel basata
@@ -1171,7 +1177,7 @@ sulle medesime osservazioni fatte nell'algoritmo di Badr, Geffert e Shipman e du
 molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \ref{algo:badr-kernel-states}
 è affetta dalla stessa modifica descritta in precedenza.
 
-\begin{algo}{Algoritmo per l'identificazione degli stati che inducono un linguaggio finito.}
+\begin{algo}{Algoritmo per il calcolo degli stati che inducono un linguaggio finito.}
   {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ e l'insieme $S$ degli stati che
   inducono un linguaggio finito in $A$}
   {L'insieme degli stati in $A$ che inducono un linguaggio finito}
@@ -1209,6 +1215,195 @@ molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \r
 \end{algo}
 
 \section{Algoritmo di Holzer e Maletti}
+
+Nuovamente, si procede con la presentazione dell'implementazione dell'algoritmo di Holzer e Maletti
+partendo dalla funzione principale e proseguendo con le funzioni ausiliarie.
+
+\begin{algo}{Algoritmo di Holzer e Maletti.}
+  {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$}
+  {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
+  \label{algo:hm-algorithm}
+  
+  $A' \gets minimize(A)$\;
+  
+  $K \gets kernelStates(A')$ \Comment*[r]{Algoritmo \ref{algo:hm-kernel-states}}
+
+  $R \gets almostEquivalenceClasses(A')$ \Comment*[r]{Algoritmo \ref{algo:hm-almost-equivalence-classes}}
+
+  $mergeStates(A', R, K)$ \Comment*[r]{Algoritmo \ref{algo:hm-hmdfa-build}}
+
+  \Return{$A'$}\;
+\end{algo}
+
+Gli algoritmi che implementano le funzioni ausiliarie utilizzate dalla funzione principale sono organizzati come segue:
+\begin{enumerate}[label=--]
+  \item l'Algoritmo \ref{algo:hm-kernel-states} implementa la funzione \emph{kernelStates} che dato in ingresso
+  un automa minimo ne identifica e restituisce l'insieme degli stati kernel;
+  \item l'Algoritmo \ref{algo:hm-almost-equivalence-classes} implementa la funzione \emph{almostEquivalenceClasses}
+  che dato in ingresso un automa minimo ne computa e restituisce la partizione degli stati in classi di quasi-equivalenza;
+  \item l'Algoritmo \ref{algo:hm-hmdfa-build} implementa la funzione \emph{mergeStates} che dato in ingresso un
+  automa minimo, la partizione dei suoi stati in classi di quasi-equivalenza e l'insieme degli stati
+  kernel, costruisce uno dei possibili automi iperminimi quasi-equivalenti all'automa in ingresso.
+\end{enumerate}
+
+\begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
+  quoziente $\partitioned{Q}{\sim}$ e l'insieme $K(A)$}
+  {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
+  \label{algo:hm-hmdfa-build}
+
+  \ForEach{$Q_i \in \partitioned{Q}{\sim}$}{
+    $q \gets q' \in Q_i$\;
+    \lIf{$K(A) \cap Q_i \neq \emptyset$ and $q \notin K(A)$}{
+      $q \gets q_K \in K(A) \cap Q_i$
+    }
+    \lForEach{$q' \in Q_i \setminus K(A)$}{
+      $\delta, q_I \gets merge(\delta, q_I, q, q')$
+    }
+  }
+
+  \Return{$A$}
+\end{algo}
+
+Si puntualizza come, nelle implementazioni dei diversi algoritmi che costituiscono le funzioni ausiliarie,
+la funzione \emph{merge} corrisponda alla specifica strategia di collasso degli stati
+ideata da Holzer e Maletti di cui una sua possibile implementazione è data nell'Algoritmo \ref{algo:hm-merge-states}.
+
+\begin{algo}{Algoritmo per il collasso degli stati.}
+  {Una funzione di transizione $\delta$, lo stato iniziale $q_I$ e due stati $q_A, q_B$}
+  {La funzione di transizione $\delta'$ e lo stato iniziale $q_{I}'$ in seguito al collasso dello stato $q_A$ in $q_B$}
+  \label{algo:hm-merge-states}
+  
+  $\delta' \gets \emptyset$\;
+  $q_{I}' \gets q_I$\;
+  \lIf{$q_I = q_A$}{
+    $q_{I}' \gets q_B$
+  }
+
+  \ForEach{$(q, \sigma, q') \in \delta$}{
+    \If{$q \neq q_A$}{
+      \lIf{$q' = q_A$}{
+        $\delta' \gets \delta' \cup \{(q, \sigma, q_B)\}$
+      } 
+      \lElse{
+        $\delta' \gets \delta' \cup \{(q, \sigma, q')\}$
+      }
+    }
+  }
+
+  \Return{$(\delta', q_{I}')$}\;
+\end{algo}
+
+\begin{algo}{Algoritmo per l'identificazione degli stati kernel.}
+  {Un'automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
+  {L'insieme degli stati kernel $K(A)$}
+  \label{algo:hm-kernel-states}
+
+  $index, low \gets \text{tabelle hash vuote che associano } q \in Q \text{ a } n \in \mathbb{N}$\;
+  $i \gets 0$\;
+  $S \gets \text{stack vuoto}$\;
+  $C, K \gets \emptyset, \emptyset$\;
+  $tarjan(A, q_I, index, low, i, S, C)$ \Comment*[r]{Algoritmo \ref{algo:hm-tarjan}}
+  \If{$C \neq \emptyset$}{
+    $q \gets q_C \in C$\;
+    $K \gets depthFirstSearch(A, q)$\;
+  }
+  \Return{$K$}\;
+\end{algo}
+
+L'Algoritmo \ref{algo:hm-tarjan} corrisponde alla versione semplificata dell'algoritmo di Tarjan per
+la ricerca delle componenti fortemente connesse in un grafo introdotta nella descrizione dell'algoritmo di 
+iperminimizzazione di Holzer e Maletti. In particolare, l'algoritmo è stato modificato per adattarlo
+all'identificazione degli stati centrali in un automa a stati finiti deterministico minimizzato.
+
+\begin{algo}{Algoritmo di Tarjan per l'identificazione degli stati centrali.}
+  {Un'automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, uno stato $q \in Q$,
+  tabelle hash $index$ e $low$ che associano $q \in Q$ a $n \in \mathbb{N}$, un intero $i$, uno stack $S$,
+  l'insieme $C$ nel quale vengono inseriti gli stati centrali}
+  {Al termine dell'esecuzione dell'algoritmo, l'insieme $C$ contiene gli stati centrali}
+  \label{algo:hm-tarjan}
+
+  $index[q], low[q] \gets i, i$\;
+  $i \gets i + 1$\;
+  $push(S, q)$\;
+
+  \ForEach{$\sigma \in \Sigma$}{
+    \If{$containsKey(index, \delta(q, \sigma))$}{
+      $tarjan(A, \delta(q, \sigma), index, low, i, S, C)$ \Comment*[r]{chiamata ricorsiva}
+      $low[q] \gets min(low[q], low[\delta(q, \sigma)])$\;
+    }
+    \ElseIf{$\delta(q, \sigma) \in S$}{
+      $low[q] \gets min(low[q], index[\delta(q, \sigma)])$\;
+    }
+
+    \If{$\delta(q, \sigma) = q$}{
+      $C \gets C \cup \{ q \}$\;
+    }
+  }
+
+  \If{$low[q] = index[q]$}{
+    $scc \gets \emptyset$\;
+    \While{$top(S) \neq q$}{
+      $scc \gets scc \cup \{ pop(S) \}$\;
+    }
+    $scc \gets scc \cup \{ pop(S) \}$\;
+
+    \If{$||scc|| > 1$}{
+      $C \gets C \cup scc$\;
+    }
+  }
+\end{algo}
+
+Ulteriormente, negli algoritmi che si avvalgono dell'utilizzo di tabelle hash, si assume
+siano già implementate alcune funzioni necessarie al loro utilizzo e che non sono state riportate in dettaglio. 
+In particolare, la funzione \emph{containsKey} restituisce il valore booleano $true$ se la chiave passata come
+argomento è presente nella tabella hash, $false$ altrimenti. La funzione \emph{deleteKey} rimuove la chiave
+passata come argomento, e conseguentemente il valore ad essa associato, dalla tabella hash. Infine, 
+la funzione \emph{values} restituisce la lista dei valori associati alle chiavi presenti in tabella.
+
+\begin{algo}{Algoritmo per il calcolo delle classi di quasi-equivalenza.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
+  {L'insieme quoziente $\partitioned{Q}{\sim}$}
+  \label{algo:hm-almost-equivalence-classes}
+
+  $I = Q$\;
+  $P = Q$\;
+  $\delta_\sim, q_{I_\sim} = \delta, q_I$\;
+
+  $H = \text{mappa vuota che associa vettori di successori a stati}$
+
+  $R = \text{mappa vuota che associa ad uno stato la parte di cui è elemento}$\;
+
+  \ForEach{$q \in Q$} {
+    $R[q] = \{q\}$
+  }
+  
+  \While{$I \neq \emptyset$}{
+    $q_A = q \in I$\;
+    $I = I \setminus \{q_A\}$\;
+
+    \If{$q_A \in P$ and $containsKey(H, V(q_A))$}{
+      $q_B = H[V(q_A)]$\;
+
+      \If{$||R[q_B]|| \geq ||R[q_A]||$}{
+        $q_A, q_B = q_B, q_A$
+      }
+
+      $P = P \setminus \{q_B\}$\;
+      $I = I \cup \{q \in P \ | \ \exists \sigma \in \Sigma : \delta_\sim(q, \sigma) = q_B \}$\;
+
+      $\delta_\sim, q_{I_\sim} = merge(\delta_\sim, q_{I_\sim}, q_A, q_B)$\;
+
+      $R[q_A] = R[q_A] \cup R[q_B]$\;
+      $deleteKey(R, q_B)$
+    }
+
+    $H[V(q_A)] = q_A$\;
+  }
+
+  \Return{$values(R)$}\;
+\end{algo}
+
 
 % CHAPTER 4
 

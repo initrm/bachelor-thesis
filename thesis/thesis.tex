@@ -1409,27 +1409,140 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
 
 \section{Ambiente e scelte implementative}
 
+Un'attenta analisi delle possibilità offerte dai diversi linguaggi di programmazione e delle librerie
+messe a disposizione dall'ampia community open-source ha portato alla scelta di \emph{Python 3.12.3}
+come linguaggio principale per l'implementazione degli algoritmi di iperminimizzazione.
+
+Nel dettaglio, si è scelto di utilizzare la versione di Python 3.12.3 e si è fatto uso della libreria 
+\emph{automata-lib} per la rappresentazione e la manipolazione di automi a stati finiti
+deterministici poiché essa offre out-of-the-box 
+
 \section{Generazione del campione}
+
+Si rende necessario comporre un campione di automi a stati finiti deterministici su cui effettuare i test
+per valutare le prestazioni degli algoritmi di iperminimizzazione implementati. Poiché non sono stati trovati
+dataset di DFA in letteratura che soddisfino i requisiti richiesti,
+si è optato per la generazione pseudo casuale del campione.
+
+Seguendo questa strada, si è dovuta trovare una strategia per generare automi a stati finiti deterministici
+che potessero essere iperminimizzati. Infatti, la generazione totalmente pseudo casuale porta nella stragrande
+maggioranza dei casi alla generazione di automi già iperminimi.
+L'idea alla base della generazione del campione è stata quella di costruire automi a stati finiti deterministici
+con un alfabeto binario fissato $\Sigma = \{a, b\}$ ed il cui insieme di stati preambolo sia generato in maniera
+regolare mentre l'insieme di stati kernel sia generato in modo pseudo casuale. Successivamente, si sono svolti 
+dei test variando alcuni parametri per ottenere i settaggi ottimali per massimizzare la percentuale di automi
+iperminimizzabili su quelli generati.
+
+Nel dettaglio, l'insieme di stati preambolo viene generato seguendo una sorta di struttura matriciale:
+supponendo di voler generare un preambolo composto da $n$ stati, con $n, \sqrt{n} \in \mathbb{N}$, allora si compone una matrice
+$\sqrt{n} \times \sqrt{n}$ in cui ogni elemento corrisponde ad uno stato del preambolo. Lo stato iniziale corrisponde
+allo stato che si trova nella prima colonna della prima riga della matrice e la funzione di transizione 
+per il generico stato $q_{i,j}$ corrispondente all'elemento in riga $i$ e colonna $j$ è definita
+come segue: $\delta(q_{i,j}, a) = q_{i+1,j}$ se $i < \sqrt{n}$ e $\delta(q_{i,j}, b) = q_{1,j+1}$ se $j < \sqrt{n}$.
+Si osservi che la funzione di transizione resta temporaneamente parziale in quanto non definita per gli stati
+che si trovano nell'ultima riga della matrice ed il simbolo $a$ e per gli stati che si trovano nell'ultima colonna
+della matrice ed il simbolo $b$, tali transizioni saranno poi sfruttate per portare dagli stati preambolo agli 
+stati kernel. 
+
+L'insieme di stati kernel può essere invece generato in due modi differenti, che ne modificano la composizione,
+il che costituisce uno dei parametri che sono stati variati per ottenere i settaggi ottimali per massimizzare
+la percentuale di automi iperminimizzabili su quelli generati. In particolare, il kernel può essere composto da
+una singola componente fortemente connessa oppure da un numero pseudo-casuale, ovviamente minore del numero
+di stati kernel, di componenti fortemente connesse, connesse tra loro.
+La strategia per la generazione della singola componente fortemente connessa, supponendo di voler generare una
+componente composta da $n$ stati, con $n \in \mathbb{N}$, consiste nel definire la 
+funzione di transizione per il generico stato $q_i$, corrispondente all'$i$-esimo stato della componente, come
+segue: $\delta(q_i, a) = q_{(i+1) \!\! \mod n}$ e $\delta(q_i, b)$ invece uguale ad uno stato scelto pseudo
+casualmente tra quelli della componente. Il numero di stati all'interno del kernel facenti parte dell'insieme degli
+stati finali è anch'esso un parametro variabile, la scelta di quali stati è invece pseudo casuale.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/gen_dfa.png}
+  \caption{\label{fig:gen-dfa}Un esempio di automa generato dalla procedura descritta.}
+\end{figure}
+
+Infine, la connessione tra gli stati preambolo e gli stati kernel avviene in maniera pseudo casuale: per ogni
+stato preambolo $q_A$ descritto precedentemente di cui non è stata definita la transizione per un simbolo
+$\sigma \in \Sigma$, si sceglie uno stato kernel $q_B$ e si definisce la transizione $\delta(q_A, \sigma) = q_B$.
+
+Un esempio di un automa a stati finiti deterministico $A$, con $||P(A)|| = 9$, $||K(A)|| = 3$ e kernel composto da una singola
+componente fortemente connessa, generato seguendo la procedura descritta è mostrato in Figura \ref{fig:gen-dfa}.
+
+Di seguito sono riportati i risultati ottenuti dai test effettuati. Questi ultimi sono stati svolti variando 
+il rapporto tra gli stati preambolo e gli stati kernel, la percentuale di stati 
+kernel finali, la composizione del kernel ed il numero di stati dell'automa.
+
+La Figura \ref{fig:dfa-gen-fstates-nstates} mostra come varia l'efficacia dell'iperminimizzazione 
+su automi con differente numero di stati kernel finali all'aumentare del numero di stati dell'automa.
+Se ne deduce che, nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
+iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
+numero di stati finali nel kernel sono più proni all'essere iperminimizzati.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\linewidth]{images/dfa_gen_fstates_nstates.png}
-  \caption{\label{fig:dfa-gen-fstates-nstates}Lorem ipsum.}
+  \caption{\label{fig:dfa-gen-fstates-nstates}Efficacia dell'iperminimizzazione 
+  su automi con differente\\numero di stati kernel finali e numero di stati.}
 \end{figure}
+
+La Figura \ref{fig:dfa-gen-fstates-pstates} mostra come varia l'efficacia dell'iperminimizzazione 
+su automi con differente numero di stati kernel finali all'aumentare del rapporto tra stati preambolo e kernel.
+Risulta chiaro che automi con un kernel composto da più di una componente fortemente connessa e con kernel di 
+dimensioni ridotte contenente un alto numero di stati finali sono più proni all'essere iperminimizzati.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\linewidth]{images/dfa_gen_fstates_pstates.png}
-  \caption{\label{fig:dfa-gen-fstates-pstates}Lorem ipsum.}
+  \caption{\label{fig:dfa-gen-fstates-pstates}Efficacia dell'iperminimizzazione 
+  su automi con differente numero di\\stati kernel finali e rapporto tra stati preambolo e kernel.}
 \end{figure}
+
+La Figura \ref{fig:dfa-gen-pstates-nstates} mostra come varia l'efficacia dell'iperminimizzazione 
+su automi con differente rapporto tra stati preambolo e kernel all'aumentare del numero di stati dell'automa.
+Si osserva come, ancora una volta nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
+iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
+numero di stati preambolo e basso numero di stati kernel sono più proni all'essere iperminimizzati.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\linewidth]{images/dfa_gen_pstates_nstates.png}
-  \caption{\label{fig:dfa-gen-pstates-nstates}Lorem ipsum.}
+  \caption{\label{fig:dfa-gen-pstates-nstates}Efficacia dell'iperminimizzazione 
+  su automi con differente numero di stati e rapporto tra stati preambolo e kernel.}
 \end{figure}
 
-\section{Risultati}
+In conclusione, risulta chiaro che, per massimizzare la percentuale di automi generati iperminimizzabili,
+è necessario generare automi con un kernel composto da più di una componente fortemente connessa, con un alto
+numero di stati finali nel kernel e con un rapporto tra stati preambolo e kernel che favorisca nettamente
+gli stati preambolo.
+
+\section{Prestazioni}
+
+Sulla base delle osservazioni fatte in precedenza si effettuano i test per valutare le performance
+degli algoritmi di iperminimizzazione implementati. In particolare, si è scelto di confrontare
+le prestazioni degli algoritmi su un campione di automi diviso in gruppi di automi con un differente
+numero di stati, da $2^1$ a $2^8$, ciascuno dei quali composto da $256$ automi con un kernel composto
+da più di una componente fortemente connessa e con un rapporto tra stati preambolo e stati kernel ed
+un numero di stati finali nel kernel pari a $0.8$.
+
+I test sono stati effettuati su un computer MacBook Pro con processore M1, 16GB di RAM e sistema operativo
+macOS Sonoma 14.5. I risultati ottenuti sono mostrati in Figura \ref{fig:dfa-pcomparison-line} e 
+\ref{fig:dfa-pcomparison-violin}.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance_comparison_line.png}
+  \caption{\label{fig:dfa-pcomparison-line}Grafico per la valutazione delle performance degli algoritmi di iperminimizzazione.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance_comparison_violin.png}
+  \caption{\label{fig:dfa-pcomparison-violin}Grafico per la valutazione delle performance degli algoritmi di iperminimizzazione.}
+\end{figure}
+
+Si osservi come i risultati sperimentali ottenuti confermino le aspettative, l'algoritmo di Holzer e Maletti risulta essere
+il più performante tra quelli implementati, seguito dall'algoritmo di Badr ed infine da quello di Badr, Geffert e Shipman.
 
 % HASH {
 %   (frozenset({'B'}), frozenset({'C'})): frozenset({'A'}), 
@@ -1452,35 +1565,6 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
 % preamble {frozenset({'A'}), frozenset({'B'}), frozenset({'C'}), frozenset({'D'})}
 % kernel {frozenset({'F'}), frozenset({'G'}), frozenset({'E'})}
 % equivalence [{frozenset({'A'})}, {frozenset({'C'})}, {frozenset({'D'}), frozenset({'G'})}, {frozenset({'F'}), frozenset({'B'})}, {frozenset({'E'})}]
-
-% è dunque chiaro che, uno stato preambolo nella medesima classe di quasi equivalenza,
-% può essere collassato in uno stato kernel o preambolo
-
-% {
-%   A: {C, F, E, D, B, G}, 
-%   C: {F, D, G, E}, 
-%   D: {G}, 
-%   F: {F, G, E}, 
-%   B: {F, D, G, E},
-%   G: {G}, 
-%   E: {F, G, E}
-% }
-
-
-
-% P = {i:i for i in minimal_dfa.states}
-% 
-%   # n-1 iterations needed to find all the almost-equivalence relations
-%   for _ in range(len(minimal_dfa.states)-1):
-% 
-%     # search for almost-equivalent states i.e. couples of states q_i1 and q_i2, with i1 ≠ i2, that
-%     # are not already in the same set of the partition P but are almost-equivalent and merges the corresponding sets
-%     for i_1 in minimal_dfa.states:
-%       for i_2 in minimal_dfa.states:
-%         if P[i_1] != P[i_2]:
-%           almost_equivalent = all(P[minimal_dfa.transitions[i_1][sigma]] == P[minimal_dfa.transitions[i_2][sigma]] for sigma in minimal_dfa.input_symbols)
-%           if almost_equivalent:
-%             P[i_2] = P[i_1]
 
 % BIBLIOGRAPHY
 

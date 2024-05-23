@@ -677,7 +677,7 @@ che inducono un linguaggio finito in $A^\otimes$ per calcolare le classi di quas
 
 A questo scopo si calcola l'insieme degli stati che inducono il linguaggio vuoto $S$ in $A^\otimes$ ed il suo 
 insieme complementare $S^C$. Si osservi come, dato un automa a stati finiti deterministico generico 
-$M = (Q_M, \Sigma_M, \delta_M, q_{I_M}, F_M)$, l'insieme degli stati che inducono un linguaggio finito in $M$
+$M = (Q_M, \Sigma_M, \delta_M, q_{I_M}, F_M)$, l'insieme degli stati che inducono un linguaggio vuoto in $M$
 è per definizione $S_M = \{q \in Q_M \ t.c. \ \forall w \in \Sigma^*_M, \ \delta_M(q, w) \notin F_M\}$ che in
 $A^\otimes$, per il Corollario \ref{cor:cross-prod-state-aeq-S}, corrisponde all'insieme $S = \{ (q, q) : q \in Q' \}$. 
 È banale dunque osservare come la costruzione di $S$ e $S^C$ richiede un tempo $\bigo(n)$.
@@ -940,9 +940,10 @@ in Tabella \ref{tab:hm-hash-table}, risulta correttamente essere $\partitioned{Q
 
 \section{Introduzione}
 
-In questo capitolo vengono presentate delle possibili implementazioni degli algoritmi riportati
-nel Capitolo \ref{cap2}. Ciascun algoritmo è suddiviso in funzioni che implementano i singoli
-passaggi descritti nella sezione corrispondente, in modo da rendere il codice più leggibile.
+In questo capitolo vengono presentate delle possibili implementazioni degli algoritmi 
+di iperminimizzazione descritti nel Capitolo \ref{cap2}. Ciascun algoritmo è suddiviso in 
+funzioni che implementano i singoli passaggi presentati nella descrizione teorica, in modo da
+rendere più chiara la struttura dello pseudocodice e facilitarne la comprensione.
 
 \section{Algoritmo di Badr, Geffert e Shipman}
 
@@ -963,9 +964,9 @@ utilizzate dall'algoritmo principale.
 
   $R \gets almostEquivalenceClasses(A')$ \Comment*[r]{Algoritmo \ref{algo:bgs-almost-equivalence-classes}}
 
-  $A'' \gets mergeStates(A', K, R)$ \Comment*[r]{Algoritmo \ref{bgs:bgs-merge-states}}
+  $mergeStates(A', K, R)$ \Comment*[r]{Algoritmo \ref{bgs:bgs-merge-states}}
 
-  \Return{$A''$}
+  \Return{$A'$}
 \end{algo}
 
 Nel dettaglio:
@@ -1049,7 +1050,7 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
 \begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
   {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
   degli stati kernel $K(A)$ e il vettore delle classi di quasi-equivalenza $R$}
-  {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
+  {Al termine dell'esecuzione dell'algoritmo, $A$ sarà iperminimo}
   \label{bgs:bgs-merge-states}
 
   \For{$i \gets 1$ \KwTo $||Q'||$}{
@@ -1066,9 +1067,9 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
     }
 
     \If{$P_{Q_i} \cup K_{Q_i} \neq \emptyset$}{
-      $q \gets q' \in P_{Q_i} \cup K_{Q_i}$\;
+      $q \gets q' : q' \in P_{Q_i} \cup K_{Q_i}$\;
       \If{$P_{Q_i} \neq \emptyset$ and $K_{Q_i} \neq \emptyset$ and $q \notin K_{Q_i}$}{
-        $q \gets q_K \in K_{Q_i}$\;
+        $q \gets q_K : q_K \in K_{Q_i}$\;
       }
 
       \ForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{
@@ -1076,8 +1077,6 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
       }
     }
   }
-
-  \Return{$A$}
 \end{algo}
 
 \section{Algoritmo di Badr}
@@ -1087,7 +1086,7 @@ iniziando dalla funzione principale e procedendo con le funzioni ausiliarie.
 
 \begin{algo}{Algoritmo di Badr.}
   {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$}
-  {Uno dei possibili automi iperminimi $A''$ quasi-equivalenti ad $A$}
+  {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
   \label{algo:badr}
 
   $A' \gets minimize(A)$\;
@@ -1096,20 +1095,20 @@ iniziando dalla funzione principale e procedendo con le funzioni ausiliarie.
   
   $P, K \gets preambleAndKernelStates(A')$ \Comment*[r]{Algoritmo \ref{algo:badr-kernel-states}}
 
-  $A'' \gets mergeStates(A', U, P, K)$ \Comment*[r]{Algoritmo \ref{algo:badr-merge-states}}
+  $mergeStates(A', U, P, K)$ \Comment*[r]{Algoritmo \ref{algo:badr-merge-states}}
   
-  \Return{$A''$}
+  \Return{$A'$}
 \end{algo}
 
 In questo caso, le funzioni ausiliarie sono implementate come segue:
 \begin{enumerate}[label=--]
   \item l'Algoritmo \ref{algo:badr-almost-equivalence-classes} implementa la funzione \emph{almostEquivalenceClasses}
-  che dato un automa minimo in ingresso, restituisce la partizione degli stati in classi di quasi-equivalenza;
+  che dato un automa minimo in ingresso, restituisce la partizione dell'insieme degli stati in classi di quasi-equivalenza;
   \item l'Algoritmo \ref{algo:badr-kernel-states} implementa la funzione \emph{preambleAndKernelStates} che dato un
   automa minimo in ingresso, restituisce l'insieme degli stati preambolo e l'insieme degli stati kernel nell'automa;
   \item l'Algoritmo \ref{algo:badr-merge-states} implementa la funzione \emph{mergeStates} che dato in ingresso
   un automa minimo $A$, la partizione dei suoi stati in classi di quasi-equivalenza ed i suoi stati kernel e preambolo,
-  costruisce uno dei possibili automi iperminimi quasi-equivalenti ad $A$.
+  costruisce uno dei possibili automi iperminimi quasi-equivalenti all'automa in ingresso.
 \end{enumerate}
 
 \begin{algo}{Algoritmo per l'ottenimento degli stati kernel e preambolo.}
@@ -1156,20 +1155,19 @@ di quasi-equivalenza risulta essere particolarmente lunga, si utilizza un'ulteri
 \begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
   {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
   quoziente $\partitioned{Q}{\sim}$ e gli insiemi $P(A)$ e $K(A)$}
-  {Uno dei possibili automi iperminimi $A'$ quasi-equivalenti ad $A$}
+  {Al termine dell'esecuzione dell'algoritmo, $A$ sarà iperminimo}
   \label{algo:badr-merge-states}
 
   \ForEach{$Q_i \in \partitioned{Q}{\sim}$}{
-    $P_{Q_i} \gets Q_i \cap P$\;
-    $K_{Q_i} \gets Q_i \cap K$\;
+    $P_{Q_i} \gets Q_i \cap P(A)$\;
+    $K_{Q_i} \gets Q_i \cap K(A)$\;
 
-    $q \gets q_P \in P_{Q_i}$\;
-    \lIf{$K_{Q_i} \neq \emptyset$}{$q \gets q_K \in K_{Q_i}$}
     
-    \lForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{collassa lo stato $q'$ in $q$}
+    \lIf{$K_{Q_i} \neq \emptyset$}{$q \gets q_K : q_K \in K_{Q_i}$}
+    \lElse{$q \gets q_P : q_P \in P_{Q_i}$}
+    
+    \ForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{collassa lo stato $q'$ in $q$}
   }
-
-  \Return{$A$}
 \end{algo}
 
 Inoltre, si puntualizza nuovamente come, essendo l'idea dell'identificazione degli stati kernel basata
@@ -1179,7 +1177,7 @@ molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \r
 
 \begin{algo}{Algoritmo per il calcolo degli stati che inducono un linguaggio finito.}
   {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ e l'insieme $S$ degli stati che
-  inducono un linguaggio finito in $A$}
+  inducono un linguaggio vuoto in $A$}
   {L'insieme degli stati in $A$ che inducono un linguaggio finito}
   \label{algo:badr-right-finite-states}
   
@@ -1200,7 +1198,7 @@ molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \r
 
   $R \gets \emptyset$\;
   \While{$S \neq \emptyset$}{
-    $q \gets $\;
+    $q \gets q_S : q_S \in S$\;
     $S \gets S \setminus \{q\}$\;
     $R \gets R \cup \{q\}$\;
     \ForEach{$(q', \sigma) \in T^\leftarrow_q$}{
@@ -1249,20 +1247,18 @@ Gli algoritmi che implementano le funzioni ausiliarie utilizzate dalla funzione 
 \begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
   {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
   quoziente $\partitioned{Q}{\sim}$ e l'insieme $K(A)$}
-  {Uno dei possibili automi iperminimi quasi-equivalenti ad $A$}
+  {Al termine dell'esecuzione dell'algoritmo, $A$ sarà iperminimo}
   \label{algo:hm-hmdfa-build}
 
   \ForEach{$Q_i \in \partitioned{Q}{\sim}$}{
-    $q \gets q' \in Q_i$\;
+    $q \gets q' : q' \in Q_i$\;
     \lIf{$K(A) \cap Q_i \neq \emptyset$ and $q \notin K(A)$}{
-      $q \gets q_K \in K(A) \cap Q_i$
+      $q \gets q_K : q_K \in K(A) \cap Q_i$
     }
     \lForEach{$q' \in Q_i \setminus K(A)$}{
       $\delta, q_I \gets merge(\delta, q_I, q, q')$
     }
   }
-
-  \Return{$A$}
 \end{algo}
 
 Si puntualizza come, nelle implementazioni dei diversi algoritmi che costituiscono le funzioni ausiliarie,
@@ -1304,14 +1300,14 @@ ideata da Holzer e Maletti di cui una sua possibile implementazione è data nell
   $S \gets \text{stack vuoto}$\;
   $C, K \gets \emptyset, \emptyset$\;
   $tarjan(A, q_I, index, low, i, S, C)$ \Comment*[r]{Algoritmo \ref{algo:hm-tarjan}}
-  \If{$C \neq \emptyset$}{
-    $q \gets q_C \in C$\;
-    $K \gets depthFirstSearch(A, q)$\;
+  \ForEach{$q \in C$}{
+    $V \gets depthFirstSearch(A, q)$\;
+    $K \gets K \cup V$\;
   }
   \Return{$K$}\;
 \end{algo}
 
-L'Algoritmo \ref{algo:hm-tarjan} corrisponde alla versione semplificata dell'algoritmo di Tarjan per
+L'Algoritmo \ref{algo:hm-tarjan} corrisponde alla versione semplificata dell'algoritmo di Tarjan \cite{DFI08} per
 la ricerca delle componenti fortemente connesse in un grafo introdotta nella descrizione dell'algoritmo di 
 iperminimizzazione di Holzer e Maletti. In particolare, l'algoritmo è stato modificato per adattarlo
 all'identificazione degli stati centrali in un automa a stati finiti deterministico minimizzato.
@@ -1320,15 +1316,15 @@ all'identificazione degli stati centrali in un automa a stati finiti determinist
   {Un'automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, uno stato $q \in Q$,
   tabelle hash $index$ e $low$ che associano $q \in Q$ a $n \in \mathbb{N}$, un intero $i$, uno stack $S$,
   l'insieme $C$ nel quale vengono inseriti gli stati centrali}
-  {Al termine dell'esecuzione dell'algoritmo, l'insieme $C$ contiene gli stati centrali}
+  {Al termine dell'esecuzione dell'algoritmo, l'insieme $C$ conterrà gli stati centrali}
   \label{algo:hm-tarjan}
 
   $index[q], low[q] \gets i, i$\;
   $i \gets i + 1$\;
-  $push(S, q)$\;
+  $S.push(q)$\;
 
   \ForEach{$\sigma \in \Sigma$}{
-    \If{$containsKey(index, \delta(q, \sigma))$}{
+    \If{not $index.containsKey(\delta(q, \sigma))$}{
       $tarjan(A, \delta(q, \sigma), index, low, i, S, C)$ \Comment*[r]{chiamata ricorsiva}
       $low[q] \gets min(low[q], low[\delta(q, \sigma)])$\;
     }
@@ -1343,10 +1339,10 @@ all'identificazione degli stati centrali in un automa a stati finiti determinist
 
   \If{$low[q] = index[q]$}{
     $scc \gets \emptyset$\;
-    \While{$top(S) \neq q$}{
-      $scc \gets scc \cup \{ pop(S) \}$\;
+    \While{$S.top() \neq q$}{
+      $scc \gets scc \cup \{ S.pop() \}$\;
     }
-    $scc \gets scc \cup \{ pop(S) \}$\;
+    $scc \gets scc \cup \{ S.pop() \}$\;
 
     \If{$||scc|| > 1$}{
       $C \gets C \cup scc$\;
@@ -1355,7 +1351,8 @@ all'identificazione degli stati centrali in un automa a stati finiti determinist
 \end{algo}
 
 Ulteriormente, negli algoritmi che si avvalgono dell'utilizzo di tabelle hash, si assume
-siano già implementate alcune funzioni necessarie al loro utilizzo e che non sono state riportate in dettaglio. 
+che tali strutture implementino alcune funzioni necessarie al loro utilizzo i cui dettagli
+implementativi non sono riportati. 
 In particolare, la funzione \emph{containsKey} restituisce il valore booleano $true$ se la chiave passata come
 argomento è presente nella tabella hash, $false$ altrimenti. La funzione \emph{deleteKey} rimuove la chiave
 passata come argomento, e conseguentemente il valore ad essa associato, dalla tabella hash. Infine, 
@@ -1370,19 +1367,19 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
   $P = Q$\;
   $\delta_\sim, q_{I_\sim} = \delta, q_I$\;
 
-  $H = \text{mappa vuota che associa vettori di successori a stati}$
+  $H = \text{tabella hash vuota che associa vettori di successori a stati}$
 
-  $R = \text{mappa vuota che associa ad uno stato la parte di cui è elemento}$\;
+  $R = \text{tabella hash vuota che associa ad uno stato la parte di cui è elemento}$\;
 
   \ForEach{$q \in Q$} {
     $R[q] = \{q\}$
   }
   
   \While{$I \neq \emptyset$}{
-    $q_A = q \in I$\;
+    $q_A = q : q \in I$\;
     $I = I \setminus \{q_A\}$\;
 
-    \If{$q_A \in P$ and $containsKey(H, V(q_A))$}{
+    \If{$q_A \in P$ and $H.containsKey(V(q_A))$}{
       $q_B = H[V(q_A)]$\;
 
       \If{$||R[q_B]|| \geq ||R[q_A]||$}{
@@ -1395,13 +1392,13 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
       $\delta_\sim, q_{I_\sim} = merge(\delta_\sim, q_{I_\sim}, q_A, q_B)$\;
 
       $R[q_A] = R[q_A] \cup R[q_B]$\;
-      $deleteKey(R, q_B)$
+      $R.deleteKey(q_B)$
     }
 
     $H[V(q_A)] = q_A$\;
   }
 
-  \Return{$values(R)$}\;
+  \Return{$R.values()$}\;
 \end{algo}
 
 

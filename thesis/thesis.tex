@@ -33,9 +33,9 @@
 % ALGORITHM ENVIRONMENT
 
 \SetKwComment{Comment}{/* }{ */}  % comment style
-\SetKwInOut{Input}{Parametri}     % input text
-\SetKwInOut{Output}{Output}       % output text
 \SetKwRepeat{DoWhile}{do}{while}  % do while loop
+\SetKwInput{Input}{Parametri}
+\SetKwInput{Output}{Output}
 \newenvironment{algo}[3]{
   \IncMargin{1.3em}
   \begin{algorithm}
@@ -89,11 +89,14 @@ Prefazione
 \label{organizzazione}
 La tesi \`e organizzata come segue:
 \begin{itemize}
-  \item nel Capitolo 1 sono presentate le nozioni preliminari e necessarie alla comprensione dell'elaborato riguardanti la teoria degli automi;
+  \item nel Capitolo 1 sono presentate le nozioni preliminari, necessarie alla comprensione dell'elaborato,
+  riguardanti la teoria degli automi;
   \item nel Capitolo 2 è presentato il problema dell'iperminimizzazione di automi a stati finiti deterministici
   ed i diversi algoritmi proposti per la sua risoluzione;
-  \item nel Capitolo 3 sono presentate delle possibili implementazioni degli algoritmi proposti;
-  \item nel Capitolo 4 sono presentati i risultati sperimentali ottenuti;
+  \item nel Capitolo 3 sono fornite delle possibili implementazioni degli algoritmi di iperminimizzazione
+  presentati nel capitolo precedente;
+  \item nel Capitolo 4 sono presentati i risultati sperimentali ottenuti dall'implementazione ed esecuzione
+  degli algoritmi nella pratica.
 \end{itemize}
 
 % THANKS TO
@@ -676,11 +679,11 @@ In particolare, l'algoritmo utilizza il sottoinsieme $R \subset Q^\otimes$ di tu
 che inducono un linguaggio finito in $A^\otimes$ per calcolare le classi di quasi-equivalenza su $Q'$.
 
 A questo scopo si calcola l'insieme degli stati che inducono il linguaggio vuoto $S$ in $A^\otimes$ ed il suo 
-insieme complementare $S^C$. Si osservi come, dato un automa a stati finiti deterministico generico 
+insieme complementare $S^c$. Si osservi come, dato un automa a stati finiti deterministico generico 
 $M = (Q_M, \Sigma_M, \delta_M, q_{I_M}, F_M)$, l'insieme degli stati che inducono un linguaggio vuoto in $M$
 è per definizione $S_M = \{q \in Q_M \ t.c. \ \forall w \in \Sigma^*_M, \ \delta_M(q, w) \notin F_M\}$ che in
 $A^\otimes$, per il Corollario \ref{cor:cross-prod-state-aeq-S}, corrisponde all'insieme $S = \{ (q, q) : q \in Q' \}$. 
-È banale dunque osservare come la costruzione di $S$ e $S^C$ richiede un tempo $\bigo(n)$.
+È banale dunque osservare come la costruzione di $S$ e $S^c$ richiede un tempo $\bigo(n)$.
 
 \begin{figure}
   \centering
@@ -755,10 +758,10 @@ $A^\otimes$, per il Corollario \ref{cor:cross-prod-state-aeq-S}, corrisponde all
   \caption{\label{tab:dfa-xcp-transitions}Tabella di transizione dell'automa in Figura \ref{fig:dfa-xcp}.}
 \end{table}
 
-Una volta calcolati $S$ e $S^C$, l'algoritmo procede istanziando per ogni stato $q \in Q^\otimes$ due insiemi
+Una volta calcolati $S$ e $S^c$, l'algoritmo procede istanziando per ogni stato $q \in Q^\otimes$ due insiemi
 $T^\rightarrow_q = \emptyset$ e $T^\leftarrow_q = \emptyset$ che conterranno rispettivamente gli stati raggiungibili
 da $q$ e gli stati che possono raggiungere $q$. La costruzione di $T^\rightarrow_q$ e $T^\leftarrow_q$ avviene
-iterativamente: per ogni stato $q \in S^C$ e per ogni $\sigma \in \Sigma$, sia $q' = \delta^\otimes(q, \sigma)$,
+iterativamente: per ogni stato $q \in S^c$ e per ogni $\sigma \in \Sigma$, sia $q' = \delta^\otimes(q, \sigma)$,
 allora $T^\rightarrow_q = T^\rightarrow_q \cup \{ (q', \sigma) \}$ e 
 $T^\leftarrow_{q'} = T^\leftarrow_{q'} \cup \{ (q, \sigma) \}$.
 
@@ -971,13 +974,13 @@ utilizzate dall'algoritmo principale.
 
 Nel dettaglio:
 \begin{enumerate}[label=--]
-  \item l'Algoritmo \ref{algo:bgs-kernel-states} implementa la funzione \emph{kernelStates} che dato un
+  \item l'Algoritmo \ref{algo:bgs-kernel-states} implementa la funzione \emph{kernelStates} che, dato un
   automa minimo in ingresso, restituisce l'insieme degli stati kernel nell'automa;
   \item l'Algoritmo \ref{algo:bgs-almost-equivalence-classes} implementa la funzione \emph{almostEquivalenceClasses}
-  che dato un automa minimo in ingresso, restituisce un vettore che associa ad ogni stato dell'automa l'indice della
+  che, dato un automa minimo in ingresso, restituisce un vettore che associa ad ogni stato dell'automa l'indice della
   classe di quasi-equivalenza a cui appartiene;
-  \item l'Algoritmo \ref{bgs:bgs-merge-states} implementa la funzione \emph{mergeStates} che dato un automa
-  minimo in ingresso costruisce uno dei possibili automi iperminimi quasi-equivalenti ad esso.
+  \item l'Algoritmo \ref{bgs:bgs-merge-states} implementa la funzione \emph{mergeStates} che, dato un automa
+  minimo in ingresso, costruisce uno dei possibili automi iperminimi quasi-equivalenti ad esso.
 \end{enumerate}
 
 \begin{algo}{Algoritmo per l'ottenimento dell'insieme degli stati kernel.}
@@ -1014,7 +1017,7 @@ prima iterazione lo stato $q_i$ di partenza all'insieme degli stati visitati. Ne
 nell'insieme $V_i$ se e solo se raggiungibile da uno stato $q_j$, con $q_j \neq q_i$,
 tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
 
-\begin{algo}{Algoritmo per la computazione delle classi di quasi-equivalenza.}
+\begin{algo}{Algoritmo per il calcolo delle classi di quasi-equivalenza.}
   {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
   {Un vettore che associa ad ogni stato $q_i \in Q$ l'indice $j$ della classe di quasi-equivalenza $Q_j$ a cui appartiene}
   \label{algo:bgs-almost-equivalence-classes}
@@ -1067,9 +1070,9 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
     }
 
     \If{$P_{Q_i} \cup K_{Q_i} \neq \emptyset$}{
-      $q \gets q' : q' \in P_{Q_i} \cup K_{Q_i}$\;
+      $q \gets \text{un elemento qualunque di } P_{Q_i} \cup K_{Q_i}$\;
       \If{$P_{Q_i} \neq \emptyset$ and $K_{Q_i} \neq \emptyset$ and $q \notin K_{Q_i}$}{
-        $q \gets q_K : q_K \in K_{Q_i}$\;
+        $q \gets \text{un elemento qualunque di } K_{Q_i}$\;
       }
 
       \ForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{
@@ -1103,10 +1106,10 @@ iniziando dalla funzione principale e procedendo con le funzioni ausiliarie.
 In questo caso, le funzioni ausiliarie sono implementate come segue:
 \begin{enumerate}[label=--]
   \item l'Algoritmo \ref{algo:badr-almost-equivalence-classes} implementa la funzione \emph{almostEquivalenceClasses}
-  che dato un automa minimo in ingresso, restituisce la partizione dell'insieme degli stati in classi di quasi-equivalenza;
-  \item l'Algoritmo \ref{algo:badr-kernel-states} implementa la funzione \emph{preambleAndKernelStates} che dato un
+  che, dato un automa minimo in ingresso, restituisce la partizione dell'insieme degli stati in classi di quasi-equivalenza;
+  \item l'Algoritmo \ref{algo:badr-kernel-states} implementa la funzione \emph{preambleAndKernelStates} che, dato un
   automa minimo in ingresso, restituisce l'insieme degli stati preambolo e l'insieme degli stati kernel nell'automa;
-  \item l'Algoritmo \ref{algo:badr-merge-states} implementa la funzione \emph{mergeStates} che dato in ingresso
+  \item l'Algoritmo \ref{algo:badr-merge-states} implementa la funzione \emph{mergeStates} che, dato in ingresso
   un automa minimo $A$, la partizione dei suoi stati in classi di quasi-equivalenza ed i suoi stati kernel e preambolo,
   costruisce uno dei possibili automi iperminimi quasi-equivalenti all'automa in ingresso.
 \end{enumerate}
@@ -1163,8 +1166,8 @@ di quasi-equivalenza risulta essere particolarmente lunga, si utilizza un'ulteri
     $K_{Q_i} \gets Q_i \cap K(A)$\;
 
     
-    \lIf{$K_{Q_i} \neq \emptyset$}{$q \gets q_K : q_K \in K_{Q_i}$}
-    \lElse{$q \gets q_P : q_P \in P_{Q_i}$}
+    \lIf{$K_{Q_i} \neq \emptyset$}{$q \gets \text{un elemento qualunque di } K_{Q_i}$}
+    \lElse{$q \gets \text{un elemento qualunque di } P_{Q_i}$}
     
     \ForEach{$q' \in P_{Q_i} \setminus \{ q \}$}{collassa lo stato $q'$ in $q$}
   }
@@ -1181,14 +1184,14 @@ molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \r
   {L'insieme degli stati in $A$ che inducono un linguaggio finito}
   \label{algo:badr-right-finite-states}
   
-  $S^C \gets Q \setminus S$\;
+  $S^c \gets Q \setminus S$\;
 
   \ForEach{$q \in Q$}{
     $T^\rightarrow_q \gets \emptyset$\;
     $T^\leftarrow_q \gets \emptyset$\;
   }
 
-  \ForEach{$q \in S^C$}{
+  \ForEach{$q \in S^c$}{
     \ForEach{$\sigma \in \Sigma$}{
       $q' \gets \delta(q, \sigma)$\;
       $T^\rightarrow_q \gets T^\rightarrow_q \cup \{(q', \sigma)\} $\;
@@ -1198,7 +1201,7 @@ molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \r
 
   $R \gets \emptyset$\;
   \While{$S \neq \emptyset$}{
-    $q \gets q_S : q_S \in S$\;
+    $q \gets \text{un elemento qualunque di } S$\;
     $S \gets S \setminus \{q\}$\;
     $R \gets R \cup \{q\}$\;
     \ForEach{$(q', \sigma) \in T^\leftarrow_q$}{
@@ -1235,30 +1238,26 @@ partendo dalla funzione principale e proseguendo con le funzioni ausiliarie.
 
 Gli algoritmi che implementano le funzioni ausiliarie utilizzate dalla funzione principale sono organizzati come segue:
 \begin{enumerate}[label=--]
-  \item l'Algoritmo \ref{algo:hm-kernel-states} implementa la funzione \emph{kernelStates} che dato in ingresso
-  un automa minimo ne identifica e restituisce l'insieme degli stati kernel;
+  \item l'Algoritmo \ref{algo:hm-kernel-states} implementa la funzione \emph{kernelStates} che, dato in ingresso
+  un automa minimo, ne identifica e restituisce l'insieme degli stati kernel;
   \item l'Algoritmo \ref{algo:hm-almost-equivalence-classes} implementa la funzione \emph{almostEquivalenceClasses}
-  che dato in ingresso un automa minimo ne computa e restituisce la partizione degli stati in classi di quasi-equivalenza;
-  \item l'Algoritmo \ref{algo:hm-hmdfa-build} implementa la funzione \emph{mergeStates} che dato in ingresso un
+  che, dato in ingresso un automa minimo, ne computa e restituisce la partizione degli stati in classi di quasi-equivalenza;
+  \item l'Algoritmo \ref{algo:hm-hmdfa-build} implementa la funzione \emph{mergeStates} che, dato in ingresso un
   automa minimo, la partizione dei suoi stati in classi di quasi-equivalenza e l'insieme degli stati
   kernel, costruisce uno dei possibili automi iperminimi quasi-equivalenti all'automa in ingresso.
 \end{enumerate}
 
-\begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
-  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
-  quoziente $\partitioned{Q}{\sim}$ e l'insieme $K(A)$}
-  {Al termine dell'esecuzione dell'algoritmo, $A$ sarà iperminimo}
-  \label{algo:hm-hmdfa-build}
+\begin{algo}{Algoritmo per l'identificazione degli stati kernel.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
+  {L'insieme degli stati kernel $K(A)$}
+  \label{algo:hm-kernel-states}
 
-  \ForEach{$Q_i \in \partitioned{Q}{\sim}$}{
-    $q \gets q' : q' \in Q_i$\;
-    \lIf{$K(A) \cap Q_i \neq \emptyset$ and $q \notin K(A)$}{
-      $q \gets q_K : q_K \in K(A) \cap Q_i$
-    }
-    \lForEach{$q' \in Q_i \setminus K(A)$}{
-      $\delta, q_I \gets merge(\delta, q_I, q, q')$
-    }
-  }
+  $index, low \gets \text{tabelle hash vuote che associano } q \in Q \text{ a } n \in \mathbb{N}$\;
+  $i \gets 0$\;
+  $S \gets \text{stack vuoto}$\;
+  $K \gets \emptyset$\;
+  $tarjan(A, q_I, index, low, i, S, K)$ \Comment*[r]{Algoritmo \ref{algo:hm-tarjan}}
+  \Return{$K$}\;
 \end{algo}
 
 Si puntualizza come, nelle implementazioni dei diversi algoritmi che costituiscono le funzioni ausiliarie,
@@ -1290,33 +1289,36 @@ ideata da Holzer e Maletti di cui una sua possibile implementazione è data nell
   \Return{$(\delta', q_{I}')$}\;
 \end{algo}
 
-\begin{algo}{Algoritmo per l'identificazione degli stati kernel.}
-  {Un'automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
-  {L'insieme degli stati kernel $K(A)$}
-  \label{algo:hm-kernel-states}
+\begin{algo}{Algoritmo per la costruzione dell'automa iperminimo.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, l'insieme
+  quoziente $\partitioned{Q}{\sim}$ e l'insieme $K(A)$}
+  {Al termine dell'esecuzione dell'algoritmo, $A$ sarà iperminimo}
+  \label{algo:hm-hmdfa-build}
 
-  $index, low \gets \text{tabelle hash vuote che associano } q \in Q \text{ a } n \in \mathbb{N}$\;
-  $i \gets 0$\;
-  $S \gets \text{stack vuoto}$\;
-  $C, K \gets \emptyset, \emptyset$\;
-  $tarjan(A, q_I, index, low, i, S, C)$ \Comment*[r]{Algoritmo \ref{algo:hm-tarjan}}
-  \ForEach{$q \in C$}{
-    $V \gets depthFirstSearch(A, q)$\;
-    $K \gets K \cup V$\;
+  \ForEach{$Q_i \in \partitioned{Q}{\sim}$}{
+    $q \gets \text{un elemento qualunque di } Q_i$\;
+    \If{$K(A) \cap Q_i \neq \emptyset$ and $q \notin K(A)$}{
+      $q \gets \text{un elemento qualunque di } K(A) \cap Q_i$\;
+    }
+    \lForEach{$q' \in Q_i \setminus K(A)$}{
+      $\delta, q_I \gets merge(\delta, q_I, q, q')$
+    }
   }
-  \Return{$K$}\;
 \end{algo}
 
-L'Algoritmo \ref{algo:hm-tarjan} corrisponde alla versione semplificata dell'algoritmo di Tarjan \cite{DFI08} per
-la ricerca delle componenti fortemente connesse in un grafo introdotta nella descrizione dell'algoritmo di 
-iperminimizzazione di Holzer e Maletti. In particolare, l'algoritmo è stato modificato per adattarlo
-all'identificazione degli stati centrali in un automa a stati finiti deterministico minimizzato.
+Ulteriormente, negli algoritmi che si avvalgono dell'utilizzo di tabelle hash, si assume
+che tali strutture implementino alcune funzioni necessarie al loro utilizzo i cui dettagli
+implementativi non sono riportati.
+In particolare, la funzione \emph{containsKey} restituisce il valore booleano $true$ se la chiave passata come
+argomento è presente nella tabella hash, $false$ altrimenti. La funzione \emph{deleteKey} rimuove la chiave
+passata come argomento, e conseguentemente il valore ad essa associato, dalla tabella hash. Infine, 
+la funzione \emph{values} restituisce la lista dei valori associati alle chiavi presenti in tabella.
 
-\begin{algo}{Algoritmo di Tarjan per l'identificazione degli stati centrali.}
-  {Un'automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, uno stato $q \in Q$,
+\begin{algo}{Algoritmo di Tarjan per l'identificazione degli stati kernel.}
+  {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$, uno stato $q \in Q$,
   tabelle hash $index$ e $low$ che associano $q \in Q$ a $n \in \mathbb{N}$, un intero $i$, uno stack $S$,
-  l'insieme $C$ nel quale vengono inseriti gli stati centrali}
-  {Al termine dell'esecuzione dell'algoritmo, l'insieme $C$ conterrà gli stati centrali}
+  l'insieme $K$ nel quale vengono inseriti gli stati kernel}
+  {Al termine dell'esecuzione dell'algoritmo, l'insieme $K$ conterrà $K(A)$}
   \label{algo:hm-tarjan}
 
   $index[q], low[q] \gets i, i$\;
@@ -1333,7 +1335,7 @@ all'identificazione degli stati centrali in un automa a stati finiti determinist
     }
 
     \If{$\delta(q, \sigma) = q$}{
-      $C \gets C \cup \{ q \}$\;
+      $K \gets K \cup \{ q \}$\;
     }
   }
 
@@ -1342,21 +1344,18 @@ all'identificazione degli stati centrali in un automa a stati finiti determinist
     \While{$S.top() \neq q$}{
       $scc \gets scc \cup \{ S.pop() \}$\;
     }
-    $scc \gets scc \cup \{ S.pop() \}$\;
 
-    \If{$||scc|| > 1$}{
-      $C \gets C \cup scc$\;
+    \If{$||scc|| > 0$}{
+      $V \gets depthFirstSearch(A, S.pop())$\;
+      $K \gets K \cup V$\;
     }
   }
 \end{algo}
 
-Ulteriormente, negli algoritmi che si avvalgono dell'utilizzo di tabelle hash, si assume
-che tali strutture implementino alcune funzioni necessarie al loro utilizzo i cui dettagli
-implementativi non sono riportati. 
-In particolare, la funzione \emph{containsKey} restituisce il valore booleano $true$ se la chiave passata come
-argomento è presente nella tabella hash, $false$ altrimenti. La funzione \emph{deleteKey} rimuove la chiave
-passata come argomento, e conseguentemente il valore ad essa associato, dalla tabella hash. Infine, 
-la funzione \emph{values} restituisce la lista dei valori associati alle chiavi presenti in tabella.
+L'Algoritmo \ref{algo:hm-tarjan} corrisponde alla versione semplificata dell'algoritmo di Tarjan \cite{DFI08} per
+la ricerca delle componenti fortemente connesse in un grafo introdotta nella descrizione dell'algoritmo di 
+iperminimizzazione di Holzer e Maletti. In particolare, l'algoritmo è stato modificato per adattarlo
+all'identificazione degli stati centrali in un automa a stati finiti deterministico minimizzato.
 
 \begin{algo}{Algoritmo per il calcolo delle classi di quasi-equivalenza.}
   {Un automa a stati finiti deterministico minimo $A = (Q, \Sigma, \delta, q_I, F)$}
@@ -1376,7 +1375,7 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
   }
   
   \While{$I \neq \emptyset$}{
-    $q_A = q : q \in I$\;
+    $q_A = \text{un elemento qualunque di } I$\;
     $I = I \setminus \{q_A\}$\;
 
     \If{$q_A \in P$ and $H.containsKey(V(q_A))$}{
@@ -1401,7 +1400,6 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
   \Return{$R.values()$}\;
 \end{algo}
 
-
 % CHAPTER 4
 
 \chapter{Risultati sperimentali}
@@ -1409,13 +1407,17 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
 
 \section{Ambiente e scelte implementative}
 
-Un'attenta analisi delle possibilità offerte dai diversi linguaggi di programmazione e delle librerie
-messe a disposizione dall'ampia community open-source ha portato alla scelta di \emph{Python 3.12.3}
-come linguaggio principale per l'implementazione degli algoritmi di iperminimizzazione.
+La prima fase dello sviluppo è stata quella di individuare l'ambiente di sviluppo più adatto per l'implementazione
+degli algoritmi di iperminimizzazione. Un'attenta analisi delle possibilità offerte dai diversi linguaggi di
+programmazione e delle librerie messe a disposizione dall'ampia community open-source ha portato alla
+scelta di \emph{Python 3.12.3} \cite{Python} come linguaggio principale per l'implementazione degli algoritmi di iperminimizzazione.
 
-Nel dettaglio, si è scelto di utilizzare la versione di Python 3.12.3 e si è fatto uso della libreria 
-\emph{automata-lib} per la rappresentazione e la manipolazione di automi a stati finiti
-deterministici poiché essa offre out-of-the-box 
+Nel dettaglio, si è fatto ampio uso delle strutture dati offerte dalla libreria standard di Python e 
+di alcune librerie di terze parti per la manipolazione di automi a stati finiti deterministici e per la 
+manipolazione dei dati ottenuti dai test effettuati. In particolare, è stata utilzzata la 
+libreria \emph{Automata} \cite{Automata} per gestire i DFA all'interno del codice, questa
+è stata scelta poiché implementa al suo interno l'algoritmo di minimizzazione di Hopcroft e permette la
+visualizzazione degli automi sotto forma di grafi usando la libreria \emph{Graphviz}.
 
 \section{Generazione del campione}
 
@@ -1437,12 +1439,23 @@ Nel dettaglio, l'insieme di stati preambolo viene generato seguendo una sorta di
 supponendo di voler generare un preambolo composto da $n$ stati, con $n, \sqrt{n} \in \mathbb{N}$, allora si compone una matrice
 $\sqrt{n} \times \sqrt{n}$ in cui ogni elemento corrisponde ad uno stato del preambolo. Lo stato iniziale corrisponde
 allo stato che si trova nella prima colonna della prima riga della matrice e la funzione di transizione 
-per il generico stato $q_{i,j}$ corrispondente all'elemento in riga $i$ e colonna $j$ è definita
-come segue: $\delta(q_{i,j}, a) = q_{i+1,j}$ se $i < \sqrt{n}$ e $\delta(q_{i,j}, b) = q_{1,j+1}$ se $j < \sqrt{n}$.
-Si osservi che la funzione di transizione resta temporaneamente parziale in quanto non definita per gli stati
-che si trovano nell'ultima riga della matrice ed il simbolo $a$ e per gli stati che si trovano nell'ultima colonna
-della matrice ed il simbolo $b$, tali transizioni saranno poi sfruttate per portare dagli stati preambolo agli 
-stati kernel. 
+è definita $\forall q_{i,j} \text{ con } i < \sqrt{n} \text{ e } j < \sqrt{n}$ e $\forall \sigma \in \Sigma$,
+ricordando $\Sigma = \{a, b\}$ come segue:
+
+\begin{equation*}
+  \delta(q_{i,j}, \sigma) =
+  \begin{cases}
+    q_{i+1,j} & \text{se } \sigma = a \\
+    q_{1,j+1} & \text{se } \sigma = b \\
+  \end{cases}
+\end{equation*}
+
+Si osservi come la funzione di transizione risultante sia parziale in quanto $\delta(q_{i,j}, \sigma)$
+non è definita per gli stati $q_{i,j}$ con $i = \sqrt{n}$ e $\sigma = a$ o con $j = \sqrt{n}$ e $\sigma = b$.
+In altri termini $\delta$ non è definita per gli stati che si trovano nell'ultima colonna della matrice e ricevono
+in ingresso il simbolo $a$ e per gli stati che si trovano nell'ultima riga della matrice e ricevono in ingresso
+il simbolo $b$. Queste transizioni sono sfruttate e sono successivamente definite in modo da 
+portare gli stati preambolo agli stati kernel.
 
 L'insieme di stati kernel può essere invece generato in due modi differenti, che ne modificano la composizione,
 il che costituisce uno dei parametri che sono stati variati per ottenere i settaggi ottimali per massimizzare
@@ -1466,8 +1479,9 @@ Infine, la connessione tra gli stati preambolo e gli stati kernel avviene in man
 stato preambolo $q_A$ descritto precedentemente di cui non è stata definita la transizione per un simbolo
 $\sigma \in \Sigma$, si sceglie uno stato kernel $q_B$ e si definisce la transizione $\delta(q_A, \sigma) = q_B$.
 
-Un esempio di un automa a stati finiti deterministico $A$, con $||P(A)|| = 9$, $||K(A)|| = 3$ e kernel composto da una singola
-componente fortemente connessa, generato seguendo la procedura descritta è mostrato in Figura \ref{fig:gen-dfa}.
+Un esempio di un automa a stati finiti deterministico $A$, generato seguendo la procedura descritta,
+con $||P(A)|| = 9$, $||K(A)|| = 3$ e kernel composto da una singola componente fortemente connessa,
+è mostrato in Figura \ref{fig:gen-dfa}.
 
 Di seguito sono riportati i risultati ottenuti dai test effettuati. Questi ultimi sono stati svolti variando 
 il rapporto tra gli stati preambolo e gli stati kernel, la percentuale di stati 
@@ -1486,10 +1500,10 @@ numero di stati finali nel kernel sono più proni all'essere iperminimizzati.
   su automi con differente\\numero di stati kernel finali e numero di stati.}
 \end{figure}
 
-La Figura \ref{fig:dfa-gen-fstates-pstates} mostra come varia l'efficacia dell'iperminimizzazione 
+In Figura \ref{fig:dfa-gen-fstates-pstates} è possibile osservare come varia l'efficacia dell'iperminimizzazione 
 su automi con differente numero di stati kernel finali all'aumentare del rapporto tra stati preambolo e kernel.
 Risulta chiaro che automi con un kernel composto da più di una componente fortemente connessa e con kernel di 
-dimensioni ridotte contenente un alto numero di stati finali sono più proni all'essere iperminimizzati.
+dimensioni ridotte contenente un alto numero di stati finali sono più probabilmente iperminimizzabili.
 
 \begin{figure}[!htb]
   \centering
@@ -1500,7 +1514,7 @@ dimensioni ridotte contenente un alto numero di stati finali sono più proni all
 
 La Figura \ref{fig:dfa-gen-pstates-nstates} mostra come varia l'efficacia dell'iperminimizzazione 
 su automi con differente rapporto tra stati preambolo e kernel all'aumentare del numero di stati dell'automa.
-Si osserva come, ancora una volta nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
+Si osservi come, ancora una volta, nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
 iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
 numero di stati preambolo e basso numero di stati kernel sono più proni all'essere iperminimizzati.
 
@@ -1525,15 +1539,17 @@ numero di stati, da $2^1$ a $2^8$, ciascuno dei quali composto da $256$ automi c
 da più di una componente fortemente connessa e con un rapporto tra stati preambolo e stati kernel ed
 un numero di stati finali nel kernel pari a $0.8$.
 
-I test sono stati effettuati su un computer MacBook Pro con processore M1, 16GB di RAM e sistema operativo
-macOS Sonoma 14.5. I risultati ottenuti sono mostrati in Figura \ref{fig:dfa-pcomparison-line} e 
-\ref{fig:dfa-pcomparison-violin}.
-
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\linewidth]{images/performance_comparison_line.png}
   \caption{\label{fig:dfa-pcomparison-line}Grafico per la valutazione delle performance degli algoritmi di iperminimizzazione.}
 \end{figure}
+
+I test sono stati effettuati su un computer MacBook Pro con processore M1, 16GB di RAM e sistema operativo
+macOS Sonoma 14.5. I risultati ottenuti sono mostrati in Figura \ref{fig:dfa-pcomparison-line} e 
+\ref{fig:dfa-pcomparison-violin}.
+
+
 
 \begin{figure}[!htb]
   \centering

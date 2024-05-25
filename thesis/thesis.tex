@@ -1344,9 +1344,11 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
     \While{$S.top() \neq q$}{
       $scc \gets scc \cup \{ S.pop() \}$\;
     }
+    $scc \gets scc \cup \{ S.pop() \}$\;
 
-    \If{$||scc|| > 0$}{
-      $V \gets depthFirstSearch(A, S.pop())$\;
+    \If{$||scc|| > 1$}{
+      $q_{scc} \gets \text{un elemento qualunque di } scc$\;
+      $V \gets depthFirstSearch(A, q_{scc})$\;
       $K \gets K \cup V$\;
     }
   }

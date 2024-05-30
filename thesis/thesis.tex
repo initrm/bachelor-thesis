@@ -1029,7 +1029,7 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
   \DoWhile{$ae\_found$}{
     $ae\_found \gets false$\;
     \ForEach{$q_i \in Q$}{
-      \ForEach{$q_j \in Q$}{
+      \ForEach{$q_j \in Q \text{ tale che } j > i$}{
         \If{$R[i] \neq R[j]$}{
           $ae \gets true$\;
           \ForEach{$\sigma \in \Sigma$}{
@@ -1039,7 +1039,11 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
             }
           }
           \If{$ae$}{
-            $R[j] \gets R[i]$\;
+            \ForEach{$q \in Q$}{
+              \If{$R[q] = R[j]$}{
+                $R[q] \gets R[i]$\;
+              }
+            }
             $ae\_found \gets true$\;
           }
         }
@@ -1547,7 +1551,7 @@ un numero di stati finali nel kernel pari a $0.8$.
   \caption{\label{fig:dfa-pcomparison-line}Grafico per la valutazione delle performance degli algoritmi di iperminimizzazione.}
 \end{figure}
 
-I test sono stati effettuati su un computer MacBook Pro con processore M1, 16GB di RAM e sistema operativo
+I test sono stati effettuati su un computer Apple MacBook Pro con processore M1, 16GB di RAM e sistema operativo
 macOS Sonoma 14.5. I risultati ottenuti sono mostrati in Figura \ref{fig:dfa-pcomparison-line} e 
 \ref{fig:dfa-pcomparison-violin}.
 

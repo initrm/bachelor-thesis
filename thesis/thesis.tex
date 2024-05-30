@@ -3,7 +3,6 @@
 \usepackage[a4paper]{geometry}
 \usepackage{amssymb,amsmath,amsthm}
 \usepackage{graphicx}
-\usepackage{url}
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{epsfig}
@@ -12,11 +11,18 @@
 \usepackage{emptypage}
 \usepackage{thesis}
 \usepackage{parskip}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
 \usepackage{booktabs}
 \usepackage[justification=centering]{caption}
 \usepackage{nicematrix}
 \usepackage[linesnumbered, ruled]{algorithm2e}
-\usepackage[utf8]{inputenc}
+\usepackage[style=alphabetic,citestyle=alphabetic,backend=biber]{biblatex}
+\usepackage{xurl}
+
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\addbibresource{bibliography.bib}
 
 % CUSTOM COMMANDS
 
@@ -120,7 +126,7 @@ compagno di studio.
 \label{cap1}
 
 La teoria degli automi è uno dei principali e più antichi campi dell'informatica teorica. In questo capitolo
-ne vengono presentati i concetti fondamentali. Per un'esposizione più completa il lettore è rimandato a \cite{HMU06}.
+ne vengono presentati i concetti fondamentali. Per un'esposizione più completa il lettore è rimandato a \parencite{HMU06}.
 
 \section{Alfabeti, parole e linguaggi}
 
@@ -202,7 +208,7 @@ una parola $w$ è possibile raggiungere più stati. La parola è accettata se al
 finale.
 
 Data la non rilevanza degli NFA per il proseguo della trattazione, maggiori dettagli, per i quali il lettore è
-nuovamente rimandato a \cite{HMU06}, sono omessi. Si ritiene tuttavia importante puntualizzare come gli automi
+nuovamente rimandato a \parencite{HMU06}, sono omessi. Si ritiene tuttavia importante puntualizzare come gli automi
 a stati finiti non deterministici siano equivalenti a quelli deterministici, ovvero, per ogni NFA esiste un
 DFA che riconosce lo stesso linguaggio e viceversa.
 
@@ -273,7 +279,7 @@ $A_1$ è detto \emph{equivalente} ad $A_2$, denotato con $A_1 \equiv A_2$, se $q
 É banale osservare che, se $A_1 \equiv A_2$, questi accettano gli stessi input, pertanto $L(A_1) = L(A_2)$.
 
 Ricordando inoltre che una classe di equivalenza è un sottoinsieme della partizione $P$ di un insieme $S$ determinata da
-una relazione di equivalenza $R$ su $S$ \cite{Ros18}, si introduce il concetto di \emph{insieme quoziente},
+una relazione di equivalenza $R$ su $S$ \parencite{Ros18}, si introduce il concetto di \emph{insieme quoziente},
 denotato da $S \slash R$, come l'insieme delle classi di equivalenza di $R$ su $S$.
 
 \begin{theorem}
@@ -305,7 +311,7 @@ Si passa quindi al collasso degli stati, in particolare, gli unici stati equival
 $G$ e $H$ che vengono sostituiti da un unico stato $G$, ottenendo l'automa in Figura \ref{fig:minified-dfa}.
 
 In ultima istanza, si sottolinea come sia ben noto un algoritmo per la minimizzazione di automi a stati 
-finiti deterministici, l'algoritmo di Hopcroft \cite{Hop71}, che permette, partendo da un DFA in ingresso, 
+finiti deterministici, l'algoritmo di Hopcroft \parencite{Hop71}, che permette, partendo da un DFA in ingresso, 
 di ottenere l'automa minimo in tempo $\bigo(n \log n)$.
 
 \begin{figure}[!htb]
@@ -322,7 +328,7 @@ di ottenere l'automa minimo in tempo $\bigo(n \log n)$.
 \section{Introduzione}
 
 Recentemente è stato introdotto un nuovo problema, affine a quello della minimizzazione, chiamato
-iperminimizzazione di automi a stati finiti deterministici \cite{BGS09}.
+iperminimizzazione di automi a stati finiti deterministici \parencite{BGS09}.
 
 Il problema dell'iperminimizzazione può essere visto come un'estensione del problema della minimizzazione: dove la
 minimizzazione permette di ridurre al minimo il numero di stati di un DFA mantenendo inalterato il linguaggio
@@ -523,7 +529,7 @@ al numero di stati $||Q||$ ed $m$ per il numero di simboli in ingresso $||\Sigma
 
 \subsection{Algoritmo di Badr, Geffert e Shipman}
 
-L'algoritmo di Badr, Geffert e Shipman \cite{BGS09} è stato il primo algoritmo proposto per l'iperminimizzazione
+L'algoritmo di Badr, Geffert e Shipman \parencite{BGS09} è stato il primo algoritmo proposto per l'iperminimizzazione
 in grado, dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, di ottenere l'automa iperminimo 
 $A'' = (Q'', \Sigma, \delta'', q_I'', F'')$ in tempo polinomiale.
 
@@ -543,7 +549,7 @@ passo successivo per semplificare la fase di identificazione degli insiemi $P(A'
 In altri termini, poiché che l'algoritmo verifica l'esistenza di un cammino di lunghezza maggiore di
 1 tra ogni coppia di stati $q_i, q_j \in Q'$, trattando l'automa come un grafo, il problema può essere ricondotto 
 al calcolo della chiusura transitiva di quest'ultimo. 
-Sono noti diversi algoritmi per lo svolgimento di tale compito \cite{DFI08}. Un possibile approccio classico potrebbe
+Sono noti diversi algoritmi per lo svolgimento di tale compito \parencite{DFI08}. Un possibile approccio classico potrebbe
 essere quello di utilizzare l'algoritmo di Floyd-Warshall, che richiede tempo $\bigo(n^3)$, tuttavia, in questo 
 caso specifico, è possibile sfruttare una ricerca in ampiezza (BFS) partendo da ogni stato $q_i \in Q'$ per
 ottenere gli stati raggiungibili da $q_i$ e popolare la corrispondente riga nella matrice $E$, ottenendo
@@ -620,7 +626,7 @@ mentre i vettori $K$ dei kernel e $R$ delle classi di quasi-equivalenza risulter
 
 \subsection{Algoritmo di Badr}
 
-L'algoritmo proposto da Andrew Badr \cite{Badr} migliora la complessità temporale dell'algoritmo
+L'algoritmo proposto da Andrew Badr \parencite{Badr} migliora la complessità temporale dell'algoritmo
 di Badr, Geffert e Shipman cambiando quella che è la strategia utilizzata per identificare le classi di
 quasi-equivalenza.
 
@@ -775,7 +781,7 @@ a tale rimozione, $T_{q'}^\rightarrow = \emptyset$, si aggiunge $q'$ a $S$.
 \end{theorem}
 
 Al termine di questo processo, grazie al risultato esposto nel Teorema \ref{th:rfs-correctness}, per la cui dimostrazione
-il lettore è rimandato a \cite{Badr}, l'insieme $R$ conterrà come da obiettivo tutti gli stati che inducono
+il lettore è rimandato a \parencite{Badr}, l'insieme $R$ conterrà come da obiettivo tutti gli stati che inducono
 un linguaggio finito in $A^\otimes$ e sarà possibile costruire $\partitioned{Q'}{\sim}$.
 
 Essendo il numero di transizioni lineare rispetto al numero di stati, il tempo necessario alla costruzione 
@@ -786,7 +792,7 @@ lineare $\bigo(||Q^\otimes||)$. Ricordando che $A^\otimes$ è lo XOR cross produ
 temporale di questo passaggio è $\bigo(n^2)$.
 
 La costruzione di $\partitioned{Q'}{\sim}$ avviene ora semplicemente, utilizzando una struttura dati QuickFind $U$ con 
-bilanciamento \cite{DFI08}. La struttura viene inizializzata per rappresentare la partizione
+bilanciamento \parencite{DFI08}. La struttura viene inizializzata per rappresentare la partizione
 di $Q'$ composta esclusivamente da singoletti, quindi, per ogni stato $(q_A, q_B) \in R$, siano $Q_i$ e $Q_j$
 rispettivamente i risultati delle operazioni di $find(q_A)$ e $find(q_B)$ in $U$, se $Q_i \neq Q_j$, 
 allora si uniscono gli insiemi $Q_i$ e $Q_j$ tramite l'operazione $union(Q_i, Q_j)$ in $U$. Per il 
@@ -821,7 +827,7 @@ rappresentato da $U$ risulta correttamente essere $\{ \{ A \}, \{ B, F \}, \{ C 
 \subsection{Algoritmo di Holzer e Maletti}
 \label{sec:hm-algorithm}
 
-L'ultimo algoritmo presentato è quello proposto da Holzer e Maletti \cite{HM10}, questo migliora i risultati
+L'ultimo algoritmo presentato è quello proposto da Holzer e Maletti \parencite{HM10}, questo migliora i risultati
 ottenuti in precedenza infatti, introducendo una nuova stategia per l'identificazione degli stati
 kernel e per la costruzione delle classi di equivalenza, riduce la complessità temporale a $\bigo(n\log n)$.
 
@@ -853,11 +859,11 @@ l'automa in ingresso ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I',
 
 Il passo successivo prevede di identificare l'insieme $K(A')$ degli stati kernel in $A'$. L'idea alla base
 della strategia utilizzata dall'algoritmo è quella di identificare l'insieme $C$ degli stati centrali in $A'$ 
-attraverso una versione dell'algoritmo di Tarjan \cite{DFI08} per l'identificazione delle componenti fortemente
+attraverso una versione dell'algoritmo di Tarjan \parencite{DFI08} per l'identificazione delle componenti fortemente
 connesse semplificata in quanto, essendo $A'$ minimo, tutti gli stati in $Q'$ sono raggiungibili da $q_I'$. 
 Questo avviene semplicemente in quanto, per definizione, gli stati centrali sono parte di una
 componente fortemente connessa di almeno due stati o hanno un ciclo su loro stessi.
-Una volta costruito l'insieme $C$ una Depth-First Search \cite{DFI08} viene utilizzata per identificare tutti
+Una volta costruito l'insieme $C$ una Depth-First Search \parencite{DFI08} viene utilizzata per identificare tutti
 gli stati raggiungibili da uno stato centrale, questi stati sono gli stati kernel per il Lemma \ref{lem:kernel-state}.
 
 L'algoritmo passa ora ad occuparsi della costruzione delle classi di quasi-equivalenza. Per ottenere una migliore
@@ -900,7 +906,7 @@ sempre in tale caso, si aggiorna il valore associato a $V(q_A)$ in $H$ con $q_B$
 
 Le dimostrazioni dei Teoremi \ref{th:aeq-correctness} e \ref{th:hm-complexity} risultano essere particolarmente
 lunghe e complesse, nonchè il fulcro del lavoro di Holzer e Maletti, pertanto sono volontariamente omesse 
-nel presente elaborato ed il lettore è rimandato a \cite{HM10}.
+nel presente elaborato ed il lettore è rimandato a \parencite{HM10}.
 
 Banalmente, l'ultimo passaggio dell'algoritmo consiste nel costruire l'automa iperminimo $A''$ a partire dai 
 risultati ottenuti dai passaggi precedenti. Iterativamente, per ogni classe di equivalenza $Q_i \in R$, 
@@ -1358,7 +1364,7 @@ la funzione \emph{values} restituisce la lista dei valori associati alle chiavi 
   }
 \end{algo}
 
-L'Algoritmo \ref{algo:hm-tarjan} corrisponde alla versione semplificata dell'algoritmo di Tarjan \cite{DFI08} per
+L'Algoritmo \ref{algo:hm-tarjan} corrisponde alla versione semplificata dell'algoritmo di Tarjan \parencite{DFI08} per
 la ricerca delle componenti fortemente connesse in un grafo introdotta nella descrizione dell'algoritmo di 
 iperminimizzazione di Holzer e Maletti. In particolare, l'algoritmo è stato modificato per adattarlo
 all'identificazione degli stati centrali in un automa a stati finiti deterministico minimizzato.
@@ -1413,17 +1419,19 @@ all'identificazione degli stati centrali in un automa a stati finiti determinist
 
 \section{Ambiente e scelte implementative}
 
-La prima fase dello sviluppo è stata quella di individuare l'ambiente di sviluppo più adatto per l'implementazione
-degli algoritmi di iperminimizzazione. Un'attenta analisi delle possibilità offerte dai diversi linguaggi di
-programmazione e delle librerie messe a disposizione dall'ampia community open-source ha portato alla
-scelta di \emph{Python 3.12.3} \cite{Python} come linguaggio principale per l'implementazione degli algoritmi di iperminimizzazione.
+La prima fase del progetto è consistita nell'individuazione dell'ambiente di sviluppo e degli strumenti ad esso
+annessi più adatti all'implementazione degli algoritmi di iperminimizzazione e all'analisi delle relative prestazioni.
+Un attento studio delle possibilità offerte dai diversi linguaggi di programmazione general purpose e
+delle librerie messe a disposizione dall'ampia community open-source ha portato alla
+scelta di \emph{Python 3.12.3} \parencite{Python} come linguaggio principale per lo sviluppo del progetto.
 
 Nel dettaglio, si è fatto ampio uso delle strutture dati offerte dalla libreria standard di Python e 
 di alcune librerie di terze parti per la manipolazione di automi a stati finiti deterministici e per la 
 manipolazione dei dati ottenuti dai test effettuati. In particolare, è stata utilzzata la 
-libreria \emph{Automata} \cite{Automata} per gestire i DFA all'interno del codice, questa
-è stata scelta poiché implementa al suo interno l'algoritmo di minimizzazione di Hopcroft e permette la
-visualizzazione degli automi sotto forma di grafi usando la libreria \emph{Graphviz}.
+libreria \emph{Automata} \parencite{Automata} per gestire i DFA all'interno del codice, questa
+è stata scelta poiché implementa già al suo interno l'algoritmo di minimizzazione di Hopcroft e permette la
+rappresentazione degli automi sotto forma di grafi usando il popolare strumento di visualizzazione 
+\emph{Graphviz} \parencite{Graphviz}.
 
 \section{Generazione del campione}
 
@@ -1566,31 +1574,20 @@ macOS Sonoma 14.5. I risultati ottenuti sono mostrati in Figura \ref{fig:dfa-pco
 Si osservi come i risultati sperimentali ottenuti confermino le aspettative, l'algoritmo di Holzer e Maletti risulta essere
 il più performante tra quelli implementati, seguito dall'algoritmo di Badr ed infine da quello di Badr, Geffert e Shipman.
 
-% HASH {
-%   (frozenset({'B'}), frozenset({'C'})): frozenset({'A'}), 
-%   (frozenset({'D'}), frozenset({'F'})): frozenset({'C'}), 
-%   (frozenset({'G'}), frozenset({'G'})): frozenset({'D'}), 
-%   (frozenset({'E'}), frozenset({'G'})): frozenset({'F'}), 
-%   (frozenset({'E'}), frozenset({'D'})): frozenset({'B'}), 
-%   (frozenset({'F'}), frozenset({'D'})): frozenset({'E'}), 
-%   (frozenset({'B'}), frozenset({'D'})): frozenset({'E'}), 
-%   (frozenset({'D'}), frozenset({'D'})): frozenset({'D'}), 
-%   (frozenset({'D'}), frozenset({'B'})): frozenset({'C'})
-% }
-% center {F, G, E}
-
-% preamble {A, B, C, D}
-% kernel {F, G, E}
-% equivalence [{A}, {C}, {D, G}, {F, B}, {E}]
-
-
-% preamble {frozenset({'A'}), frozenset({'B'}), frozenset({'C'}), frozenset({'D'})}
-% kernel {frozenset({'F'}), frozenset({'G'}), frozenset({'E'})}
-% equivalence [{frozenset({'A'})}, {frozenset({'C'})}, {frozenset({'D'}), frozenset({'G'})}, {frozenset({'F'}), frozenset({'B'})}, {frozenset({'E'})}]
-
 % BIBLIOGRAPHY
 
-\bibliographystyle{alpha}
-\bibliography{bibliography}
+\defbibfilter{papers}{
+  type=article or
+  type=inproceedings or
+  type=incollection
+}
+
+\printbibheading
+\printbibliography[filter=papers,heading=subbibliography,title={Pubblicazioni}]
+\printbibliography[type=book,heading=subbibliography,title={Testi}]
+\printbibliography[type=software,heading=subbibliography,title={Software}]
+
+% \bibliographystyle{alpha}
+% \bibliography{bibliography}
 
 \end{document}

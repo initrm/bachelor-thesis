@@ -1046,9 +1046,7 @@ tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
           }
           \If{$ae$}{
             \ForEach{$q \in Q$}{
-              \If{$R[q] = R[j]$}{
-                $R[q] \gets R[i]$\;
-              }
+              \lIf{$R[q] = R[j]$}{$R[q] \gets R[i]$}
             }
             $ae\_found \gets true$\;
           }
@@ -1434,13 +1432,14 @@ rappresentazione degli automi sotto forma di grafi usando il popolare strumento 
 \emph{Graphviz} \parencite{Graphviz}.
 
 \section{Generazione del campione}
+\label{sec:sample-generation}
 
 Si rende necessario comporre un campione di automi a stati finiti deterministici su cui effettuare i test
 per valutare le prestazioni degli algoritmi di iperminimizzazione implementati. Poiché non sono stati trovati
 dataset di DFA in letteratura che soddisfino i requisiti richiesti,
 si è optato per la generazione pseudo casuale del campione.
 
-Seguendo questa strada, si è dovuta trovare una strategia per generare automi a stati finiti deterministici
+Seguendo quanto detto, si è dovuto trovare una strategia per generare automi a stati finiti deterministici
 che potessero essere iperminimizzati. Infatti, la generazione totalmente pseudo casuale porta nella stragrande
 maggioranza dei casi alla generazione di automi già iperminimi.
 L'idea alla base della generazione del campione è stata quella di costruire automi a stati finiti deterministici
@@ -1483,12 +1482,6 @@ segue: $\delta(q_i, a) = q_{(i+1) \!\! \mod n}$ e $\delta(q_i, b)$ invece uguale
 casualmente tra quelli della componente. Il numero di stati all'interno del kernel facenti parte dell'insieme degli
 stati finali è anch'esso un parametro variabile, la scelta di quali stati è invece pseudo casuale.
 
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.8\linewidth]{images/gen_dfa.png}
-  \caption{\label{fig:gen-dfa}Un esempio di automa generato dalla procedura descritta.}
-\end{figure}
-
 Infine, la connessione tra gli stati preambolo e gli stati kernel avviene in maniera pseudo casuale: per ogni
 stato preambolo $q_A$ descritto precedentemente di cui non è stata definita la transizione per un simbolo
 $\sigma \in \Sigma$, si sceglie uno stato kernel $q_B$ e si definisce la transizione $\delta(q_A, \sigma) = q_B$.
@@ -1497,15 +1490,18 @@ Un esempio di un automa a stati finiti deterministico $A$, generato seguendo la 
 con $||P(A)|| = 9$, $||K(A)|| = 3$ e kernel composto da una singola componente fortemente connessa,
 è mostrato in Figura \ref{fig:gen-dfa}.
 
-Di seguito sono riportati i risultati ottenuti dai test effettuati. Questi ultimi sono stati svolti variando 
-il rapporto tra gli stati preambolo e gli stati kernel, la percentuale di stati 
-kernel finali, la composizione del kernel ed il numero di stati dell'automa.
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/gen_dfa.png}
+  \caption{\label{fig:gen-dfa}Un esempio di automa generato dalla procedura descritta.}
+\end{figure}
 
-La Figura \ref{fig:dfa-gen-fstates-nstates} mostra come varia l'efficacia dell'iperminimizzazione 
-su automi con differente numero di stati kernel finali all'aumentare del numero di stati dell'automa.
-Se ne deduce che, nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
-iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
-numero di stati finali nel kernel sono più proni all'essere iperminimizzati.
+Come già accennato precedentemente, sono stati effettuati dei test variando alcuni parametri della
+procedura di generazione, i cui risultati ottenuti sono riportati di seguito, al fine di ottenere i
+settaggi ottimali per massimizzare la percentuale di automi iperminimizzabili su
+quelli generati. Maggiormente nello specifico, sono stati variati: il rapporto tra gli stati
+preambolo e gli stati kernel, la percentuale di stati kernel finali, la composizione
+del kernel e il numero di stati dell'automa.
 
 \begin{figure}[!htb]
   \centering
@@ -1513,6 +1509,12 @@ numero di stati finali nel kernel sono più proni all'essere iperminimizzati.
   \caption{\label{fig:dfa-gen-fstates-nstates}Efficacia dell'iperminimizzazione 
   su automi con differente\\numero di stati kernel finali e numero di stati.}
 \end{figure}
+
+La Figura \ref{fig:dfa-gen-fstates-nstates} mostra come varia l'efficacia dell'iperminimizzazione 
+su automi con differente numero di stati kernel finali all'aumentare del numero di stati dell'automa.
+Se ne deduce che, nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
+iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
+numero di stati finali nel kernel sono più proni all'essere iperminimizzati.
 
 In Figura \ref{fig:dfa-gen-fstates-pstates} è possibile osservare come varia l'efficacia dell'iperminimizzazione 
 su automi con differente numero di stati kernel finali all'aumentare del rapporto tra stati preambolo e kernel.
@@ -1546,33 +1548,86 @@ gli stati preambolo.
 
 \section{Prestazioni}
 
-Sulla base delle osservazioni fatte in precedenza si effettuano i test per valutare le performance
-degli algoritmi di iperminimizzazione implementati. In particolare, si è scelto di confrontare
-le prestazioni degli algoritmi su un campione di automi diviso in gruppi di automi con un differente
-numero di stati, da $2^1$ a $2^8$, ciascuno dei quali composto da $256$ automi con un kernel composto
-da più di una componente fortemente connessa e con un rapporto tra stati preambolo e stati kernel ed
-un numero di stati finali nel kernel pari a $0.8$.
+Una serie di test sperimentali è stata effettuata per valutare le prestazioni degli algoritmi di iperminimizzazione
+implementati. Gli esperimenti sono stati condotti su una macchina con processore Apple M1, 16GB di RAM e sistema
+operativo macOS Sonoma 14.5 e su di un campione di automi generati come descritto precedentemente con un numero di
+stati compreso tra $2^1$ e $2^{10}$, in particolar modo 256 automi per ogni potenza di $2$ inclusa nell'intervallo
+(estremi inclusi), in modo tale da osservare come il tempo di esecuzione di ciascun algoritmo varia in relazione
+alla dimensione, in termini di numero di stati, dell’automa in ingresso.
+
+Sulla base dei risultati ottenuti nella Sezione \ref{sec:sample-generation}, gli automi sono stati generati con 
+un kernel composto da più di una componente fortemente connessa e con un rapporto tra stati preambolo e kernel
+e con un numero di stati finali nel kernel pari a $0.8$.
+
+Gli esiti ottenuti dagli esperimenti sono riportati in Figura \ref{fig:dfa-pcomparison-all-lines}, 
+\ref{fig:dfa-pcomparison-only-lines} e \ref{fig:dfa-pcomparison-violin}. In aggiunta, sono riportate
+in Figura \ref{fig:dfa-pcomparison-violin-focus-all} e \ref{fig:dfa-pcomparison-violin-focus-only}
+le distribuzioni dei tempi di esecuzione degli algoritmi riportate in Figura \ref{fig:dfa-pcomparison-violin},
+con un migliore livello di dettaglio per maggior chiarezza.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=1\linewidth]{images/performance_comparison_line.png}
-  \caption{\label{fig:dfa-pcomparison-line}Grafico per la valutazione delle performance degli algoritmi di iperminimizzazione.}
+  \includegraphics[width=1\linewidth]{images/performance_all_line.png}
+  \caption{\label{fig:dfa-pcomparison-all-lines}Performance degli algoritmi di iperminimizzazione sull'intero campione.}
 \end{figure}
-
-I test sono stati effettuati su un computer Apple MacBook Pro con processore M1, 16GB di RAM e sistema operativo
-macOS Sonoma 14.5. I risultati ottenuti sono mostrati in Figura \ref{fig:dfa-pcomparison-line} e 
-\ref{fig:dfa-pcomparison-violin}.
-
-
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=1\linewidth]{images/performance_comparison_violin.png}
-  \caption{\label{fig:dfa-pcomparison-violin}Grafico per la valutazione delle performance degli algoritmi di iperminimizzazione.}
+  \includegraphics[width=1\linewidth]{images/performance_filtered_line.png}
+  \caption{\label{fig:dfa-pcomparison-only-lines}Performance degli algoritmi di iperminimizzazione sul
+  campione considerando solo gli automi il cui numero di stati in seguito all'iperminimizzazione
+  è minore dell'automa minimo.}
 \end{figure}
 
-Si osservi come i risultati sperimentali ottenuti confermino le aspettative, l'algoritmo di Holzer e Maletti risulta essere
-il più performante tra quelli implementati, seguito dall'algoritmo di Badr ed infine da quello di Badr, Geffert e Shipman.
+I risultati sperimentali confermano le aspettative per quanto riguarda le prestazioni dell'
+algoritmo di Holzer e Maletti, che risulta essere il più performante tra quelli implementati, mentre smentiscono
+parzialmente le aspettative per quanto riguarda gli altri due algoritmi. Infatti, l'algoritmo di Badr risulta
+essere più lento dell'algoritmo di Badr, Geffert e Shipman. Questo risultato è dovuto al fatto che 
+l'algoritmo di Badr, nella funzione che si occupa della costruzione dello XOR cross product dell'automa in
+ingresso minimizzato con se stesso ed in quella che effettua calcolo degli stati che inducono un linguaggio
+finito su quest'ultimo, effettua $\Theta(n^2)$ operazioni, dove $n$ è il numero di stati dell'automa in ingresso, il che significa che eseguirà sempre esattamente 
+un numero di operazioni nell'ordine di $n^2$. Al contrario, l'algoritmo di Badr, Geffert e Shipman, nel calcolo delle classi di
+quasi-equivalenza, effettua un numero di operazioni $\bigo(n^3 \cdot m)$, dove $m$ è il
+numero di simboli dell'alfabeto dell'automa in ingresso, questo implica che l'algoritmo effettua al più
+un numero di operazioni nell'ordine di $n^3 \cdot m$, ma come dimostrano i risultati sperimentali, tale caso
+accade molto raramente ed dunque nella pratica effettua molte meno operazioni.
+Nel dettaglio, l'algoritmo di Badr, Geffert e Shipman risulta essere il più lento tra i tre algoritmi implementati
+quando la ricerca delle coppie di stati quasi-equivalenti richiede tutte le $n-1$ iterazioni al massimo richieste
+per trovare $\partitioned{Q}{\sim}$, il che, nuovamente, accade molto di rado. La dimostrazione di quanto detto è
+osservabile in Figura \ref{fig:dfa-pcomparison-all-forced-lines}, dove è stata eseguita una versione modificata dell'algoritmo 
+dove la ricerca delle coppie di stati quasi-equivalenti non termina nel momento in cui non ci sono più coppie
+che soddisfino tale condizione ma continua fino a che non ha effettuato tutte le $n-1$ iterazioni, ovvero il caso
+peggiore possibile.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance_violin.png}
+  \caption{\label{fig:dfa-pcomparison-violin}Distribuzioni delle performance degli algoritmi di iperminimizzazione sull'intero
+  campione e considerando solo gli automi il cui numero di stati in seguito all'iperminimizzazione
+  è minore dell'automa minimo.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance_forced_all_line.png}
+  \caption{\label{fig:dfa-pcomparison-all-forced-lines}Performance degli algoritmi di iperminimizzazione sul
+  campione forzando l'algoritmo di Badr, Geffert e Shipman ad eseguire $\Theta(n^3 \cdot m)$ operazioni.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance_violin_focus_all.png}
+  \caption{\label{fig:dfa-pcomparison-violin-focus-all}Focus sulle distribuzioni delle performance degli algoritmi
+  di iperminimizzazione sull'intero campione.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance_violin_focus_only.png}
+  \caption{\label{fig:dfa-pcomparison-violin-focus-only}Focus sulle distribuzioni delle performance degli algoritmi
+  di iperminimizzazione considerando solo gli automi il cui numero di stati in seguito all'iperminimizzazione
+  è minore dell'automa minimo.}
+\end{figure}
 
 % BIBLIOGRAPHY
 

@@ -13,15 +13,12 @@
 % the if is triggered into the main.tex file by the twoside option
 % example: \documentclass[a4paper,12pt,twoside]{report}
 \if@twoside
-	\setlength\oddsidemargin{36.1\p@}
-	\setlength\evensidemargin{0\p@}
-	\setlength\marginparwidth{40\p@}
-\else
-	\setlength\oddsidemargin{36.1\p@}
-	\setlength\evensidemargin{36.1\p@}
-	\setlength\marginparwidth{40\p@}
+  \setlength\oddsidemargin{36.1\p@}
+  \setlength\evensidemargin{0\p@}
+  \setlength\marginparwidth{40\p@}
 \fi
 
+\marginparwidth 40pt
 \marginparsep 10pt
 \topmargin 0pt \headsep .5in
 \textheight 8.1in \textwidth 6in
@@ -51,29 +48,29 @@
 % so that single spacing is used.
 % (Note \def\figure{\@float{figure}set single spacing} doesn't work because figure has an optional argument)
 % \def\@xfloat#1[#2]{
-% 	\ifhmode 
-% 		\@bsphack\@floatpenalty -\@Mii
-% 	\else
-%    	\@floatpenalty-\@Miii
-% 	\fi
-% 	\def\@captype{#1}
-% 	\ifinner
+%   \ifhmode 
+%     \@bsphack\@floatpenalty -\@Mii
+%   \else
+%     \@floatpenalty-\@Miii
+%   \fi
+%   \def\@captype{#1}
+%   \ifinner
 %     \@parmoderr\@floatpenalty\z@
 %   \else
-% 		\@next\@currbox\@freelist{
-% 			\@tempcnta\csname ftype@#1\endcsname
+%     \@next\@currbox\@freelist{
+%       \@tempcnta\csname ftype@#1\endcsname
 %       \multiply\@tempcnta\@xxxii\advance\@tempcnta\sixt@@n
 %       \@tfor \@tempa :=#2\do{
-% 				\if\@tempa h\advance\@tempcnta \@ne\fi
+%         \if\@tempa h\advance\@tempcnta \@ne\fi
 %         \if\@tempa t\advance\@tempcnta \tw@\fi
 %         \if\@tempa b\advance\@tempcnta 4\relax\fi
 %         \if\@tempa p\advance\@tempcnta 8\relax\fi
 %       }
-% 			\global\count\@currbox\@tempcnta
-% 		}
-% 		\@fltovf
-% 	\fi
-% 	\global\setbox\@currbox\vbox\bgroup 
+%       \global\count\@currbox\@tempcnta
+%     }
+%     \@fltovf
+%   \fi
+%   \global\setbox\@currbox\vbox\bgroup 
 %   \def\baselinestretch{1}\@normalsize
 %   \boxmaxdepth\z@
 %   \hsize\columnwidth \@parboxrestore
@@ -81,17 +78,17 @@
 
 % redefine the macro used for footnotes to use single spacing
 \long\def\@footnotetext#1{
-	\insert\footins{
-		\def\baselinestretch{1}\footnotesize
+  \insert\footins{
+    \def\baselinestretch{1}\footnotesize
     \interlinepenalty\interfootnotelinepenalty 
     \splittopskip\footnotesep
     \splitmaxdepth \dp\strutbox \floatingpenalty \@MM
     \hsize\columnwidth \@parboxrestore
-   	\edef\@currentlabel{\csname p@footnote\endcsname\@thefnmark}\@makefntext{
-			\rule{\z@}{\footnotesep}\ignorespaces
-			#1\strut
-		}
-	}
+    \edef\@currentlabel{\csname p@footnote\endcsname\@thefnmark}\@makefntext{
+      \rule{\z@}{\footnotesep}\ignorespaces
+      #1\strut
+    }
+  }
 }
 
 % \author, \title are defined in report, here are the rest of the
@@ -114,13 +111,13 @@
 \def\@relatore{}\def\@correlatore{}\def\@anno{}\def\@matricola{}
 
 \def\@submitdate{
-	\ifcase\the\month\or
-		January\or February\or March\or April\or May\or June\or
-  	July\or August\or September\or October\or November\or December
-	\fi
+  \ifcase\the\month\or
+    January\or February\or March\or April\or May\or June\or
+    July\or August\or September\or October\or November\or December
+  \fi
   \space \number\the\year
 }
-	
+  
 \ifnum\month=12
     \@tempcnta=\year \advance\@tempcnta by 1
     \edef\@copyrightyear{\number\the\@tempcnta}
@@ -134,70 +131,56 @@
 \tablespagefalse
 
 \def\titlep{
-	\thispagestyle{empty}
+  \thispagestyle{empty}
   \begin{center}
-  	\includegraphics[width=1\linewidth]{images/logo_facolta.jpg}
+    \includegraphics[width=1\linewidth]{images/logo_facolta.jpg}
     \Large{\em \@dept}
   \end{center}
   \vskip1in
-	\begin{center}
+  \begin{center}
     \begin{doublespace}
-			{\Huge\uppercase\expandafter{\@title}}
+      {\Huge\uppercase\expandafter{\@title}}
     \end{doublespace}
-	\end{center}
-	\vfill
+  \end{center}
+  \vfill
   \begin{description}
     \item[Relatore:] \@relatore
   \end{description}
-	\vskip0.5in
+  \vskip0.5in
   \null\hfill
-	\begin{flushright}
-		Autore:\\\@author\\Matricola: \@matricola
-	\end{flushright}
+  \begin{flushright}
+    Autore:\\\@author\\Matricola: \@matricola
+  \end{flushright}
   \vfill
-	\begin{center}
+  \begin{center}
     \large   Anno Accademico \@anno
   \end{center}
+  % starts the numbering of the pages from the
+  % intentionally left blank page
+  \if@twoside
+    \addtocounter{page}{-2}
+  \else
+    \addtocounter{page}{-1}
+  \fi
 \newpage}
 
 \def\beforepreface{
-	\pagenumbering{roman}
-	\pagestyle{plain}
-	\titlep
+  \pagenumbering{roman}
+  \pagestyle{plain}
+  \titlep
 }
 
 \def\prefacesection#1{
-	\chapter*{#1}
-	\addcontentsline{toc}{chapter}{#1}
+  \chapter*{#1}
 }
 
 % the \addvspace business below is to avoid the extra space that gets put
 % in the tables of figures and tables between chapters (it makes no sense
 % now that the numbering is continuous)
 \def\afterpreface{
-	\newpage
-	\tableofcontents
-	\newpage
-	\iftablespage{
-		\addvspace{10pt}
-		\let\saveaddvspace=\addvspace
-		\def\addvspace##1{}
-		\listoftables
-		\let\addvspace=\saveaddvspace
-	}
-		\newpage
-	\fi
-	\iffigurespage{
-		\addvspace{10pt}
-		\let\saveaddvspace=\addvspace
-		\def\addvspace##1{}
-		\listoffigures
-		\let\addvspace=\saveaddvspace
-	}
-		\newpage
-	\fi
-	\pagenumbering{arabic}
-	\pagestyle{headings}
+  \tableofcontents
+  \pagenumbering{arabic}
+  \pagestyle{headings}
 }
 
 \pagestyle{headings}

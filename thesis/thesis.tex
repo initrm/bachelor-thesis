@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt,twoside, openright]{report} % use options twoside, openright for print
+\documentclass[a4paper,12pt]{report} % use options twoside, openright for print
 
 \usepackage[a4paper]{geometry}
 \usepackage{amssymb,amsmath,amsthm}
@@ -10,6 +10,7 @@
 \usepackage{setspace}
 \usepackage{emptypage}
 \usepackage{thesis}
+\usepackage{subcaption}
 \usepackage{parskip}
 \usepackage[utf8]{inputenc}
 \usepackage{csquotes}
@@ -98,18 +99,18 @@ Prefazione
 \prefacesection{Ringraziamenti}
 \addcontentsline{toc}{chapter}{Ringraziamenti}
 
-Prima di tutto, voglio ringraziare il mio relatore, Prof. Giovanni Pighizzini,
-per la sua guida e il suo supporto durante questo progetto.
-
-Voglio ringraziare la mia famiglia, per il loro costante supporto ed incoraggiamento
-durante l'intero percorso accademico e la mia ragazza, Beatrice, per essere stata sempre al mio fianco,
-anche nei momenti più difficili.
-
-Ci tengo inoltre a ringraziare le persone con le quali ho condiviso questi anni di studio, in particolare
-Tomas, con il quale ho condiviso la maggior parte delle giornate in ateneo e che è stato un eccezionale
-compagno di studio.
-
-\hfill 9 Giugno 2023
+% Prima di tutto, voglio ringraziare il mio relatore, Prof. Giovanni Pighizzini,
+% per la sua guida e il suo supporto durante questo progetto.
+% 
+% Voglio ringraziare la mia famiglia, per il loro costante supporto ed incoraggiamento
+% durante l'intero percorso accademico e la mia ragazza, Beatrice, per essere stata sempre al mio fianco,
+% anche nei momenti più difficili.
+% 
+% Ci tengo inoltre a ringraziare le persone con le quali ho condiviso questi anni di studio, in particolare
+% Tomas, con il quale ho condiviso la maggior parte delle giornate in ateneo e che è stato un eccezionale
+% compagno di studio.
+% 
+% \hfill 9 Giugno 2023
 
 % TABLE OF CONTENTS
 
@@ -1421,7 +1422,7 @@ scelta di \emph{Python 3.12.3} \parencite{Python} come linguaggio principale per
 Nel dettaglio, si è fatto ampio uso delle strutture dati offerte dalla libreria standard di Python e 
 di alcune librerie di terze parti per la manipolazione di automi a stati finiti deterministici e per la 
 manipolazione dei dati ottenuti dai test effettuati. In particolare, è stata utilzzata la 
-libreria \emph{Automata} \parencite{Automata} per gestire i DFA all'interno del codice, questa
+libreria \emph{Automata} \parencite{Automata} per gestire i DFA all'interno del codice. Questa
 è stata scelta poiché implementa già al suo interno l'algoritmo di minimizzazione di Hopcroft e permette la
 rappresentazione degli automi sotto forma di grafi usando il popolare strumento di visualizzazione 
 \emph{Graphviz} \parencite{Graphviz}.
@@ -1443,12 +1444,13 @@ regolare mentre l'insieme di stati kernel sia generato in modo pseudo casuale. S
 dei test variando alcuni parametri per ottenere i settaggi ottimali per massimizzare la percentuale di automi
 iperminimizzabili su quelli generati.
 
-Nel dettaglio, l'insieme di stati preambolo viene generato seguendo una sorta di struttura matriciale:
-supponendo di voler generare un preambolo composto da $n$ stati, con $n, \sqrt{n} \in \mathbb{N}$, allora si compone una matrice
-$\sqrt{n} \times \sqrt{n}$ in cui ogni elemento corrisponde ad uno stato del preambolo. Lo stato iniziale corrisponde
-allo stato che si trova nella prima colonna della prima riga della matrice e la funzione di transizione 
-è definita $\forall q_{i,j} \text{ con } i < \sqrt{n} \text{ e } j < \sqrt{n}$ e $\forall \sigma \in \Sigma$,
-ricordando $\Sigma = \{a, b\}$ come segue:
+Nel dettaglio, il preambolo viene generato in modo tale che stati e transizioni formino una griglia. Suppondendo di
+voler generare un preambolo composto da $n$ stati, con $n \in \mathbb{N}$, in primo luogo si compone 
+una matrice di dimensione $m$ pari a $\lfloor \log_2n \rfloor \times \lfloor \log_2n \rfloor$ in cui ogni elemento 
+corrisponde ad uno stato del preambolo. Sia $q_{i,j}$ lo stato di riga $i$ e colonna $j$, lo stato iniziale
+dell'automa sarà $q_{1,1}$, ovvero lo stato che si trova nella prima colonna della prima riga della matrice, mentre
+la funzione di transizione è definita $\forall q_{i,j} \text{ con } i < \sqrt{m} \text{ e } j < \sqrt{m}$ e 
+$\forall \sigma \in \Sigma$, ricordando $\Sigma = \{a, b\}$ come segue:
 
 \begin{equation*}
   \delta(q_{i,j}, \sigma) =
@@ -1458,11 +1460,32 @@ ricordando $\Sigma = \{a, b\}$ come segue:
   \end{cases}
 \end{equation*}
 
-Si osservi come la funzione di transizione risultante sia parziale in quanto $\delta(q_{i,j}, \sigma)$
-non è definita per gli stati $q_{i,j}$ con $i = \sqrt{n}$ e $\sigma = a$ o con $j = \sqrt{n}$ e $\sigma = b$.
-In altri termini $\delta$ non è definita per gli stati che si trovano nell'ultima colonna della matrice e ricevono
-in ingresso il simbolo $a$ e per gli stati che si trovano nell'ultima riga della matrice e ricevono in ingresso
-il simbolo $b$. Queste transizioni sono sfruttate e sono successivamente definite in modo da 
+Se $n$ non è un quadrato perfetto (i.e. $\sqrt{n} \notin \mathbb{N}$) gli $n - m$ stati preambolo rimanenti 
+vengono suddivisi in due gruppi $R$ e $B$, rispettivamente di dimensione $r = \lfloor \frac{n - m}{2} \rfloor$ e 
+$b = \lceil \frac{n - m}{2} \rceil$. Partendo dalla matrice costruita in precedenza, siano $q_{r_i}$ l'i-esimo elemento 
+del gruppo $R$ e $q_{b_j}$ il j-esimo elemento del gruppo $B$, si completa la costruzione della griglia degli
+stati preambolo come segue: $\forall i \in \{1, 2, ..., r\}, \ \delta(q_{i, \sqrt{m}}, a) = q_{r_i}$ e 
+$\forall j \in \{1, 2, ..., b\}, \ \delta(q_{\sqrt{m}, j}, b) = q_{b_i}$. In altri termini, viene aggiunta una colonna
+sulla destra contentente gli stati in $R$ ed una riga sotto contentente gli stati in $B$.
+
+\begin{figure}[!htb]
+  \begin{subfigure}[h]{0.39\linewidth}
+    \includegraphics[width=\linewidth]{images/p_gen_dfa.png}
+    \caption{Preambolo di dimensione $n=7$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[h]{0.5\linewidth}
+    \includegraphics[width=\linewidth]{images/perf_square_p_gen_dfa.png}
+    \caption{Preambolo di dimensione $n=9$}
+  \end{subfigure}
+  \caption{Due esempi di preamboli generati seguendo la tecnica descritta: \\
+  (a) con un numero di stati non quadrato perfetto, \\(b) con un numero quadrato perfetto di stati.}
+\end{figure}
+
+Si osservi come la funzione di transizione risultante sia parziale in quanto non è definita per tutti i simboli in ingresso
+per tutti gli stati del preambolo. Nello specifico, non è definita per gli stati in ultima posizione
+di ogni riga che ricevono in ingresso il simbolo $a$ e per gli stati in ultima riga che ricevono in 
+ingresso il simbolo $b$. Queste transizioni sono sfruttate e sono successivamente definite in modo da 
 portare gli stati preambolo agli stati kernel.
 
 L'insieme di stati kernel può essere invece generato in due modi differenti, che ne modificano la composizione,
@@ -1482,12 +1505,12 @@ stato preambolo $q_A$ descritto precedentemente di cui non è stata definita la 
 $\sigma \in \Sigma$, si sceglie uno stato kernel $q_B$ e si definisce la transizione $\delta(q_A, \sigma) = q_B$.
 
 Un esempio di un automa a stati finiti deterministico $A$, generato seguendo la procedura descritta,
-con $||P(A)|| = 9$, $||K(A)|| = 3$ e kernel composto da una singola componente fortemente connessa,
+con $||P(A)|| = 10$, $||K(A)|| = 2$ e kernel composto da una singola componente fortemente connessa,
 è mostrato in Figura \ref{fig:gen-dfa}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.8\linewidth]{images/gen_dfa.png}
+  \includegraphics[width=0.9\linewidth]{images/gen_dfa.png}
   \caption{\label{fig:gen-dfa}Un esempio di automa generato dalla procedura descritta.}
 \end{figure}
 
@@ -1511,11 +1534,6 @@ Se ne deduce che, nonostante all'aumentare del numero di stati diminuisca la per
 iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
 numero di stati finali nel kernel sono più proni all'essere iperminimizzati.
 
-In Figura \ref{fig:dfa-gen-fstates-pstates} è possibile osservare come varia l'efficacia dell'iperminimizzazione 
-su automi con differente numero di stati kernel finali all'aumentare del rapporto tra stati preambolo e kernel.
-Risulta chiaro che automi con un kernel composto da più di una componente fortemente connessa e con kernel di 
-dimensioni ridotte contenente un alto numero di stati finali sono più probabilmente iperminimizzabili.
-
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\linewidth]{images/dfa_gen_fstates_pstates.png}
@@ -1523,18 +1541,23 @@ dimensioni ridotte contenente un alto numero di stati finali sono più probabilm
   su automi con differente numero di\\stati kernel finali e rapporto tra stati preambolo e kernel.}
 \end{figure}
 
-La Figura \ref{fig:dfa-gen-pstates-nstates} mostra come varia l'efficacia dell'iperminimizzazione 
-su automi con differente rapporto tra stati preambolo e kernel all'aumentare del numero di stati dell'automa.
-Si osservi come, ancora una volta, nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
-iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
-numero di stati preambolo e basso numero di stati kernel sono più proni all'essere iperminimizzati.
-
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\linewidth]{images/dfa_gen_pstates_nstates.png}
   \caption{\label{fig:dfa-gen-pstates-nstates}Efficacia dell'iperminimizzazione 
   su automi con differente numero di stati e rapporto tra stati preambolo e kernel.}
 \end{figure}
+
+In Figura \ref{fig:dfa-gen-fstates-pstates} è possibile osservare come varia l'efficacia dell'iperminimizzazione 
+su automi con differente numero di stati kernel finali all'aumentare del rapporto tra stati preambolo e kernel.
+Risulta chiaro che automi con un kernel composto da più di una componente fortemente connessa e con kernel di 
+dimensioni ridotte contenente un alto numero di stati finali sono più probabilmente iperminimizzabili.
+
+La Figura \ref{fig:dfa-gen-pstates-nstates} mostra come varia l'efficacia dell'iperminimizzazione 
+su automi con differente rapporto tra stati preambolo e kernel all'aumentare del numero di stati dell'automa.
+Si osservi come, ancora una volta, nonostante all'aumentare del numero di stati diminuisca la percentuale di automi
+iperminimizzabili, automi con un kernel composto da più di una componente fortemente connessa e con un alto
+numero di stati preambolo e basso numero di stati kernel sono più proni all'essere iperminimizzati.
 
 In conclusione, risulta chiaro che, per massimizzare la percentuale di automi generati iperminimizzabili,
 è necessario generare automi con un kernel composto da più di una componente fortemente connessa, con un alto
@@ -1546,7 +1569,7 @@ gli stati preambolo.
 Una serie di test sperimentali è stata effettuata per valutare le prestazioni degli algoritmi di iperminimizzazione
 implementati. Gli esperimenti sono stati condotti su una macchina con processore Apple M1, 16GB di RAM e sistema
 operativo macOS Sonoma 14.5 e su di un campione di automi generati come descritto precedentemente con un numero di
-stati compreso tra $2^1$ e $2^{10}$, in particolar modo 256 automi per ogni potenza di $2$ inclusa nell'intervallo
+stati compreso tra $2^2$ e $2^{10}$, in particolar modo 256 automi per ogni potenza di $2$ inclusa nell'intervallo
 (estremi inclusi), in modo tale da osservare come il tempo di esecuzione di ciascun algoritmo varia in relazione
 alla dimensione, in termini di numero di stati, dell’automa in ingresso.
 
@@ -1555,10 +1578,7 @@ un kernel composto da più di una componente fortemente connessa e con un rappor
 e con un numero di stati finali nel kernel pari a $0.8$.
 
 Gli esiti ottenuti dagli esperimenti sono riportati in Figura \ref{fig:dfa-pcomparison-all-lines}, 
-\ref{fig:dfa-pcomparison-only-lines} e \ref{fig:dfa-pcomparison-violin}. In aggiunta, sono riportate
-in Figura \ref{fig:dfa-pcomparison-violin-focus-all} e \ref{fig:dfa-pcomparison-violin-focus-only}
-le distribuzioni dei tempi di esecuzione degli algoritmi riportate in Figura \ref{fig:dfa-pcomparison-violin},
-con un migliore livello di dettaglio per maggior chiarezza.
+\ref{fig:dfa-pcomparison-only-lines} e \ref{fig:dfa-pcomparison-violin}.
 
 \begin{figure}[!htb]
   \centering
@@ -1570,12 +1590,17 @@ con un migliore livello di dettaglio per maggior chiarezza.
   \centering
   \includegraphics[width=1\linewidth]{images/performance_filtered_line.png}
   \caption{\label{fig:dfa-pcomparison-only-lines}Performance degli algoritmi di iperminimizzazione sul
-  campione considerando solo gli automi il cui numero di stati in seguito all'iperminimizzazione
-  è minore dell'automa minimo.}
+  campione considerando solo gli automi iperminimizzazati diversi dell'automa minimo.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth]{images/performance_violin.png}
+  \caption{\label{fig:dfa-pcomparison-violin}Distribuzioni delle performance degli algoritmi di iperminimizzazione.}
 \end{figure}
 
 I risultati sperimentali confermano le aspettative per quanto riguarda le prestazioni dell'
-algoritmo di Holzer e Maletti, che risulta essere il più performante tra quelli implementati, mentre smentiscono
+algoritmo di Holzer e Maletti, che risulta essere il più efficiente tra quelli implementati, mentre smentiscono
 parzialmente le aspettative per quanto riguarda gli altri due algoritmi. Infatti, l'algoritmo di Badr risulta
 essere più lento dell'algoritmo di Badr, Geffert e Shipman. Questo risultato è dovuto al fatto che 
 l'algoritmo di Badr, nella funzione che si occupa della costruzione dello XOR cross product dell'automa in
@@ -1593,14 +1618,6 @@ osservabile in Figura \ref{fig:dfa-pcomparison-all-forced-lines}, dove è stata 
 dove la ricerca delle coppie di stati quasi-equivalenti non termina nel momento in cui non ci sono più coppie
 che soddisfino tale condizione ma continua fino a che non ha effettuato tutte le $n-1$ iterazioni, ovvero il caso
 peggiore possibile.
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=1\linewidth]{images/performance_violin.png}
-  \caption{\label{fig:dfa-pcomparison-violin}Distribuzioni delle performance degli algoritmi di iperminimizzazione sull'intero
-  campione e considerando solo gli automi il cui numero di stati in seguito all'iperminimizzazione
-  è minore dell'automa minimo.}
-\end{figure}
 
 \begin{figure}[!htb]
   \centering

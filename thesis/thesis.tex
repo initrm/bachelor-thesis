@@ -1446,11 +1446,12 @@ iperminimizzabili su quelli generati.
 
 Nel dettaglio, il preambolo viene generato in modo tale che stati e transizioni formino una griglia. Suppondendo di
 voler generare un preambolo composto da $n$ stati, con $n \in \mathbb{N}$, in primo luogo si compone 
-una matrice di dimensione $m$ pari a $\lfloor \log_2n \rfloor \times \lfloor \log_2n \rfloor$ in cui ogni elemento 
+una matrice di $\lfloor \sqrt{n} \rfloor$ righe e $\lfloor \sqrt{n} \rfloor$ colonne, cioè 
+di $m = ( \lfloor \sqrt{n} \rfloor )^2$ elementi, in cui ogni elemento 
 corrisponde ad uno stato del preambolo. Sia $q_{i,j}$ lo stato di riga $i$ e colonna $j$, lo stato iniziale
-dell'automa sarà $q_{1,1}$, ovvero lo stato che si trova nella prima colonna della prima riga della matrice, mentre
-la funzione di transizione è definita $\forall q_{i,j} \text{ con } i < \sqrt{m} \text{ e } j < \sqrt{m}$ e 
-$\forall \sigma \in \Sigma$, ricordando $\Sigma = \{a, b\}$ come segue:
+dell'automa sarà $q_{1,1}$, ovvero lo stato che si trova nella prima colonna della prima riga della matrice.
+La funzione di transizione è definita $\forall q_{i,j} \text{ con } i < \sqrt{m} \text{ e } j < \sqrt{m}$ e 
+$\forall \sigma \in \Sigma$, ricordando $\Sigma = \{a, b\}$, come segue:
 
 \begin{equation*}
   \delta(q_{i,j}, \sigma) =
@@ -1462,8 +1463,8 @@ $\forall \sigma \in \Sigma$, ricordando $\Sigma = \{a, b\}$ come segue:
 
 Se $n$ non è un quadrato perfetto (i.e. $\sqrt{n} \notin \mathbb{N}$) gli $n - m$ stati preambolo rimanenti 
 vengono suddivisi in due gruppi $R$ e $B$, rispettivamente di dimensione $r = \lfloor \frac{n - m}{2} \rfloor$ e 
-$b = \lceil \frac{n - m}{2} \rceil$. Partendo dalla matrice costruita in precedenza, siano $q_{r_i}$ l'i-esimo elemento 
-del gruppo $R$ e $q_{b_j}$ il j-esimo elemento del gruppo $B$, si completa la costruzione della griglia degli
+$b = \lceil \frac{n - m}{2} \rceil$. Partendo dalla matrice costruita in precedenza, siano $q_{r_i}$ l'$i$-esimo elemento 
+del gruppo $R$ e $q_{b_j}$ il $j$-esimo elemento del gruppo $B$, si completa la costruzione della griglia degli
 stati preambolo come segue: $\forall i \in \{1, 2, ..., r\}, \ \delta(q_{i, \sqrt{m}}, a) = q_{r_i}$ e 
 $\forall j \in \{1, 2, ..., b\}, \ \delta(q_{\sqrt{m}, j}, b) = q_{b_i}$. In altri termini, viene aggiunta una colonna
 sulla destra contentente gli stati in $R$ ed una riga sotto contentente gli stati in $B$.
@@ -1498,21 +1499,21 @@ componente composta da $n$ stati, con $n \in \mathbb{N}$, consiste nel definire 
 funzione di transizione per il generico stato $q_i$, corrispondente all'$i$-esimo stato della componente, come
 segue: $\delta(q_i, a) = q_{(i+1) \!\! \mod n}$ e $\delta(q_i, b)$ invece uguale ad uno stato scelto pseudo
 casualmente tra quelli della componente. Il numero di stati all'interno del kernel facenti parte dell'insieme degli
-stati finali è anch'esso un parametro variabile, la scelta di quali stati è invece pseudo casuale.
+stati finali è anch'esso un parametro variabile, la scelta di quali stati siano finali è invece pseudo casuale.
 
 Infine, la connessione tra gli stati preambolo e gli stati kernel avviene in maniera pseudo casuale: per ogni
 stato preambolo $q_A$ descritto precedentemente di cui non è stata definita la transizione per un simbolo
 $\sigma \in \Sigma$, si sceglie uno stato kernel $q_B$ e si definisce la transizione $\delta(q_A, \sigma) = q_B$.
 
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/gen_dfa.png}
+  \caption{\label{fig:gen-dfa}Un esempio di automa generato dalla procedura descritta.}
+\end{figure}
+
 Un esempio di un automa a stati finiti deterministico $A$, generato seguendo la procedura descritta,
 con $||P(A)|| = 10$, $||K(A)|| = 2$ e kernel composto da una singola componente fortemente connessa,
 è mostrato in Figura \ref{fig:gen-dfa}.
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.9\linewidth]{images/gen_dfa.png}
-  \caption{\label{fig:gen-dfa}Un esempio di automa generato dalla procedura descritta.}
-\end{figure}
 
 Come già accennato precedentemente, sono stati effettuati dei test variando alcuni parametri della
 procedura di generazione, i cui risultati ottenuti sono riportati di seguito, al fine di ottenere i
@@ -1573,9 +1574,10 @@ stati compreso tra $2^2$ e $2^{10}$, in particolar modo 256 automi per ogni pote
 (estremi inclusi), in modo tale da osservare come il tempo di esecuzione di ciascun algoritmo varia in relazione
 alla dimensione, in termini di numero di stati, dell’automa in ingresso.
 
-Sulla base dei risultati ottenuti nella Sezione \ref{sec:sample-generation}, gli automi sono stati generati con 
-un kernel composto da più di una componente fortemente connessa e con un rapporto tra stati preambolo e kernel
-e con un numero di stati finali nel kernel pari a $0.8$.
+Sulla base dei risultati ottenuti nella Sezione \ref{sec:sample-generation}, sono stati generati automi
+con un rapporto tra stati preambolo e kernel che favorisca nettamente gli stati preambolo,
+pari a $0.8$, e con un kernel formato da più di una componente fortemente connessa nel quale
+l'$80\%$ degli stati da cui è composto appartenga all'insieme degli stati finali.
 
 Gli esiti ottenuti dagli esperimenti sono riportati in Figura \ref{fig:dfa-pcomparison-all-lines}, 
 \ref{fig:dfa-pcomparison-only-lines} e \ref{fig:dfa-pcomparison-violin}.
@@ -1610,7 +1612,7 @@ un numero di operazioni nell'ordine di $n^2$. Al contrario, l'algoritmo di Badr,
 quasi-equivalenza, effettua un numero di operazioni $\bigo(n^3 \cdot m)$, dove $m$ è il
 numero di simboli dell'alfabeto dell'automa in ingresso, questo implica che l'algoritmo effettua al più
 un numero di operazioni nell'ordine di $n^3 \cdot m$, ma come dimostrano i risultati sperimentali, tale caso
-accade molto raramente ed dunque nella pratica effettua molte meno operazioni.
+accade molto raramente e dunque nella pratica effettua molte meno operazioni.
 Nel dettaglio, l'algoritmo di Badr, Geffert e Shipman risulta essere il più lento tra i tre algoritmi implementati
 quando la ricerca delle coppie di stati quasi-equivalenti richiede tutte le $n-1$ iterazioni al massimo richieste
 per trovare $\partitioned{Q}{\sim}$, il che, nuovamente, accade molto di rado. La dimostrazione di quanto detto è

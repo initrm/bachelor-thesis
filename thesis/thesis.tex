@@ -1461,7 +1461,7 @@ $\forall \sigma \in \Sigma$, ricordando $\Sigma = \{a, b\}$, come segue:
   \end{cases}
 \end{equation*}
 
-Se $n$ non è un quadrato perfetto (i.e. $\sqrt{n} \notin \mathbb{N}$) gli $n - m$ stati preambolo rimanenti 
+Se $n$ non è un quadrato perfetto (i.e. $\sqrt{n} \notin \mathbb{N}$), gli $n - m$ stati preambolo rimanenti 
 vengono suddivisi in due gruppi $R$ e $B$, rispettivamente di dimensione $r = \lfloor \frac{n - m}{2} \rfloor$ e 
 $b = \lceil \frac{n - m}{2} \rceil$. Partendo dalla matrice costruita in precedenza, siano $q_{r_i}$ l'$i$-esimo elemento 
 del gruppo $R$ e $q_{b_j}$ il $j$-esimo elemento del gruppo $B$, si completa la costruzione della griglia degli
@@ -1497,11 +1497,11 @@ di stati kernel, di componenti fortemente connesse, connesse tra loro.
 La strategia per la generazione della singola componente fortemente connessa, supponendo di voler generare una
 componente composta da $n$ stati, con $n \in \mathbb{N}$, consiste nel definire la 
 funzione di transizione per il generico stato $q_i$, corrispondente all'$i$-esimo stato della componente, come
-segue: $\delta(q_i, a) = q_{(i+1) \!\! \mod n}$ e $\delta(q_i, b)$ invece uguale ad uno stato scelto pseudo
-casualmente tra quelli della componente. Il numero di stati all'interno del kernel facenti parte dell'insieme degli
+segue: $\delta(q_i, a) = q_{(i+1) \!\! \mod n}$ e $\delta(q_i, b)$ invece uguale ad uno stato scelto 
+pseudo-casualmente tra quelli della componente. Il numero di stati all'interno del kernel facenti parte dell'insieme degli
 stati finali è anch'esso un parametro variabile, la scelta di quali stati siano finali è invece pseudo casuale.
 
-Infine, la connessione tra gli stati preambolo e gli stati kernel avviene in maniera pseudo casuale: per ogni
+Infine, la connessione tra gli stati preambolo e gli stati kernel avviene in maniera pseudo-casuale: per ogni
 stato preambolo $q_A$ descritto precedentemente di cui non è stata definita la transizione per un simbolo
 $\sigma \in \Sigma$, si sceglie uno stato kernel $q_B$ e si definisce la transizione $\delta(q_A, \sigma) = q_B$.
 
@@ -1567,7 +1567,7 @@ gli stati preambolo.
 
 \section{Prestazioni}
 
-Una serie di test sperimentali è stata effettuata per valutare le prestazioni degli algoritmi di iperminimizzazione
+È stata effettuata una serie di test sperimentali per valutare le prestazioni degli algoritmi di iperminimizzazione
 implementati. Gli esperimenti sono stati condotti su una macchina con processore Apple M1, 16GB di RAM e sistema
 operativo macOS Sonoma 14.5 e su di un campione di automi generati come descritto precedentemente con un numero di
 stati compreso tra $2^2$ e $2^{10}$, in particolar modo 256 automi per ogni potenza di $2$ inclusa nell'intervallo

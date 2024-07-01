@@ -92,7 +92,31 @@
 \prefacesection{Prefazione}
 \addcontentsline{toc}{chapter}{Prefazione}
 
-Prefazione
+Nel campo dell'informatica teorica, uno degli argomenti di maggiore interesse è quello relativo alla 
+teoria degli automi. Uno dei problemi di maggiore rilevanza in questo campo è quello della minimizzazione
+di automi a stati finiti deterministici. Recentemente è stato introdotto un nuovo problema affine a quello
+della minimizzazione, chiamato iperminimizzazione di automi a stati finiti deterministici. Questo problema
+consiste, dato un DFA, nel trovare un automa a stati finiti deterministico con il minor
+numero di stati possibile che riconosca un linguaggio finitamente
+differente rispetto al linguaggio riconosciuto dall'automa di partenza, tale automa è detto iperminimo. 
+In altri termini, dato un automa iperminimo, un qualsiasi altro automa
+con un numero minore di stati riconosce un linguaggio infinitamente differente.
+Tale risultato è di grande interesse teorico e pratico, e la ricerca di algoritmi efficienti per la sua
+risoluzione è stata oggetto di studio negli ultimi anni. Nel corso del tempo sono emersi principalmente 
+tre algoritmi per la risoluzione del problema, ciascuno dei quali rifinisce le strategie utilizzate migliorando
+la complessità computazionale dell'algoritmo precedente. Il primo algoritmo presentato in grado di risolvere
+il problema dell'iperminimizzazione in tempo polinomiale è stato quello di Badr, Geffert e Shipman, con 
+complessità computazionale pari a $\bigo(n^3 \cdot m)$, dove $n$ è il numero di stati dell'automa di partenza
+e $m$ è la cardinalità dell'alfabeto dell'automa.
+Successivamente, sono stati proposti due nuovi algoritmi, l'algoritmo di Badr, con complessità
+computazionale $\bigo(n^2)$, e l'algoritmo di Holzer e Maletti, con complessità computazionale 
+uguale a $\bigo(n \log n)$. In questa tesi vengono indagate le prestazioni di questi
+algoritmi nel tentativo di stabilire un ponte tra la teoria e la pratica. Gli algoritmi sono stati
+dunque implementati e sono stati condotti dei test per valutarne le presentazioni.
+I risultati degli esperimenti svolti mostrano come l'algoritmo di Holzer e Maletti sia il più efficiente tra quelli proposti, 
+in accordo con quanto previsto dalla teoria. Più sorprendentemente invece l'algoritmo di Badr, Geffert e Shipman, 
+nonostante abbia una complessità computazionale maggiore rispetto all'algoritmo di Badr, 
+si comporta in media meglio nella pratica in quanto il caso peggiore si verifica molto di rado.
 
 % ORGANIZATION
 
@@ -102,12 +126,12 @@ La tesi è organizzata come segue:
 \begin{itemize}
   \item nel Capitolo 1 sono presentate le nozioni preliminari, necessarie alla comprensione dell'elaborato,
   riguardanti la teoria degli automi;
-  \item nel Capitolo 2 è presentato il problema dell'iperminimizzazione di automi a stati finiti deterministici
+  \item nel Capitolo 2 sono esposti il problema dell'iperminimizzazione di automi a stati finiti deterministici
   ed i diversi algoritmi proposti per la sua risoluzione;
   \item nel Capitolo 3 sono fornite delle possibili implementazioni degli algoritmi di iperminimizzazione
   presentati nel capitolo precedente;
-  \item nel Capitolo 4 sono presentati i risultati sperimentali ottenuti dall'implementazione ed esecuzione
-  degli algoritmi nella pratica.
+  \item nel Capitolo 4 sono discussi i risultati sperimentali ottenuti dagli esperimenti condotti per la valutazione
+  delle prestazioni degli algoritmi di iperminimizzazione nella pratica.
 \end{itemize}
 
 % THANKS TO
@@ -115,18 +139,18 @@ La tesi è organizzata come segue:
 \prefacesection{Ringraziamenti}
 \addcontentsline{toc}{chapter}{Ringraziamenti}
 
-% Prima di tutto, voglio ringraziare il mio relatore, Prof. Giovanni Pighizzini,
-% per la sua guida e il suo supporto durante questo progetto.
-% 
-% Voglio ringraziare la mia famiglia, per il loro costante supporto ed incoraggiamento
-% durante l'intero percorso accademico e la mia ragazza, Beatrice, per essere stata sempre al mio fianco,
-% anche nei momenti più difficili.
-% 
-% Ci tengo inoltre a ringraziare le persone con le quali ho condiviso questi anni di studio, in particolare
-% Tomas, con il quale ho condiviso la maggior parte delle giornate in ateneo e che è stato un eccezionale
-% compagno di studio.
-% 
-% \hfill 9 Giugno 2023
+Prima di tutto, voglio ringraziare il mio relatore, Prof. Giovanni Pighizzini,
+per la sua guida e il suo supporto durante questo progetto.
+
+Voglio ringraziare la mia famiglia, per il loro costante supporto ed incoraggiamento
+durante l'intero percorso accademico e la mia ragazza, Beatrice, per essere stata sempre al mio fianco,
+anche nei momenti più difficili.
+
+Ci tengo inoltre a ringraziare le persone con le quali ho condiviso questi anni di studio, in particolare
+Tomas, con il quale ho condiviso la maggior parte delle giornate in ateneo e che è stato un eccezionale
+compagno di studio.
+
+\hfill \today
 
 % TABLE OF CONTENTS
 

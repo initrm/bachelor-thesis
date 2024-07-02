@@ -1,0 +1,17 @@
+*.venv
+*/.ipynb_checkpoints
+*/libs
+thesis/*.aux
+thesis/*.fls
+thesis/*.log
+thesis/*.out
+thesis/*.fdb_latexmk
+thesis/*.synctex.gz
+thesis/*.run.xml
+thesis/*.bcf
+thesis/*.toc
+thesis/*.bbl
+thesis/*.blg
+thesis/examples
+thesis/guidelines
+thesis/template

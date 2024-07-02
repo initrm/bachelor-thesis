@@ -38,7 +38,7 @@ practice on average as the worst case occurs very rarely.
 ## References
 
 This thesis is based on the following papers:
-- Andrew Badr, Viliam Geffert e Ian Shipman. ≪Hyper-minimizing minimized deterministic finite state automata≫. In: _RAIRO - Theoretical Informatics and Applications_ 43.1 (2009), pp. 69–94. DOI: [10.1051/ita:2007061](https://doi.org/10.1051/ita:2007061).
-- Andrew Badr. ≪Hyper-Minimization in $\mathcal{O}(n^2)$≫. In: _Implementation and Applications of Automata_. A cura di Oscar H Ibarra e Bala Ravikumar. Berlin, Heidelberg: Springer Berlin Heidelberg, 2008, pp. 223–231. ISBN: 978-3-540-70844-5
-- Markus Holzer e Andreas Maletti. ≪An $n \log n$ algorithm for hyper-minimizing a (minimized) deterministic automaton≫. In: _Theoretical Computer Science_ 411.38 (2010). Implementation and Application of Automata
+- Andrew Badr, Viliam Geffert and Ian Shipman. ≪Hyper-minimizing minimized deterministic finite state automata≫. In: _RAIRO - Theoretical Informatics and Applications_ 43.1 (2009), pp. 69–94. DOI: [10.1051/ita:2007061](https://doi.org/10.1051/ita:2007061).
+- Andrew Badr. ≪Hyper-Minimization in $\mathcal{O}(n^2)$≫. In: _Implementation and Applications of Automata_. Edited by Oscar H. Ibarra e Bala Ravikumar. Berlin, Heidelberg: Springer Berlin Heidelberg, 2008, pp. 223–231. ISBN: 978-3-540-70844-5
+- Markus Holzer and Andreas Maletti. ≪An $n \log n$ algorithm for hyper-minimizing a (minimized) deterministic automaton≫. In: _Theoretical Computer Science_ 411.38 (2010). Implementation and Application of Automata
 (CIAA 2009), pp. 3404–3413. ISSN: 0304-3975. DOI: [10.1016/j.tcs.201](https://doi.org/10.1016/j.tcs.2010.05.0290.05.029). URL: [https://www.sciencedirect.com/science/article/pii/S030439751000321X](https://www.sciencedirect.com/science/article/pii/S030439751000321X).

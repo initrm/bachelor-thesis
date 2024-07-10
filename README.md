@@ -6,9 +6,9 @@ Initial DFA             |  Hyper-minimized DFA
 
 This repository contains the code and the report for my bachelor's thesis "Hyper-minimizing deterministic finite state automata". The thesis places itself in the field of theoretical computer science and is about the hyper-minimization problem, a problem related to the minimization of deterministic finite state automata. The hyper-minimization problem consists in finding a deterministic finite state automaton with the smallest number of states that accepts a language finitely different from the language accepted by the starting automaton. More details can be found in the abstract below and in the report itself.
 
-## Aknowledgements
+## Note
 
-Since this is a bachelor's thesis and my university is in Italy, the report is written in Italian. The abstract is reported below in English.
+Although this README is in English, please be aware that since this is a bachelor's thesis and my university is in Italy, the report is written in Italian. The thesis abstract is reported below in English.
 
 ## Abstract
 

@@ -2,7 +2,7 @@
 
 Initial DFA             |  Hyper-minimized DFA
 :-------------------------:|:-------------------------:
-![Initial DFA](https://github.com/initrm/bachelor-thesis/blob/main/thesis/images/dfa.png?raw=true)  |  ![Hyper-minimized DFA](https://github.com/initrm/bachelor-thesis/blob/main/thesis/images/hyper_minified_dfa.png?raw=true)
+![Initial DFA](/thesis/images/dfa.png)  |  ![Hyper-minimized DFA](/thesis/images/hyper_minified_dfa.png)
 
 This repository contains the code and the report for my bachelor's thesis "Hyper-minimizing deterministic finite state automata". The thesis places itself in the field of theoretical computer science and is about the hyper-minimization problem, a problem related to the minimization of deterministic finite state automata. The hyper-minimization problem consists in finding a deterministic finite state automaton with the smallest number of states that accepts a language finitely different from the language accepted by the starting automaton. More details can be found in the abstract below and in the report itself.
 

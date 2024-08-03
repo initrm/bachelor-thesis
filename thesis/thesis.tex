@@ -105,8 +105,9 @@ Questo problema consiste, dato un automa deterministico, nel trovare un automa a
 deterministico, detto iperminimo, con il minor numero di stati possibile che riconosca un linguaggio
 finitamente differente rispetto al linguaggio riconosciuto dall'automa di partenza.
 In altri termini, dato un automa iperminimo, un qualsiasi altro automa
-con un numero minore di stati riconosce un linguaggio infinitamente differente.
-Contrariamente al problema della minimizzazione, l'automa iperminimo non è unico, è infatti possibile 
+con un numero minore di stati riconosce un linguaggio infinitamente differente rispetto al linguaggio
+accettato dall'automa di partenza.
+Contrariamente al problema della minimizzazione, l'automa iperminimo non è unico. È infatti possibile 
 trovare più automi iperminimi per uno stesso automa di partenza, ciascuno dei quali
 riconosce un linguaggio diverso finitamente differente rispetto a quello riconosciuto dall'automa di partenza.
 L'iperminimizzazione risulta essere un problema di grande interesse teorico e pratico in quanto, in 
@@ -204,7 +205,7 @@ Si è in grado a questo punto di introdurre il concetto di linguaggio.
 
 Due esempi particolari possono essere il linguaggio vuoto $L_\varnothing = \varnothing$ ed il linguaggio composto
 solo dalla parola vuota $L_\varepsilon = \{\varepsilon\}$, puntualizzando il fatto che $L_\varnothing \neq L_\varepsilon$,
-infatti $|L_\varnothing| = 0$ mentre $|L_\varepsilon| = 1$.
+infatti $||L_\varnothing|| = 0$ mentre $||L_\varepsilon|| = 1$.
 
 Convenzionalmente, fissato un alfabeto $\Sigma$, viene indicato con $\Sigma^*$ il linguaggio composto da tutte
 le parole su $\Sigma$, compresa la parola vuota.
@@ -253,9 +254,9 @@ la funzione di transizione $\delta$ è mostrata in Tabella \ref{tab:transitions}
   uno stato $q \in F$.
 \end{definition}
 
-Gli automi a stati finiti non deterministici sono simili ai DFA, la differenza principale risiede nella
+Gli automi a stati finiti non deterministici (NFA) sono simili ai DFA, la differenza principale risiede nella
 funzione di transizione che è definita come $\delta: Q \times \Sigma \rightarrow 2^Q$ che ne cambia di
-conseguenza anche il modo di processare gli input. In questo modo, partendo dallo stato iniziale e leggendo
+conseguenza anche il modo di elaborare gli input. In questo modo, partendo dallo stato iniziale e leggendo
 una parola $w$ è possibile raggiungere più stati. La parola è accettata se almeno uno degli stati raggiunti è
 finale.
 
@@ -434,8 +435,8 @@ tra stati agli automi: due automi $A_1 = (Q_1, \Sigma, \delta_1,\allowbreak q_{I
 $A_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2)$ sono detti \emph{quasi-equivalenti}, denotato con $A_1 \sim A_2$,
 se $q_{I_1} \sim q_{I_2}$. Si osservi come, se $A_1 \sim A_2$, allora $L(A_1) \sim L(A_2)$.
 
-Grazie al concetto di quasi-equivalenza tra automi, è ora possibile fornire quella che è la
-definizione formale di un automa a stati finiti deterministico iperminimo.
+Grazie al concetto di quasi-equivalenza tra automi, è ora possibile fornire la
+definizione formale di automa a stati finiti deterministico iperminimo.
 
 \begin{definition}\label{def:hyper-min-dfa}
   Sia $A = (Q, \Sigma, \delta, q_I, F)$ un automa a stati finiti deterministico, $A$ è detto \emph{iperminimo}
@@ -613,7 +614,7 @@ un vettore $K$ di dimensione $||Q'||$ tale che $k_i = 1$ se e solo se $q_i \in K
 Grazie al Lemma \ref{lem:kernel-state} la costruzione del vettore $K$ si riduce nel determinare se per ogni
 stato $q_i \in Q'$, esista uno stato $q_j \in Q'$ tale che $e_{1,j} = e_{j,j} = e_{j,i} = 1$.
 
-É banale dunque osservare come la costruzione del vettore $K$ sia eseguita in tempo $\bigo(n)$ essendo che 
+È banale dunque osservare come la costruzione del vettore $K$ sia eseguita in tempo $\bigo(n)$ essendo che 
 per ogni stato $q_i \in Q'$ la verifica di appartenenza a $K(A')$ richiede un tempo costante $\bigo(1)$.
 
 L'algoritmo procede con la determinazione delle classi di quasi-equivalenza, a questo scopo, viene creato un vettore
@@ -640,7 +641,7 @@ della quasi-equivalenza per ciascuna coppia richiede un tempo $\bigo(m)$, essend
 al più $||Q'|| - 1$ volte, la complessità temporale totale risulta essere $\bigo(n^3 \cdot m)$.
 
 Infine, per ottenere l'automa $A''$ iperminimo, considerando l'insieme delle classi di quasi-equivalenza
-rappresentato dal vettore $R$, si processano iterativamente tutti i $Q_i \in \partitioned{Q'}{\sim}$
+rappresentato dal vettore $R$, si esaminano iterativamente tutti i $Q_i \in \partitioned{Q'}{\sim}$
 collassando ove possibile gli stati seguendo quanto descritto nel punto 4 della strategia generale riportata
 nella Sezione \ref{sec:hyperminimization-strategy}.
 
@@ -679,11 +680,11 @@ mentre i vettori $K$ dei kernel e $R$ delle classi di quasi-equivalenza risulter
 \subsection{Algoritmo di Badr}
 
 L'algoritmo proposto da Andrew Badr \parencite{Badr} migliora la complessità temporale dell'algoritmo
-di Badr, Geffert e Shipman cambiando quella che è la strategia utilizzata per identificare le classi di
+di Badr, Geffert e Shipman cambiando la strategia utilizzata per identificare le classi di
 quasi-equivalenza.
 
-Equivalentemente all'algoritmo precedente, l'algoritmo di Badr minimizza come prima operazione l'automa
-in ingresso $A$ ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I', F')$.
+Equivalentemente all'algoritmo precedente, l'algoritmo di Badr come prima operazione minimizza l'automa
+in ingresso $A$ ottenendo l'automa minimo $A' = (Q', \Sigma, \delta', q_I', \\F')$.
 
 Il passo successivo prevede di identificare le classi di quasi-equivalenza. A questo scopo, si introduce
 una nuova operazione tra automi a stati finiti deterministici e un importante risultato ad essa associato.
@@ -837,8 +838,8 @@ il lettore è rimandato a \parencite{Badr}, l'insieme $R$ conterrà come da obie
 un linguaggio finito in $A^\otimes$ e sarà possibile costruire $\partitioned{Q'}{\sim}$.
 
 Essendo il numero di transizioni lineare rispetto al numero di stati, il tempo necessario alla costruzione 
-di $T^\rightarrow_q$ e $T^\leftarrow_q$ per tutti gli stati corrisponde complessivamente a $\bigo(||Q^\otimes||)$,
-inoltre, l'aggiunta di ogni stato ad $R$ richiede un tempo costante $\bigo(1)$ più un tempo trascurabile per ciascuno
+di $T^\rightarrow_q$ e $T^\leftarrow_q$ per tutti gli stati corrisponde complessivamente a $\bigo(||Q^\otimes||)$.
+Inoltre, l'aggiunta di ogni stato ad $R$ richiede un tempo costante $\bigo(1)$ più un tempo trascurabile per ciascuno
 stato da cui si raggiunge quello corrente, pertanto la costruzione di $R$ richiede anch'essa un tempo
 lineare $\bigo(||Q^\otimes||)$. Ricordando che $A^\otimes$ è lo XOR cross product di $A'$ con se stesso, la complessità
 temporale di questo passaggio è $\bigo(n^2)$.
@@ -1070,7 +1071,7 @@ Nel dettaglio:
 
 Si ritiene importante puntualizzare come, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo
 \ref{algo:bgs-kernel-states} per ottenere l'insieme $V_i$ degli stati raggiungibili da uno stato $q_i$ in $A$,
-non sia la versione più classica della Breadth-First Search, ma una versione modificata che non aggiunge nella
+non sia la versione classica della Breadth-First Search, ma una versione modificata che non aggiunge nella
 prima iterazione lo stato $q_i$ di partenza all'insieme degli stati visitati. Ne segue che $q_i$ si troverà
 nell'insieme $V_i$ se e solo se raggiungibile da uno stato $q_j$, con $q_j \neq q_i$,
 tale che $q_j$ sia raggiungibile da $q_i$ o se $q_i$ ha un ciclo su se stesso.
@@ -1236,7 +1237,7 @@ di quasi-equivalenza risulta essere particolarmente lunga, si utilizza un'ulteri
 Inoltre, si puntualizza nuovamente come, essendo l'idea dell'identificazione degli stati kernel basata
 sulle medesime osservazioni fatte nell'algoritmo di Badr, Geffert e Shipman e dunque l'implementazione
 molto simile, la funzione \emph{breadthFirstSearch} utilizzata nell'Algoritmo \ref{algo:badr-kernel-states}
-è affetta dalla stessa modifica descritta in precedenza.
+contiene la stessa modifica descritta in precedenza.
 
 \begin{algo}{Algoritmo per il calcolo degli stati che inducono un linguaggio finito.}
   {Un automa a stati finiti deterministico $A = (Q, \Sigma, \delta, q_I, F)$ e l'insieme $S$ degli stati che

@@ -254,7 +254,7 @@ la funzione di transizione $\delta$ è mostrata in Tabella \ref{tab:transitions}
   uno stato $q \in F$.
 \end{definition}
 
-Gli automi a stati finiti non deterministici (NFA) sono simili ai DFA, la differenza principale risiede nella
+Gli automi a stati finiti non deterministici sono simili ai DFA, la differenza principale risiede nella
 funzione di transizione che è definita come $\delta: Q \times \Sigma \rightarrow 2^Q$ che ne cambia di
 conseguenza anche il modo di elaborare gli input. In questo modo, partendo dallo stato iniziale e leggendo
 una parola $w$ è possibile raggiungere più stati. La parola è accettata se almeno uno degli stati raggiunti è
@@ -341,7 +341,7 @@ denotato da $S \slash R$, come l'insieme delle classi di equivalenza di $R$ su $
   (o \emph{minimizzato}) se non esiste un automa $A' = (Q', \Sigma, \delta', q_I', F')$ tale che $A \equiv A'$ e $||Q'|| < ||Q||$.
 \end{theorem}
 
-Queste nozioni permettono di fornire quella che è la soluzione al problema della minimizzazione di un automa a
+Queste nozioni permettono di fornire quella che è la soluzione al problema della minimizzazione di automi a
 stati finiti deterministici.
 
 Dato un automa $A = (Q, \Sigma, \delta, q_I, F)$, l'automa $A' = (Q', \Sigma, \delta', q_I', F')$ ottenuto, dapprima
@@ -1658,8 +1658,8 @@ Gli esiti ottenuti dagli esperimenti sono riportati in Figura \ref{fig:dfa-pcomp
   \caption{\label{fig:dfa-pcomparison-violin}Distribuzioni delle performance degli algoritmi di iperminimizzazione.}
 \end{figure}
 
-I risultati sperimentali confermano le aspettative per quanto riguarda le prestazioni dell'
-algoritmo di Holzer e Maletti, che risulta essere il più efficiente tra quelli implementati, mentre smentiscono
+I risultati sperimentali confermano le aspettative per quanto riguarda le prestazioni dell'algoritmo di Holzer e Maletti,
+che risulta essere il più efficiente tra quelli implementati, mentre smentiscono
 parzialmente le aspettative per quanto riguarda gli altri due algoritmi. Infatti, l'algoritmo di Badr risulta
 essere più lento dell'algoritmo di Badr, Geffert e Shipman. Questo risultato è dovuto al fatto che 
 l'algoritmo di Badr, nella funzione che si occupa della costruzione dello XOR cross product dell'automa in
